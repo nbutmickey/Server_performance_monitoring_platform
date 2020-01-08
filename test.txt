@@ -2,4 +2,4 @@
 这是feature1分支上的内容
 这是fast forward 模式下的内容
 这是no fast forward模式下的内容
-
+这是dev模式下需要暂存的内容
