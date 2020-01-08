@@ -1,3 +1,4 @@
 这是master分支上的内容
 这是feature1分支上的内容
+这是fast forward 模式下的内容
 
