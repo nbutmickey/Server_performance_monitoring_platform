@@ -26,7 +26,7 @@
             xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
         xmlHttp.withCredentials = true
-        xmlHttp.open("GET", "http://10.28.142.103:3000/cookie/?AppID=85d4a553-ee8d-4136-80ab-2469adcae44d", true);
+        xmlHttp.open("GET", "http://192.168.31.88:3000/cookie/?AppID=85d4a553-ee8d-4136-80ab-2469adcae44d", true);
         xmlHttp.send();
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState === 4) {
