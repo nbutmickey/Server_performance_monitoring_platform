@@ -28,6 +28,7 @@ app.all("/manage/*", function (req, res, next) {
       success: false,
       note: "未提供token"
     })
+    //res.end();
   }
   try {
     jwt.verify(auth, "mickey_2020");

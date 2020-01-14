@@ -22,7 +22,7 @@
             xmlHttp = new XMLHttpRequest();
             //console.log("support");
         } else {
-            //IE6,IE5浏览器
+            //IE6,IE5浏览器f
             xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
         xmlHttp.withCredentials = true
@@ -40,7 +40,7 @@
                     let fp = document.createElement("script");
                     fp.type = "text/javascript";
                     fp.async = true;
-                    fp.src = "http://10.28.142.103:3000/static/javascripts/collection.js";
+                    fp.src = "http://192.168.31.88:3000/static/javascripts/collection.js";
                     let s = document.getElementsByTagName("script")[0];
                     s.parentNode.insertBefore(fp, s);
                 }
