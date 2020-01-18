@@ -1,18 +1,63 @@
-// function timestampToTime(timestamp) {
-//    var date = new Date(timestamp);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-//    var Y = date.getFullYear() + '-';
-//    var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
-//    var D = (date.getDate() < 10 ? '0'+date.getDate() : date.getDate()) + ' ';
-//    var h = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours()) + ':';
-//    var m = (date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()) + ':';
-//    var s = (date.getSeconds() < 10 ? '0'+date.getSeconds() : date.getSeconds());
-//     return Y+M+D+h+m+s;                  
-// }
+//数据收集脚本初始化
+function Init(){
+    let userID=getCookie("userID");
+    console.log(userID);
+    console.log(getAppID());
+}
 
-//关键性能指标统计
+//获取cookie值
+function getCookie(key){
+    if(document.cookie.length>0){
+        c_start=document.cookie.indexOf(key+"=");
+        if(c_start!=-1){
+            c_start=c_start+key.length+1;
+            c_end=document.cookie.indexOf(";",c_start);
+            if(c_end==-1){
+                c_end=document.cookie.length;
+                return unescape(document.cookie.substring(c_start,c_end));
+            }
+        }
+    }
+}
+
+function getResourcesList() {
+    let resourceList=[];
+    let perfResEntries=window.performance.getEntries();
+    if(perfResEntries){
+        perfResEntries.forEach(function (item) {
+            resourceList.push({
+                Url:item.name,
+                EntryType:item.entryType,
+                InitiatorType:item.InitiatorType,
+                Duration:item.duration,
+                FileSize:item.transferSize
+            })
+        })
+    }
+    return resourceList;
+}
+
+//获取appID
+function getAppID(){
+    if(window._appID){
+        return _appID;
+    }
+}
+
+//性能指数据统计
 function performance_Collect(){
     let time=window.performance.timing||window.msPerformance.timing||window.webkitPerformance.timing;
-    let performanceIndex={
+    let loadTime=time.loadEventEnd-time.navigationStart;
+    if(loadTime<=0){
+        //若未加载完，则延迟200ms后继续该函数进行数据的收集，直到成功。
+        setTimeout(function () {
+            performance_Collect();
+        },200);
+        return;
+    }
+    let performanceIndex={    
+    // 以下是区间段耗时
+
     // DNS解析耗时 
         dns:time.domainLookupEnd-time.domainLookupStart,
     // TCP连接耗时
@@ -27,16 +72,38 @@ function performance_Collect(){
         dom:time.domInteractive-time.responseEnd,
     //资源加载耗时
         resource:time.loadEventStart-time.domContentLoadedEventEnd,        
+    
+    
+    // 以下是关键性能指标
+    
     //首包时间
         firstByte:time.responseStart-time.domainLookupStart,
     //白屏时间
         fpt:time.responseEnd-time.fetchStart,
     //首次可交互时间
         tti:time.domInteractive-time.fetchStart,
-    //DOM Ready时间
+    //DOM Ready时间，即html完全加载时间
         ready:time.domContentLoadedEventEnd-time.fetchStart,
     //页面完全加载时间
-        load:time.loadEventEnd-time.fetchStart
+        load:time.loadEventEnd-time.fetchStart,
+    //进入页面的类型    
+        navType: function() {
+            let t = "";
+            switch (performance.navigation.type) {
+                case 0:
+                    t = "NAVIGATE";
+                    break;
+                case 1:
+                    t = "RELOAD";
+                    break;
+                case 2:
+                    t = "BACK_FORWARD";
+                    break;
+                case 255:
+                    t = "RESERVED"
+            }
+            return t;
+        }()
     }
     return performanceIndex;
 }
@@ -44,8 +111,9 @@ function performance_Collect(){
 //UV统计
 function UV_Collect(){
     let IP=req.headers['x-forwarded-for']||req.ip||req.socket.remoteAddress||req.connection.socket.remoteAddress||req.connection.remoteAddress||'';
-    if(IP.split(',').length>0){
-      IP=IP.split(',')[0];
+    if(IP.length>0){
+      let end=IP.indexOf(":");    
+      IP=IP.substr(0,end);
     }
     return IP;
 }
@@ -83,38 +151,31 @@ function hookAjax() {
 }
 
 //传输模块(Ajax实现)
-function transport_Collection() {
-    let xmlHttp;
-    if(window.XMLHttpRequest){
-        xmlHttp=new XMLHttpRequest();
-        //console.log("support");
-    }else{
-        //IE6,IE5浏览器
-        xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    xmlHttp.open("POST","http://127.0.0.1:3000/",true);
-    xmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-    let performanceIndex=performance_Collect();
-    xmlHttp.send("performnce="+JSON.stringify(performanceIndex));
-}
+// function transport_Collection() {
+//     let xmlHttp;
+//     if(window.XMLHttpRequest){
+//         xmlHttp=new XMLHttpRequest();
+//         //console.log("support");
+//     }else{
+//         //IE6,IE5浏览器
+//         xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+//     }
+//     xmlHttp.open("POST","http://127.0.0.1:3000/",true);
+//     xmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+//     let performanceIndex=performance_Collect();
+//     xmlHttp.send("performnce="+JSON.stringify(performanceIndex));
+// }
 
 //传输模块（Image实现）
-// function imgReport() {
-//     let data={
-//         creationTime:11,
-//         count:1
-//     }
-//     let url='http://127.0.0.1:3000/imgReport/';
-//     let image=document.createElement("img");
-//     //let items=[];
-//     items=JSON.stringify(data);
-//     //let name='img_'+(+new Date());
-//     image.onload=image.onerror=function(){
-//         console.log("收到请求");
-//     }
-//     // let newUrl = url + (url.indexOf('?') < 0 ? '?' : '&') + items.join('&');
-//     image.src = url+'?'+'creationTime=11&count=1';
-// }
+function uploadData(type,data) {
+    let url='http://192.168.31.88:3000/collect/imgReport';
+    let image=new Image();
+    let UpLoadData=JSON.stringify(data);
+    image.src = url+'?'+'type='+type+'&dataJson='+UpLoadData;
+    image.onload=image.onerror=function(){
+        console.log("数据上传完成！");
+    }
+}
 
 //获取浏览器信息
 function BrowserInfo_Collection() {
@@ -178,7 +239,6 @@ function OSInfo_Collection(){
     let win=(navigator.platform=='Win32')||(navigator.platform=='Win64')||(navigator.platform=='wow64');
     let mac=(navigator.platform=='Mac68K')||(navigator.platform=='MacPPC')||(navigator.platform=='Macintosh');
     if(mac) {
-        //console.log(mac);
         return "MAC";
     }
     let unix=(navigator.platform=='X11')&&!win&&!mac;
@@ -234,16 +294,7 @@ function OSbit_Collection() {
 
 (function(){
     
-    console.log(BrowserInfo_Collection());
-    console.log(ScreenInfo_Collection());
-    console.log(OSInfo_Collection());
-    console.log(OSbit_Collection());
+    Init();
     PV_Collect();
-    //imgReport()
-    //console.log(GeoLocatin_Collection());
-    //console.log(performanceInde);
-    // setInterval(function () {
-    //     transport_Collection();
-    // },3000)
-
+    uploadData('performance',performance_Collect())
 })()

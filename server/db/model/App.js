@@ -64,5 +64,20 @@ const findApp = function (domain, username) {
     })
 }
 
+const findAppByAppID=function (appID) {
+    return new Promise((resolve, reject) => {
+        AppInfo.findOne({appID: appID }, (err, result) => {
+            if (err) {
+                reject(err);
+            }
+            if (result !== null) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        })
+    })
+}
 
-module.exports = { AppInfo, saveApp, findApp, deleteApp };
+
+module.exports = { AppInfo, saveApp, findApp, deleteApp ,findAppByAppID };

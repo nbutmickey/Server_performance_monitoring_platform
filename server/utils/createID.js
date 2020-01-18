@@ -3,7 +3,7 @@ function createAppID() {
 }
 
 function createClientID() {
-    return (new Date()).getTime().toString(32);
+    return (new Date()).getTime().toString(32)+'-'+(Math.random() * 20000000).toString(26).substr(0, 5);
 }
 
 module.exports={createAppID,createClientID};

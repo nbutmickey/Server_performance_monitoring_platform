@@ -51,7 +51,7 @@ app.use('/static', express.static('public'))
 
 app.use('/manage', indexRouter);
 app.use('/users', usersRouter);
-app.use('/colllect', collectRouter);
+app.use('/collect', collectRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
