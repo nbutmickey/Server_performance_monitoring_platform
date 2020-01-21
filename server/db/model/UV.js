@@ -31,6 +31,22 @@ var UvInfo = new Schema({
     },
 });
 
+const findUvByIP=(ipaddress)=>{
+    return new Promise((resolve,reject)=>{
+        UvInfo.findOne({ ipAddr: ipaddress }, (err, result) => {
+            if (err) {
+                console.log(err);
+                reject(err);
+            }
+            if (result !== null) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        });
+    })
+}
+
 const saveUvInfo = (uvinfo) => {
     return new Promise((resolve, reject) => {
         uvinfo.save((err) => {
@@ -46,4 +62,4 @@ const saveUvInfo = (uvinfo) => {
 // 创建一个model
 var UvInfo = mongoose.model("uvInfo", UvInfo);
 
-module.exports = { UvInfo,saveUvInfo};
+module.exports = { UvInfo,saveUvInfo,findUvByIP};

@@ -65,7 +65,7 @@
       </li>
       <li>
         <a
-          href="http://vue-loader.vuejs.org/"
+          href="/"
           target="_blank"
         >
           vue-loader
@@ -73,7 +73,7 @@
       </li>
       <li>
         <a
-          href="https://github.com/vuejs/awesome-vue"
+          href="/dashboard"
           target="_blank"
         >
           awesome-vue
