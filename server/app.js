@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var bodyParser = require('body-parser');
+
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -12,9 +14,9 @@ const jwt = require("jsonwebtoken");
 var app = express();
 
 app.all('*', function (req, res, next) {
-  res.header('Access-Control-Allow-Methods', '*');
+  res.header('Access-Control-Allow-Methods', 'PUT,GET,POST,OPTIONS,DELETE');
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Content-Type;Authorization');
+  res.header('Access-Control-Allow-Headers', 'content-type,Authorization');
   res.header('Content-Type', 'application/json;charset=utf-8');
   next();
 });
@@ -44,8 +46,10 @@ app.all("/manage/*", function (req, res, next) {
 })
 
 app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json());  //body-parser 解析json格式数据
+app.use(bodyParser.urlencoded({            //此项必须在 bodyParser.json 下面,为参数编码
+  extended: true
+}));
 app.use(cookieParser());
 app.use('/static', express.static('public'))
 

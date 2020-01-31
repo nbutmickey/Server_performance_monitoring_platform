@@ -1,12 +1,12 @@
 let request=require("request")
 function  getIPInfo(ipaddr) {
     return new Promise((resolve,reject)=>{
-        request.get("http://ip.taobao.com/service/getIpInfo.php?ip="+ipaddr, function(err, response){
-               let {code,data}=JSON.parse(response.body);
-               if(code===0){
+        request.get("http://hubing.online:8085/lookUp?ip="+ipaddr, function(err, response){
+               let { success,data}=JSON.parse(response.body);
+               if(success){
                    resolve({
                     country:data.country,
-                    province:data.region,
+                    province:data.province,
                     city:data.city,
                     isp:data.isp
                 }); 

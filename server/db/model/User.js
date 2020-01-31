@@ -43,7 +43,7 @@ const saveUser = (user) => {
     return new Promise((resolve, reject) => {
         user.save((err) => {
             if (err) {
-                console.log(err);
+                //console.log(err);
                 reject(false)
             }
             resolve(true);

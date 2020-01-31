@@ -31,17 +31,20 @@
             if (xmlHttp.readyState === 4) {
                 if (xmlHttp.status >= 200 && xmlHttp.status < 300 || xmlHttp.status === 304) {
                     //写入cookie
-                    let User_Cookie = JSON.parse(xmlHttp.responseText).cookie;
-                    let exp = new Date();
-                    exp.setTime(exp.getTime() + 365 * 24 * 60 * 60 * 1000);
-                    document.cookie = "userID=" + User_Cookie + ";expires=" + exp.toGMTString();
+                    let success = JSON.parse(xmlHttp.responseText).success;
+                    if (success) {
+                        let User_Cookie = JSON.parse(xmlHttp.responseText).cookie;
+                        let exp = new Date();
+                        exp.setTime(exp.getTime() + 365 * 24 * 60 * 60 * 1000);
+                        document.cookie = "userID=" + User_Cookie + ";expires=" + exp.toGMTString();
 
-                    let fp = document.createElement("script");
-                    fp.type = "text/javascript";
-                    fp.async = true;
-                    fp.src = "http://192.168.31.88:3000/static/javascripts/collection.js";
-                    let s = document.getElementsByTagName("script")[0];
-                    s.parentNode.insertBefore(fp, s);
+                        let fp = document.createElement("script");
+                        fp.type = "text/javascript";
+                        fp.async = true;
+                        fp.src = "http://192.168.31.88:3000/static/javascripts/collection.js";
+                        let s = document.getElementsByTagName("script")[0];
+                        s.parentNode.insertBefore(fp, s);
+                    }
                 }
             }
         }

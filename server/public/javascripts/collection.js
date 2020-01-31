@@ -32,19 +32,20 @@ function PV_Collect() {
     setInterval(function () {
         var newURL = location.href;
         var newHash = location.hash;
-        console.log("jiance");
         if (newHash != oldHash || newURL != oldURL) {
             oldURL = newURL;
             oldHash = newHash;
-            console.log('触发');
             //上传数据
             let pvInfo = {
                 clientID: getCookie("userID"),
                 appID: getAppID(),
-                visitTime: Date.now()
+                visitTime: Date.now(),
+                pageURL:BaseInfo_Collection(document).url,
+                referrer:BaseInfo_Collection(document).referrer
             }
             uploadData("pv", pvInfo);
-            uploadData("performance", performance_Collect());
+            
+            //uploadData("resource", Resources_Collect());
         }
     }, 100)
 
@@ -72,32 +73,7 @@ function hookAjax() {
     XMLHttpRequest.prototype.open = customizeOpen;
 }
 
-//传输模块(Ajax实现)
-// function transport_Collection() {
-//     let xmlHttp;
-//     if(window.XMLHttpRequest){
-//         xmlHttp=new XMLHttpRequest();
-//         //console.log("support");
-//     }else{
-//         //IE6,IE5浏览器
-//         xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-//     }
-//     xmlHttp.open("POST","http://127.0.0.1:3000/",true);
-//     xmlHttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-//     let performanceIndex=performance_Collect();
-//     xmlHttp.send("performnce="+JSON.stringify(performanceIndex));
-// }
 
-//传输模块（Image实现）
-function uploadData(type, data) {
-    let url = 'http://192.168.31.88:3000/collect/imgReport';
-    let image = new Image();
-    let UpLoadData = JSON.stringify(data);
-    image.src = url + '?' + 'type=' + type + '&dataJson=' + encodeURIComponent(UpLoadData);
-    image.onload = image.onerror = function () {
-        console.log("数据上传完成！");
-    }
-}
 
 //获取浏览器信息
 function BrowserInfo_Collection() {
@@ -218,8 +194,7 @@ function OSbit_Collection() {
 
 //性能指数据统计
 function performance_Collect() {
-    //console.log(window.performance.timing);
-    let time = window.performance.timing || window.msPerformance.timing || window.webkitPerformance.timing;
+    let time = performance.timing || msPerformance.timing || webkitPerformance.timing;
     let loadTime = time.loadEventEnd - time.navigationStart;
     if (loadTime <= 0) {
         //若未加载完，则延迟200ms后继续该函数进行数据的收集，直到成功。
@@ -258,6 +233,15 @@ function performance_Collect() {
         ready: time.domContentLoadedEventEnd - time.fetchStart,
         //页面完全加载时间
         load: time.loadEventEnd - time.fetchStart,
+    }
+
+    let performanceInfo = {
+        clientID: getCookie("userID"),
+        appID: getAppID(),
+        visitTime: Date.now(),
+        pageurl: BaseInfo_Collection(document).url,
+        domain: BaseInfo_Collection(document).domain,
+        referrer: BaseInfo_Collection(document).referrer,
         //进入页面的类型    
         navType: function () {
             let t = "";
@@ -275,55 +259,78 @@ function performance_Collect() {
                     t = "RESERVED"
             }
             return t;
-        }()
-    }
-
-    let performanceInfo = {
-        clientID: getCookie("userID"),
-        appID: getAppID(),
-        visitTime: Date.now(),
-        pageurl: BaseInfo_Collection(document).url,
-        domain: BaseInfo_Collection(document).domain,
-        referrer: BaseInfo_Collection(document).referrer,
+        }(),
         performanceDetail: performanceIndex
     }
-    console.log(performanceInfo);
-    return performanceInfo;
-
+    uploadData("performance", performanceInfo);
 }
 
-//资源加载详情信息获取
+//资源加载详情信息获取(只获取首页)
 function Resources_Collect() {
     let resourceList = [];
-    let perfResEntries = window.performance.getEntries();
+    let perfResEntries = window.performance.getEntriesByType("resource");
     if (perfResEntries) {
         perfResEntries.forEach(function (item) {
-
             //需过滤掉脚本文件的请求和上传todo....
-            resourceList.push({
-                Url: item.name,
-                EntryType: item.entryType,
-                InitiatorType: item.InitiatorType,
-                Duration: item.duration,
-                FileSize: item.transferSize
-            })
+            let reqAppID=/[http|https]*?:\/\/192.168.31.88:3000\/collect\/clientID\/\?appID=[a-z0-9]{5}-[a-z0-9]{8}-[a-z0-9]{8}-[a-z0-9]{7}/;
+            let collectJS=/[http|https]*?:\/\/192.168.31.88:3000\/static\/javascripts\/collection\.js/;
+            let uploadJS=/[http|https]*?:\/\/192.168.31.88:3000\/collect\/imgReport\?./;
+            let resUploadJS=/[http|https]*?:\/\/192.168.31.88:3000\/collect\/resourceUpload/;
+            if(!reqAppID.test(item.name)&&!collectJS.test(item.name)&&!uploadJS.test(item.name)&&!resUploadJS.test(item.name)){
+                resourceList.push({
+                    Url: item.name,
+                    InitiatorType: item.initiatorType,
+                    Duration: item.duration,
+                    FileSize: item.transferSize
+                })
+            }
         })
     }
-
+    //console.log(Object.prototype.toString.call(res));
     let res = {
         clientID: getCookie("userID"),
         appID: getAppID(),
         visitTime: Date.now(),
-        detail: resourceList,
+        detail:resourceList,
     }
 
     return res;
 }
+//传输模块(Ajax实现)
+function uploadDataByAjax() {
+    let xmlHttp;
+    if(window.XMLHttpRequest){
+        xmlHttp=new XMLHttpRequest();
+        //console.log("support");
+    }else{
+        //IE6,IE5浏览器
+        xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
+    }
+    xmlHttp.open("POST","http://192.168.31.88:3000/collect/resourceUpload",true);
+    xmlHttp.setRequestHeader("Content-Type","application/json");
+    let resources=Resources_Collect();
+    //console.log(resources);
+    xmlHttp.send(JSON.stringify(resources));
+}
 
+//传输模块（Image实现）
+function uploadData(type, data) {
+    //console.log("data="+data);
+    let url = 'http://192.168.31.88:3000/collect/imgReport';
+    let image = new Image();
+    let UpLoadData = JSON.stringify(data);
+    image.src = url + '?' + 'type=' + type + '&dataJson=' + encodeURIComponent(UpLoadData);
+    image.onload = image.onerror = function () {
+        console.log("数据上传完成！");
+    }
+}
 
 (function () {
+    window.addEventListener("load",function () {
+        performance_Collect();  
+    })
     window.addEventListener("load", function () {
-        uploadData("resource", Resources_Collect());
+        uploadDataByAjax();
     })
     UV_Collect();
     PV_Collect();
