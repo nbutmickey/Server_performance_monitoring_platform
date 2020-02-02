@@ -36,16 +36,20 @@ function PV_Collect() {
             oldURL = newURL;
             oldHash = newHash;
             //上传数据
+            let { url, referrer, ua } = BaseInfo_Collection(location.href, window.document.referrer);
             let pvInfo = {
                 clientID: getCookie("userID"),
                 appID: getAppID(),
                 visitTime: Date.now(),
-                pageURL:BaseInfo_Collection(document).url,
-                referrer:BaseInfo_Collection(document).referrer
+                os: OSInfo_Collection(),
+                bs: BrowserInfo_Collection(),
+                screen: ScreenInfo_Collection(),
+                isPC:isPC(),
+                pageURL: url,
+                referrer,
+                ua
             }
             uploadData("pv", pvInfo);
-            
-            //uploadData("resource", Resources_Collect());
         }
     }, 100)
 
@@ -57,20 +61,49 @@ function UV_Collect() {
         appID: getAppID(),
         visitTime: Date.now(),
         os: OSInfo_Collection(),
-        osBit: OSbit_Collection(),
-        screen: ScreenInfo_Collection()
+        bs: BrowserInfo_Collection(),
+        screen: ScreenInfo_Collection(),
+        isPC:isPC()
     }
     uploadData("uv", uvInfo);
 }
 
 
 //拦截所有请求
-function hookAjax() {
-    XMLHttpRequest.prototype.nativeOpen = XMLHttpRequest.prototype.open;
-    let customizeOpen = function (method, url, async, user, password) {
-        this.nativeOpen(method, url, async, user, password);
+function apiInfo_Collection() {
+    var start, end;
+    function onLoadStart(data) {
+        start = data.timeStamp;
     }
-    XMLHttpRequest.prototype.open = customizeOpen;
+    function onLoadEnd(data) {
+        end = data.timeStamp;
+        let apiInfo = {
+            clientID: getCookie("userID"),
+            appID: getAppID(),
+            visitTime: Date.now(),
+            pageURL: location.href,
+            ua: navigator.userAgent,
+            statusCode: data.target.status,
+            apiURL: data.target.responseURL,
+            duration: end - start,
+            os: OSInfo_Collection(),
+            bs: BrowserInfo_Collection(),
+            screen: ScreenInfo_Collection(),
+            
+        }
+        uploadData("api", apiInfo);
+    }
+    (function (xhr) {
+        // Capture request before any network activity occurs:
+        var send = xhr.send;
+        xhr.send = function (data) {
+            this.addEventListener('loadstart', onLoadStart);
+            this.addEventListener('loadend', onLoadEnd);
+            //this.addEventListener('error', onError);
+            return send.apply(this, arguments);
+        };
+    })(XMLHttpRequest.prototype);
+
 }
 
 
@@ -112,21 +145,34 @@ function BrowserInfo_Collection() {
     }
 }
 
-//获取基本信息（用户页面url、用户源、当前访问文档的title、当前域名）
-function BaseInfo_Collection(document) {
-    if (document) {
-        //域名
-        let domain = document.domain;
-        //url(页面)
-        let url = document.URL;
-        //源地址（入口地址）
-        let referrer = document.referrer;
-        return {
-            domain: domain,
-            url: url,
-            referrer: referrer
-        }
+function isPC() {
+    let userAgentInfo = navigator.userAgent;
+    let agents = new Array("Android", "iPhone", "SymbianOS", "Windows Phone", "iPad", "iPod");
+    let flag = true;
+    for (let i = 0; i < agents.length; i++) {
+        if (userAgentInfo.indexOf(agents[i]) > 0) { flag = false; break; }
     }
+    return flag;
+}
+
+
+//获取基本信息（用户页面url、用户源、当前访问文档的title、当前域名）
+function BaseInfo_Collection(absURL, refURL) {
+    var tempAbsURL = sessionStorage.getItem("absURL");
+    var tempRefURL = sessionStorage.getItem("refURL");
+    if (tempAbsURL === null && tempRefURL === null) {
+        tempAbsURL = absURL;
+        sessionStorage.setItem("absURL", absURL);
+        tempRefURL = refURL;
+        sessionStorage.setItem("refURL", refURL);
+    } else if (absURL !== tempAbsURL) {
+        sessionStorage.setItem("refURL", tempRefURL);
+        tempRefURL = tempAbsURL;
+        sessionStorage.setItem("absURL", absURL);
+        tempAbsURL = absURL;
+    }
+    //console.log({url:tempAbsURL,referrer:tempRefURL,domain:document.domain});
+    return { url: tempAbsURL, referrer: tempRefURL, domain: document.domain, ua: navigator.userAgent }
 }
 
 //获取屏幕分辨率
@@ -141,17 +187,23 @@ function OSInfo_Collection() {
     let win = (navigator.platform == 'Win32') || (navigator.platform == 'Win64') || (navigator.platform == 'wow64');
     let mac = (navigator.platform == 'Mac68K') || (navigator.platform == 'MacPPC') || (navigator.platform == 'Macintosh');
     if (mac) {
-        return "MAC";
+        return "MAC OS";
     }
     let unix = (navigator.platform == 'X11') && !win && !mac;
     if (unix) return "UNIX";
-    let linux = (String(navigator.platform).indexOf("Linux") > -1);
-    let android = userAgent.toLowerCase().match(/android/i) == "android";
+    let linux = (String(navigator.userAgent).indexOf("Linux") > -1);
+    let android = navigator.userAgent.toLowerCase().match(/android/i) == "android";
+    let ipad = userAgent.toLowerCase().indexOf("ipad") > -1;
+    let iphone = userAgent.toLowerCase().indexOf("iphone") > -1;
     if (linux) {
         if (android) {
             return "Android";
         } else
             return "LINUX";
+    } else if (iphone) {
+        return "ios";
+    } else if (ipad) {
+        return "iPadOS"
     }
     if (win) {
         let win2000 = userAgent.indexOf("windows nt 5.0") > -1 || userAgent.indexOf("windows 2000") > -1;
@@ -181,17 +233,6 @@ function OSInfo_Collection() {
     }
 }
 
-//获取操作系统位数
-function OSbit_Collection() {
-    let agent = navigator.userAgent.toLowerCase();
-    if (agent.indexOf("win32") >= 0 || agent.indexOf("wow32") >= 0) {
-        return 32;
-    } else if (agent.indexOf("win64") >= 0 || agent.indexOf("wow32") >= 0) {
-        return 64;
-    } else
-        return 64;
-}
-
 //性能指数据统计
 function performance_Collect() {
     let time = performance.timing || msPerformance.timing || webkitPerformance.timing;
@@ -206,13 +247,14 @@ function performance_Collect() {
     let performanceIndex = {
         // 以下是区间段耗时
 
+        redirect: time.redirectEnd - time.redirectStart,
         // DNS解析耗时 
         dns: time.domainLookupEnd - time.domainLookupStart,
         // TCP连接耗时
         tcp: time.connectEnd - time.connectStart,
         //SSL安全连接耗时（需要判断是否为https协议）to do....
         ssl: time.connectEnd - time.secureConnectionStart,
-        //首字节时间(Time to First Byte)
+        //首字节时间(Time to First Byte)=>可表征后端整体响应耗时
         ttfb: time.responseStart - time.requestStart,
         //数据传输耗时    
         trans: time.responseEnd - time.responseStart,
@@ -223,25 +265,27 @@ function performance_Collect() {
 
         // 以下是关键性能指标
 
-        //首包时间
+        //首包时间(首字节时间)
         firstByte: time.responseStart - time.domainLookupStart,
+        //DNS缓存时间
+        dnsCache: time.domainLookupStart - time.fetchStart,
         //白屏时间
         fpt: time.responseEnd - time.fetchStart,
         //首次可交互时间
         tti: time.domInteractive - time.fetchStart,
         //DOM Ready时间，即html完全加载时间
-        ready: time.domContentLoadedEventEnd - time.fetchStart,
+        ready: time.domComplete - time.fetchStart,
         //页面完全加载时间
         load: time.loadEventEnd - time.fetchStart,
     }
-
+    let { url, domain, referrer } = BaseInfo_Collection(location.href, window.document.referrer);
     let performanceInfo = {
         clientID: getCookie("userID"),
         appID: getAppID(),
         visitTime: Date.now(),
-        pageurl: BaseInfo_Collection(document).url,
-        domain: BaseInfo_Collection(document).domain,
-        referrer: BaseInfo_Collection(document).referrer,
+        pageurl: url,
+        domain,
+        referrer,
         //进入页面的类型    
         navType: function () {
             let t = "";
@@ -262,21 +306,21 @@ function performance_Collect() {
         }(),
         performanceDetail: performanceIndex
     }
-    uploadData("performance", performanceInfo);
+    uploadData("per", performanceInfo);
 }
 
 //资源加载详情信息获取(只获取首页)
-function Resources_Collect() {
+function resources_Collect() {
     let resourceList = [];
     let perfResEntries = window.performance.getEntriesByType("resource");
     if (perfResEntries) {
         perfResEntries.forEach(function (item) {
             //需过滤掉脚本文件的请求和上传todo....
-            let reqAppID=/[http|https]*?:\/\/192.168.31.88:3000\/collect\/clientID\/\?appID=[a-z0-9]{5}-[a-z0-9]{8}-[a-z0-9]{8}-[a-z0-9]{7}/;
-            let collectJS=/[http|https]*?:\/\/192.168.31.88:3000\/static\/javascripts\/collection\.js/;
-            let uploadJS=/[http|https]*?:\/\/192.168.31.88:3000\/collect\/imgReport\?./;
-            let resUploadJS=/[http|https]*?:\/\/192.168.31.88:3000\/collect\/resourceUpload/;
-            if(!reqAppID.test(item.name)&&!collectJS.test(item.name)&&!uploadJS.test(item.name)&&!resUploadJS.test(item.name)){
+            let reqAppID = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/clientID\/\?appID=[a-z0-9]{5}-[a-z0-9]{8}-[a-z0-9]{8}-[a-z0-9]{7}/;
+            let collectJS = /[http|https]*?:\/\/192.168.31.88:3000\/static\/javascripts\/collection\.js/;
+            let uploadJS = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/imgReport\?./;
+            let resUploadJS = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/resourceUpload/;
+            if (!reqAppID.test(item.name) && !collectJS.test(item.name) && !uploadJS.test(item.name) && !resUploadJS.test(item.name)) {
                 resourceList.push({
                     Url: item.name,
                     InitiatorType: item.initiatorType,
@@ -291,32 +335,29 @@ function Resources_Collect() {
         clientID: getCookie("userID"),
         appID: getAppID(),
         visitTime: Date.now(),
-        detail:resourceList,
+        detail: resourceList,
     }
-
-    return res;
+    uploadData("res", res);
+    //return res;
 }
 //传输模块(Ajax实现)
-function uploadDataByAjax() {
-    let xmlHttp;
-    if(window.XMLHttpRequest){
-        xmlHttp=new XMLHttpRequest();
-        //console.log("support");
-    }else{
-        //IE6,IE5浏览器
-        xmlHttp=new ActiveXObject("Microsoft.XMLHTTP");
-    }
-    xmlHttp.open("POST","http://192.168.31.88:3000/collect/resourceUpload",true);
-    xmlHttp.setRequestHeader("Content-Type","application/json");
-    let resources=Resources_Collect();
-    //console.log(resources);
-    xmlHttp.send(JSON.stringify(resources));
-}
+// function uploadResDataByAjax() {
+//     let xmlHttp;
+//     if (window.XMLHttpRequest) {
+//         xmlHttp = new XMLHttpRequest();
+//     } else {
+//         //IE6,IE5浏览器
+//         xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+//     }
+//     xmlHttp.open("POST", "http://192.168.31.88:3000/collect/resourceUpload", true);
+//     xmlHttp.setRequestHeader("Content-Type", "application/json");
+//     let resources = Resources_Collect();
+//     xmlHttp.send(JSON.stringify(resources));
+// }
 
 //传输模块（Image实现）
 function uploadData(type, data) {
-    //console.log("data="+data);
-    let url = 'http://192.168.31.88:3000/collect/imgReport';
+    let url = 'http://192.168.31.88:3000/collect/upload';
     let image = new Image();
     let UpLoadData = JSON.stringify(data);
     image.src = url + '?' + 'type=' + type + '&dataJson=' + encodeURIComponent(UpLoadData);
@@ -325,13 +366,15 @@ function uploadData(type, data) {
     }
 }
 
+
 (function () {
-    window.addEventListener("load",function () {
-        performance_Collect();  
+    window.addEventListener("load", function () {
+        performance_Collect();
     })
     window.addEventListener("load", function () {
-        uploadDataByAjax();
+        resources_Collect();
     })
+    apiInfo_Collection();
     UV_Collect();
     PV_Collect();
 })()

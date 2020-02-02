@@ -39,16 +39,5 @@ var Performance = new Schema({
     }
 });
 
-const savePerformance=function (performance) {
-    return new Promise((resolve,reject)=>{
-        performance.save((err)=>{
-            if(err){    
-            reject(false)
-            }
-            resolve(true)
-        })
-    })
-}
-
 var Performance = mongoose.model("Performance", Performance);
-module.exports = { Performance,savePerformance }
+module.exports = Performance

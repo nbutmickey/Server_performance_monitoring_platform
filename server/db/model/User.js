@@ -18,40 +18,10 @@ var userInfo = new Schema({
         type: String,
         required: true
     },
-    create_time: {
-        type: Date,
-    }
+    create_time:Date
 })
-
-const findUser = (username) => {
-    return new Promise((resolve, reject) => {
-        User.findOne({ username: username }, (err, result) => {
-            if (err) {
-                console.log(err);
-                reject(err);
-            }
-            if (result !== null) {
-                resolve(true);
-            } else {
-                resolve(false);
-            }
-        })
-    })
-}
-
-const saveUser = (user) => {
-    return new Promise((resolve, reject) => {
-        user.save((err) => {
-            if (err) {
-                //console.log(err);
-                reject(false)
-            }
-            resolve(true);
-        })
-    })
-}
 
 // 创建一个model
 var UserInfo = mongoose.model("userInfo", userInfo);
 
-module.exports = { UserInfo, findUser, saveUser };
+module.exports = UserInfo;

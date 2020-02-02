@@ -1,26 +1,20 @@
 var express = require('express');
 var router = express.Router();
-const { createAppID } = require("../utils/createID");
-let  {AppInfo,findApp,saveApp,deleteApp} = require("../db/model/App");
+let createID = require("../utils/createID");
+let appinfo = require("../service/appinfo");
 
 //新建应用
 router.post('/newApp', async function (req, res) {
-  let appInfo = new AppInfo({
-    appName: req.body.appName,
-    userName: req.body.userName,
-    monitoringDomain: req.body.monitoringDomain,
-    createTime: Date.now(),
-    appID: createAppID(),
-  });
-  let result = await findApp(appInfo.monitoringDomain, appInfo.userName);
+  let appID=createID.createAppID();
+  let result = await appinfo.findApp(req.body.monitoringDomain, req.body.userName);
   if (result) {
     res.json({
       succes: false,
       note: "该域已被您监测过!"
     })
   } else {
-    let doc = await saveApp(appInfo);
-    if (!doc) {
+    let success = await appinfo.saveApp(req.body,appID);
+    if (!success) {
       res.json({
         success: false,
         note: "内部出现了错误！"
@@ -29,8 +23,8 @@ router.post('/newApp', async function (req, res) {
       res.json({
         success: true,
         note: "新建应用成功！",
-        appID: appInfo.appID,
-        appName: appInfo.appName
+        appID:appID,
+        appName: req.body.appName
       })
     }
   }
@@ -38,8 +32,7 @@ router.post('/newApp', async function (req, res) {
 
 // 删除应用信息
 router.post("/delApp",async function (req, res, next) {
-  let appID=req.body.appID;
-  let result=await deleteApp(appID);
+  let result=await appinfo.deleteApp(req.body.appID);
   if(result){
     res.json({
       success:true,

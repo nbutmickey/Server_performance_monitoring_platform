@@ -7,6 +7,7 @@ function  getIPInfo(ipaddr) {
                    resolve({
                     country:data.country,
                     province:data.province,
+                    ip:data.ip,
                     city:data.city,
                     isp:data.isp
                 }); 

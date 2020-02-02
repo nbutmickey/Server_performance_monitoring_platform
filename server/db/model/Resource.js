@@ -19,17 +19,6 @@ var resource=new Schema({
     }
 });
 
-const saveResource = (resource) => {
-    return new Promise((resolve, reject) => {
-        resource.save((err) => {
-            if (err) {
-                reject(false)
-            }
-            resolve(true);
-        })
-    })
-}
-
 var Resource = mongoose.model("resource", resource);
 
-module.exports = { Resource,saveResource};
+module.exports = Resource;

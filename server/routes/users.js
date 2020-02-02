@@ -1,14 +1,15 @@
 var express = require('express');
 var router = express.Router();
-let { userInfo, findUser, saveUser } = require("../db/model/User");
+let userinfo= require("../service/userinfo");
 let sha1 = require("sha1");
 let createToken = require("../utils/createToken");
+let _=require("loadsh");
 
 // 登录
 router.post('/login', async function (req, res, next) {
   let username = req.body.username;
   let password = sha1(req.body.password);
-  let doc = await findUser(username);
+  let doc = await userinfo.findUser(username);
   if (!doc) {
     res.json({
       success: false,
@@ -18,7 +19,7 @@ router.post('/login', async function (req, res, next) {
     // 密码正确，生成一个token
     let token = createToken(username);
     doc.token = token;
-    let result = await saveUser(doc);
+    let result = await userinfo.saveUser(doc);
     if (result) {
       res.json({
         success: true,
@@ -43,22 +44,15 @@ router.post('/login', async function (req, res, next) {
 
 // 注册
 router.post('/reg', async function (req, res, next) {
-  let user = new userInfo({
-    username: req.body.username,
-    phonenumber: req.body.phonenumber,
-    password: sha1(req.body.password),
-    token: createToken(this.username),
-    create_time: Date.now()
-  });
-  //console.log(user);
-  let doc = await findUser(user.username);
+  let user=_.extend(req.body,{password:sha1(req.body.password),token: createToken(req.body.username),create_time: Date.now()});
+  let doc = await userinfo.findUser(user.username);
   if (doc) {
     res.json({
       success: false,
       note: "用户名或手机号已存在"
     })
   } else {
-    let result = await saveUser(user);
+    let result = await userinfo.saveUser(user);
     if (result) {
       res.json({
         success: true,

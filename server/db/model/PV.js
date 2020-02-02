@@ -14,22 +14,15 @@ var PvInfo = new Schema({
         required: true
     },
     pageURL: String,
-    referrer: String
+    referrer: String,
+    ua:String,
+    os:String,
+    bs:String,
+    screen:String,
+    isPC:Boolean
 });
-
-const savePvInfo = function (pvInfo) {
-    return new Promise((resolve, reject) => {
-        pvInfo.save((err) => {
-            if (err) {
-                reject(false);
-            }
-            resolve(true);
-        })
-    });
-
-}
 
 // 创建一个model
 var PvInfo = mongoose.model("pvInfo", PvInfo);
 
-module.exports = { PvInfo, savePvInfo };
+module.exports = PvInfo;
