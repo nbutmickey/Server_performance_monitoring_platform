@@ -1,11 +1,12 @@
 let AppInfo = require("../db/model/App");
+let time=require("../utils/time");
 //对model进行操作
 const saveApp = function (appinfo, clientID) {
     let appInfo = new AppInfo({
         appName: appinfo.appName,
         userName: appinfo.userName,
         monitoringDomain: appinfo.monitoringDomain,
-        createTime: Date.now(),
+        createTime: time.getNowTime(),
         appID: clientID,
     });
     return new Promise((resolve, reject) => {

@@ -1,5 +1,5 @@
 let UvInfo = require("../db/model/UV");
-
+let time = require("../utils/time");
 const updateOneUv = (clientID, appID, os, screen, bs, isPC) => {
     return new Promise((resolve, reject) => {
         UvInfo.updateOne({ clientID: clientID, appID: appID }, { os: os, screen: screen, bs: bs, isPC: isPC }, (err) => {
@@ -70,7 +70,6 @@ const deleteAllUvByAppID = (appID) => {
 
 
 const saveUv = (clientID, appID, IPInfo) => {
-    //console.log(IPInfo);
     let uvTemp = new UvInfo({
         clientID: clientID,
         appID: appID,
@@ -83,7 +82,7 @@ const saveUv = (clientID, appID, IPInfo) => {
         screen: '未知',
         bs: '未知',
         isPC: true,
-        visitTime: Date.now()
+        visitTime: time.getNowTimeString()
     });
     return new Promise((resolve, reject) => {
         uvTemp.save((err) => {
@@ -98,4 +97,33 @@ const saveUv = (clientID, appID, IPInfo) => {
     })
 }
 
-module.exports = { saveUv, findUvByIP, deleteAllUvByID, updateOneUv, findUvByClientID, deleteAllUvByAppID }
+
+/*获取UV数量*/
+const getUvNum = async function (appID, sTime, eTime) {
+    return await UvInfo.aggregate([
+        {
+            $match: {
+                visitTime: {
+                    $gte: sTime,
+                    $lt: eTime
+                },
+                appID: appID
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                count: {
+                    $sum: 1
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                count: "$count"
+            }
+        }
+    ])
+}
+module.exports = { saveUv, getUvNum, findUvByIP, deleteAllUvByID, updateOneUv, findUvByClientID, deleteAllUvByAppID }

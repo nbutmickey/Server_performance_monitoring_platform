@@ -4,6 +4,7 @@ let userinfo= require("../service/userinfo");
 let sha1 = require("sha1");
 let createToken = require("../utils/createToken");
 let _=require("loadsh");
+let time=require("../utils/time");
 
 // 登录
 router.post('/login', async function (req, res, next) {
@@ -44,7 +45,7 @@ router.post('/login', async function (req, res, next) {
 
 // 注册
 router.post('/reg', async function (req, res, next) {
-  let user=_.extend(req.body,{password:sha1(req.body.password),token: createToken(req.body.username),create_time: Date.now()});
+  let user=_.extend(req.body,{password:sha1(req.body.password),token: createToken(req.body.username),create_time: time.getNowTimeString()});
   let doc = await userinfo.findUser(user.username);
   if (doc) {
     res.json({

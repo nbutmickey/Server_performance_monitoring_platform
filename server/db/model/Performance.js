@@ -24,6 +24,7 @@ var Performance = new Schema({
     referrer: String,
     navType: String,
     performanceDetail: {
+        redirect:Number,
         dns: Number,
         tcp: Number,
         ssl: Number,
@@ -32,6 +33,7 @@ var Performance = new Schema({
         dom: Number,
         resource: Number,
         firstByte: Number,
+        dnsCache:Number,
         fpt: Number,
         tti: Number,
         ready: Number,

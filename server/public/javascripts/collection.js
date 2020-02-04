@@ -13,7 +13,12 @@ function getCookie(key) {
     }
 }
 
-
+//获取时间
+function  getNowTime(){
+    const date=new Date(Date.now());
+    date.setMinutes(date.getMinutes()-date.getTimezoneOffset());
+    return date.toISOString();
+}
 
 //获取appID
 function getAppID() {
@@ -40,7 +45,7 @@ function PV_Collect() {
             let pvInfo = {
                 clientID: getCookie("userID"),
                 appID: getAppID(),
-                visitTime: Date.now(),
+                visitTime: getNowTime(),
                 os: OSInfo_Collection(),
                 bs: BrowserInfo_Collection(),
                 screen: ScreenInfo_Collection(),
@@ -59,7 +64,7 @@ function UV_Collect() {
     let uvInfo = {
         clientID: getCookie("userID"),
         appID: getAppID(),
-        visitTime: Date.now(),
+        visitTime: getNowTime(),
         os: OSInfo_Collection(),
         bs: BrowserInfo_Collection(),
         screen: ScreenInfo_Collection(),
@@ -80,7 +85,7 @@ function apiInfo_Collection() {
         let apiInfo = {
             clientID: getCookie("userID"),
             appID: getAppID(),
-            visitTime: Date.now(),
+            visitTime: getNowTime(),
             pageURL: location.href,
             ua: navigator.userAgent,
             statusCode: data.target.status,
@@ -246,17 +251,17 @@ function performance_Collect() {
     }
     let performanceIndex = {
         // 以下是区间段耗时
-
+        //重定向时间
         redirect: time.redirectEnd - time.redirectStart,
         // DNS解析耗时 
         dns: time.domainLookupEnd - time.domainLookupStart,
         // TCP连接耗时
         tcp: time.connectEnd - time.connectStart,
         //SSL安全连接耗时（需要判断是否为https协议）to do....
-        ssl: time.connectEnd - time.secureConnectionStart,
+        ssl: time.secureConnectionStart==0?0:time.connectEnd - time.secureConnectionStart,
         //首字节时间(Time to First Byte)=>可表征后端整体响应耗时
         ttfb: time.responseStart - time.requestStart,
-        //数据传输耗时    
+        //数据传输耗时（响应耗时）    
         trans: time.responseEnd - time.responseStart,
         //DOM解析耗时
         dom: time.domInteractive - time.responseEnd,
@@ -273,7 +278,7 @@ function performance_Collect() {
         fpt: time.responseEnd - time.fetchStart,
         //首次可交互时间
         tti: time.domInteractive - time.fetchStart,
-        //DOM Ready时间，即html完全加载时间
+        //DOM Ready时间，即html完全加载时间（首屏时间）=>无图片情况下
         ready: time.domComplete - time.fetchStart,
         //页面完全加载时间
         load: time.loadEventEnd - time.fetchStart,
@@ -282,7 +287,7 @@ function performance_Collect() {
     let performanceInfo = {
         clientID: getCookie("userID"),
         appID: getAppID(),
-        visitTime: Date.now(),
+        visitTime: getNowTime(),
         pageurl: url,
         domain,
         referrer,
@@ -334,7 +339,7 @@ function resources_Collect() {
     let res = {
         clientID: getCookie("userID"),
         appID: getAppID(),
-        visitTime: Date.now(),
+        visitTime:getNowTime(),
         detail: resourceList,
     }
     uploadData("res", res);

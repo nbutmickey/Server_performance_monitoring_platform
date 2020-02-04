@@ -10,6 +10,7 @@ const savePerformance = function (data) {
     referrer: data.referrer,
     navType: data.navType,
     performanceDetail: {
+      redirect:data.performanceDetail.redirect,
       dns: data.performanceDetail.dns,
       tcp: data.performanceDetail.tcp,
       ssl: data.performanceDetail.ssl,
@@ -18,6 +19,7 @@ const savePerformance = function (data) {
       dom: data.performanceDetail.dom,
       resource: data.performanceDetail.resource,
       firstByte: data.performanceDetail.firstByte,
+      dnsCache:data.performanceDetail.dnsCache,
       fpt: data.performanceDetail.fpt,
       tti: data.performanceDetail.tti,
       ready: data.performanceDetail.ready,
@@ -35,4 +37,15 @@ const savePerformance = function (data) {
   })
 }
 
-module.exports = { savePerformance }
+const deleteAllPerByAppID=function (appID) {
+  return new Promise((resolve,reject)=>{
+    Performance.deleteMany((err)=>{
+      try {
+        resolve(true);
+      } catch (error) {
+        reject(false);
+      }
+    })
+  });
+} 
+module.exports = { savePerformance,deleteAllPerByAppID }

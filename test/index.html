@@ -5,52 +5,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>数据收集</title>
+    <title>文件上传</title>
 </head>
 
 <body>
-    test
+    <input id="upload" type="file" />
+    <button id="submit">上传文件</button>
+    <button id="download">下载文件</button>
+    <img src="http://192.168.31.88:3000/collect/downloadFile/f2017f87941fbbab4e4e96a9acbfb299" alt="">
 </body>
 <script type="text/javascript">
-    (function () {
-        var _app = _app || [];
-        window._app = _app;
-        //一个被检测应用对应一个AppID,AppID由服务端生成
-        _app.push(['_appID', '85d4a553-ee8d-4136-80ab-2469adcae44d']);
-        let xmlHttp;
-        if (window.XMLHttpRequest) {
-            xmlHttp = new XMLHttpRequest();
-        } else {
-            //IE6,IE5浏览器
-            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlHttp.withCredentials = true
-        xmlHttp.open("GET", "http://192.168.31.88:3000/collect/clientID/?appID=85d4a553-ee8d-4136-80ab-2469adcae44d", true);
+    var submit = document.getElementById("submit");
+    var download = document.getElementById("download");
+    download.onclick = function () {
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("GET", "http://192.168.31.88:3000/collect/downloadFile/f2017f87941fbbab4e4e96a9acbfb299", true);
+        xmlHttp.onload = function () {
+            let blob = this.response; //使用response作为返回，而非responseText
+            let reader = new FileReader();
+            reader.readAsDataURL(blob); // 转换为base64，可以直接放入a标签href
+            reader.onload = function (e) {
+                // 转换完成，创建一个a标签用于下载
+                let a = document.createElement("a");
+                a.download = "图1.jpg";
+                a.href = e.target.result;
+                a.click();
+            };
+        };
+        xmlHttp.responseType = "blob";
         xmlHttp.send();
+    }
+
+    submit.onclick = function () {
+        var upload = document.getElementById("upload");
+        var formData = new FormData();
+        formData.append("resume", upload.files[0]);
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("POST", "http://192.168.31.88:3000/collect/fileUpload", true);
+        xmlHttp.send(formData);
         xmlHttp.onreadystatechange = function () {
             if (xmlHttp.readyState === 4) {
                 if (xmlHttp.status >= 200 && xmlHttp.status < 300 || xmlHttp.status === 304) {
-                    //写入cookie
-                    let success = JSON.parse(xmlHttp.responseText).success;
-                    if (success) {
-                        let User_Cookie = JSON.parse(xmlHttp.responseText).cookie;
-                        let exp = new Date();
-                        exp.setTime(exp.getTime() + 365 * 24 * 60 * 60 * 1000);
-                        document.cookie = "userID=" + User_Cookie + ";expires=" + exp.toGMTString();
-
-                        let fp = document.createElement("script");
-                        fp.type = "text/javascript";
-                        fp.async = true;
-                        fp.src = "http://192.168.31.88:3000/static/javascripts/collection.js";
-                        let s = document.getElementsByTagName("script")[0];
-                        s.parentNode.insertBefore(fp, s);
-                    }
+                    console.log(xmlHttp.responseText);
                 }
             }
         }
+    }
 
-
-    })()
 </script>
 
 </html>

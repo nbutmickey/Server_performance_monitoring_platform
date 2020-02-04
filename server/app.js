@@ -9,6 +9,7 @@ var bodyParser = require('body-parser');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var collectRouter = require('./routes/collect');
+var statisticsRouter = require('./routes/statistics');
 const jwt = require("jsonwebtoken");
 
 var app = express();
@@ -18,14 +19,15 @@ app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'content-type,Authorization');
   res.header('Content-Type', 'application/json;charset=utf-8');
-  next();
+  if (req.method == "OPTIONS") res.sendStatus(200); /*让options请求快速返回*/
+  else next();
 });
 
 // 设置要访问资源的url必须经过token的验证才可访问
 app.all("/manage/*", function (req, res, next) {
   const auth = req.get("Authorization");
   //console.log(auth);
-  if (auth === ' '||auth===undefined) {
+  if (auth === ' ' || auth === undefined) {
     res.json({
       success: false,
       note: "未提供token"
@@ -42,7 +44,7 @@ app.all("/manage/*", function (req, res, next) {
     })
   }
   // 验证通过，放行
-  
+
 })
 
 app.use(logger('dev'));
@@ -56,6 +58,7 @@ app.use('/static', express.static('public'))
 app.use('/manage', indexRouter);
 app.use('/users', usersRouter);
 app.use('/collect', collectRouter);
+app.use('/info', statisticsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
