@@ -16,6 +16,9 @@ var APIInfo = new Schema({
     apiURL:String,
     statusCode:Number,
     duration:Number,
+    province:String,
+    isp:String,
+    ip:String,
     os:String,
     bs:String,
     screen:String

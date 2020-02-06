@@ -23,6 +23,10 @@ var Performance = new Schema({
     },
     referrer: String,
     navType: String,
+    province:String,
+    os:String,
+    bs:String,
+    ip:String,
     performanceDetail: {
         redirect:Number,
         dns: Number,

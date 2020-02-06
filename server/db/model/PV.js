@@ -14,6 +14,8 @@ var PvInfo = new Schema({
         required: true
     },
     pageURL: String,
+    ip:String,
+    province:String,
     referrer: String,
     ua:String,
     os:String,

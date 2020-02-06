@@ -55,7 +55,7 @@ const deleteAllUvByID = (appID, ipaddr) => {
         })
     });
 }
-
+/*根据应用ID（appID）删除所有UV数据*/
 const deleteAllUvByAppID = (appID) => {
     return new Promise((resolve, reject) => {
         UvInfo.deleteMany({ appID: appID }, (err) => {
@@ -68,7 +68,7 @@ const deleteAllUvByAppID = (appID) => {
     });
 }
 
-
+/*存储UV数据*/
 const saveUv = (clientID, appID, IPInfo) => {
     let uvTemp = new UvInfo({
         clientID: clientID,
@@ -97,8 +97,7 @@ const saveUv = (clientID, appID, IPInfo) => {
     })
 }
 
-
-/*获取UV数量*/
+/*获取UV数量（总数）*/
 const getUvNum = async function (appID, sTime, eTime) {
     return await UvInfo.aggregate([
         {
@@ -126,4 +125,230 @@ const getUvNum = async function (appID, sTime, eTime) {
         }
     ])
 }
-module.exports = { saveUv, getUvNum, findUvByIP, deleteAllUvByID, updateOneUv, findUvByClientID, deleteAllUvByAppID }
+
+/*获取各时间段的UV数量*/
+const getUvNumByDivider = async function (appID, sTime, eTime,divider) {
+    return await UvInfo.aggregate([
+        {
+            $match: {
+                visitTime: {
+                    $gte: sTime,
+                    $lt: eTime
+                },
+                appID: appID
+            },
+        },
+        {
+            $group: {
+                _id: {
+                    $subtract: [
+                        {
+                            $subtract: ["$visitTime", new Date(0)]
+                        },
+                        {
+                            $mod: [
+                                {
+                                    $subtract: ["$visitTime", new Date(0)]
+                                },
+                                divider
+                            ]
+                        }]
+                },
+                count: {
+                    $sum: 1
+                }
+            },
+        },
+        {
+            $project: {
+                _id: 0,
+                count: "$count",
+                visitTime: {
+                    $add: [new Date(0), "$_id"]
+                }
+            }
+        },
+        {
+            $sort: {
+                visitTime: 1
+            }
+
+        }
+    ])
+}
+
+/*根据地理位置获取UV数量*/
+const getUvNumByGeo = async function (appID, sTime, eTime) {
+    return await UvInfo.aggregate([
+        {
+            $match: {
+                visitTime: {
+                    $gte: sTime,
+                    $lt: eTime
+                },
+                appID: appID
+            }
+        },
+        {
+            $group: {
+                _id: "$province",
+                count: {
+                    $sum: 1
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                province: "$_id",
+                count: "$count"
+            }
+        },
+        {
+            $sort:{
+                count:-1
+            }
+        }
+    ])
+}
+/*获取客户端浏览器类型数量占比*/
+const getBsInfo = async function (appID, sTime, eTime) {
+    return await UvInfo.aggregate([
+        {
+            $match: {
+                visitTime: {
+                    $gte: sTime,
+                    $lt: eTime
+                },
+                appID: appID
+            }
+        },
+        {
+            $group: {
+                _id: "$bs",
+                count: {
+                    $sum: 1
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                bs: "$_id",
+                count: "$count"
+            }
+        },
+        {
+            $sort: {
+                count:1
+            }
+        }
+    ])
+}
+
+/*获取客户端操作系统类型数量占比*/
+const getOsInfo = async function (appID, sTime, eTime) {
+    return await UvInfo.aggregate([
+        {
+            $match: {
+                visitTime: {
+                    $gte: sTime,
+                    $lt: eTime
+                },
+                appID: appID
+            }
+        },
+        {
+            $group: {
+                _id: "$os",
+                count: {
+                    $sum: 1
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                os: "$_id",
+                count: "$count"
+            }
+        },
+        {
+            $sort: {
+                count: 1
+            }
+        }
+    ])
+}
+/*获取终端屏幕分辨率数量的占比*/
+const getScreenInfo = async function (appID, sTime, eTime) {
+    return await UvInfo.aggregate([
+        {
+            $match: {
+                visitTime: {
+                    $gte: sTime,
+                    $lt: eTime
+                },
+                appID: appID
+            }
+        },
+        {
+            $group: {
+                _id: "$screen",
+                count: {
+                    $sum: 1
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                screen: "$_id",
+                count: "$count"
+            }
+        },
+        {
+            $sort: {
+                count: 1
+            }
+        }
+    ])
+}
+
+/*获取终端是否为PC的占比*/
+const getIsPCInfo = async function (appID, sTime, eTime) {
+    return await UvInfo.aggregate([
+        {
+            $match: {
+                visitTime: {
+                    $gte: sTime,
+                    $lt: eTime
+                },
+                appID: appID
+            }
+        },
+        {
+            $group: {
+                _id: "$isPC",
+                count: {
+                    $sum: 1
+                }
+            }
+        },
+        {
+            $project: {
+                _id: 0,
+                isPC: "$_id",
+                count: "$count"
+            }
+        },
+        {
+            $sort: {
+                count: 1
+            }
+        }
+    ])
+}
+
+
+module.exports = { saveUv, getScreenInfo, getIsPCInfo, getOsInfo, getBsInfo, getUvNumByGeo, getUvNumByDivider, getUvNum, findUvByIP, deleteAllUvByID, updateOneUv, findUvByClientID, deleteAllUvByAppID }

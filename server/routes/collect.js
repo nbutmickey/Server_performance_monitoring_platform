@@ -3,6 +3,7 @@ var router = express.Router();
 const multer=require("multer");
 const upfile=multer({dest:'public/resume/'});
 const path=require("path");
+let middleware = require("../utils/middleware");
 let createID = require("../utils/createID");
 let perinfo = require("../service/perinfo");
 let uvinfo = require("../service/uvinfo");
@@ -18,17 +19,17 @@ router.get('/clientID', async function (req, res, next) {
   let clientID = req.query.clientID;
   //console.log(clientID);
   let result = await appinfo.findAppByAppID(appID);
-  console.log(result);
+  //console.log(result);
   if (result) {
     //获取IP地址
     let tempIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || req.connection.socket.remoteAddress || req.connection.remoteAddress || '';
     //console.log(tempIP);
     let IP = tempIP.split(":")[tempIP.split(":").length - 1]
     //查询IP地址对应的地理信息
-    let IPInfo = await ipSearch("112.123.33.86");//需修改成IP
+    let IPInfo = await ipSearch("27.128.241.0");//需修改成IP
     //根据clientID查找是否该访问者曾经访问过，若访问过，则不生成ID，直接返回，若未访问过，则需要生成ID返回。
     let visitResult = await uvinfo.findUvByClientID(clientID);
-    console.log(visitResult);
+    //console.log(visitResult);
     if (!visitResult && typeof lientID ==="undefined") {
       //生成用户ID，作为身份证明
       let clientID = createID.createClientID();
@@ -40,7 +41,6 @@ router.get('/clientID', async function (req, res, next) {
           success: true,
           cookie: clientID,
         });
-
       }
     } else {
       res.json({
@@ -53,41 +53,41 @@ router.get('/clientID', async function (req, res, next) {
 //13731950807
 
 //处理用户上传收集数据信息
-router.get('/upload', async function (req, res, next) {
+router.get('/upload',middleware.setIPInfo, async function (req, res, next) {
   let { type, dataJson } = req.query;
-  let data = JSON.parse(dataJson);
   switch (type) {
     case 'per':
-      let perData=filter.filterPerData(data);
+      let perData=filter.filterPerData(dataJson);
       if(perData){
-        await perinfo.savePerformance(perData);
+        await perinfo.savePerformance(dataJson);
       }
       //await perinfo.deleteAllPerByAppID(data.appID);
       break;
     case 'uv':
-      await uvinfo.updateOneUv(data.clientID, data.appID, data.os, data.screen, data.bs,data.isPC);
+      await uvinfo.updateOneUv(dataJson.clientID, dataJson.appID, dataJson.os, dataJson.screen, dataJson.bs,dataJson.isPC);
       //await uvinfo.deleteAllUvByAppID(data.appID)
       break;
     case 'pv':
-      await pvinfo.savePv(data);
+      await pvinfo.savePv(dataJson);
       //await pvinfo.deleteAllPvByAppID(data.appID);
       break;
     case 'api':
-      let apiData=filter.filterApiData(data);
+      let apiData=filter.filterApiData(dataJson);
       //await apiinfo.deleteAllApiByAppID(data.appID);
       await apiinfo.saveApi(apiData);
-      break;
-    case 'res':
-      //console.log(data);
-      let resData=filter.filterResData(data);
-      await resourceinfo.saveResource(resData);
-      //await resourceinfo.deleteAllresByAppID(data.appID);
       break;
     default:
       break;
   }
   res.status(200).end();
 })
+
+router.post("/upload",async function (req,res,next) {
+  let dataJson=JSON.parse(req.body.dataJson);
+  let resData=filter.filterResData(dataJson);
+  await resourceinfo.saveResource(resData);
+  res.status(200).end();
+});
 
 
 //获取资源详情数据

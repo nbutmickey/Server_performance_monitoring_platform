@@ -9,6 +9,9 @@ const saveApi=function (apiinfo) {
         statusCode:apiinfo.statusCode,
         apiURL:apiinfo.apiURL,
         duration:apiinfo.duration,
+        ip:apiinfo.ip,
+        province:apiinfo.province,
+        isp:apiinfo.isp,
         os:apiinfo.os,
         bs:apiinfo.bs,
         screen:apiinfo.screen

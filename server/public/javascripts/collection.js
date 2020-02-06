@@ -28,7 +28,7 @@ function getAppID() {
 }
 
 
-//PV统计
+//PV统计(此方法很耗性能，后期有待改进。。。)
 function PV_Collect() {
     var location = window.location;
     var oldURL = location.href;
@@ -41,7 +41,7 @@ function PV_Collect() {
             oldURL = newURL;
             oldHash = newHash;
             //上传数据
-            let { url, referrer, ua } = BaseInfo_Collection(location.href, window.document.referrer);
+            let { url, referrer, ua ,domain} = BaseInfo_Collection(location.href, window.document.referrer);
             let pvInfo = {
                 clientID: getCookie("userID"),
                 appID: getAppID(),
@@ -55,6 +55,7 @@ function PV_Collect() {
                 ua
             }
             uploadData("pv", pvInfo);
+            performance_Collect( url, domain, referrer);
         }
     }, 100)
 
@@ -239,7 +240,7 @@ function OSInfo_Collection() {
 }
 
 //性能指数据统计
-function performance_Collect() {
+function performance_Collect( url, domain, referrer) {
     let time = performance.timing || msPerformance.timing || webkitPerformance.timing;
     let loadTime = time.loadEventEnd - time.navigationStart;
     if (loadTime <= 0) {
@@ -283,7 +284,6 @@ function performance_Collect() {
         //页面完全加载时间
         load: time.loadEventEnd - time.fetchStart,
     }
-    let { url, domain, referrer } = BaseInfo_Collection(location.href, window.document.referrer);
     let performanceInfo = {
         clientID: getCookie("userID"),
         appID: getAppID(),
@@ -291,6 +291,8 @@ function performance_Collect() {
         pageurl: url,
         domain,
         referrer,
+        os:OSInfo_Collection(),
+        bs:BrowserInfo_Collection(),
         //进入页面的类型    
         navType: function () {
             let t = "";
@@ -316,7 +318,7 @@ function performance_Collect() {
 
 //资源加载详情信息获取(只获取首页)
 function resources_Collect() {
-    let resourceList = [];
+    let detail = [];
     let perfResEntries = window.performance.getEntriesByType("resource");
     if (perfResEntries) {
         perfResEntries.forEach(function (item) {
@@ -324,9 +326,9 @@ function resources_Collect() {
             let reqAppID = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/clientID\/\?appID=[a-z0-9]{5}-[a-z0-9]{8}-[a-z0-9]{8}-[a-z0-9]{7}/;
             let collectJS = /[http|https]*?:\/\/192.168.31.88:3000\/static\/javascripts\/collection\.js/;
             let uploadJS = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/imgReport\?./;
-            let resUploadJS = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/resourceUpload/;
+            let resUploadJS = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/upload/;
             if (!reqAppID.test(item.name) && !collectJS.test(item.name) && !uploadJS.test(item.name) && !resUploadJS.test(item.name)) {
-                resourceList.push({
+                detail.push({
                     Url: item.name,
                     InitiatorType: item.initiatorType,
                     Duration: item.duration,
@@ -340,10 +342,9 @@ function resources_Collect() {
         clientID: getCookie("userID"),
         appID: getAppID(),
         visitTime:getNowTime(),
-        detail: resourceList,
+        detail
     }
-    uploadData("res", res);
-    //return res;
+    uploadDataBySendBeacon(res);
 }
 //传输模块(Ajax实现)
 // function uploadResDataByAjax() {
@@ -371,11 +372,16 @@ function uploadData(type, data) {
     }
 }
 
+function uploadDataBySendBeacon(data){
+    let url = 'http://192.168.31.88:3000/collect/upload';
+    let headers={
+        type:"application/x-www-form-urlencoded"
+    }
+    let blob=new Blob(["dataJson="+encodeURIComponent(JSON.stringify(data))],headers);
+    navigator.sendBeacon(url,blob);
+}
 
 (function () {
-    window.addEventListener("load", function () {
-        performance_Collect();
-    })
     window.addEventListener("load", function () {
         resources_Collect();
     })
