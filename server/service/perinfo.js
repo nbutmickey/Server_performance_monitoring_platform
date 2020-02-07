@@ -54,13 +54,18 @@ const deleteAllPerByAppID = function (appID) {
   });
 }
 
-const getKeyPerToday = async function (appID, sTime, eTime) {
-  return await Performance.aggregate([
+const getKeyPerToday = async function (appID) {
+  
+  //时间处理这里有点问题。。。
+  let yesTime=new Date(new Date(new Date().toLocaleDateString()).getTime()-16*60*60*1000);
+  let toTime=new Date(new Date().toLocaleDateString());
+  let nowTime=new Date(new Date().getTime()+8*60*60*1000)
+  let resultYesterday=await Performance.aggregate([
     {
       $match: {
         visitTime: {
-          $gte: sTime,
-          $lt: eTime
+          $gte: yesTime,
+          $lt: toTime
         },
         appID: appID
       }
@@ -92,6 +97,57 @@ const getKeyPerToday = async function (appID, sTime, eTime) {
       }
     }
   ])
+
+  let resultToday=await Performance.aggregate([
+    {
+      $match: {
+        visitTime: {
+          $gte: toTime,
+          $lt: nowTime
+        },
+        appID: appID
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        fpt: {
+          $avg: "$performanceDetail.fpt"
+        },
+        ready: {
+          $avg: "$performanceDetail.ready"
+        },
+        tti: {
+          $avg: "$performanceDetail.tti"
+        },
+        load: {
+          $avg: "$performanceDetail.load"
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        fpt: 1,
+        ready: 1,
+        tti: 1,
+        load: 1
+      }
+    }
+  ])
+  let result={
+    fpt:{},
+    ready:{},
+    tti:{},
+    load:{}
+  };
+  let yesterday=resultYesterday[0];
+  let today=resultToday[0];
+  for(key in today){
+    result[key].time=parseInt(today[key]);
+    result[key].percentage=((parseInt(yesterday[key])-parseInt(today[key]))/parseInt(yesterday[key])).toFixed(2);
+  }
+  return result;
 }
 
 const getKeyPerDividerByPage = async function (appID, sTime, eTime, page, divider) {

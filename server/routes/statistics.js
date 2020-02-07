@@ -166,16 +166,16 @@ router.get("/isPCInfo", async function (req, res, next) {
 })
 
 router.get("/keyPerToday", async function (req, res, next) {
-    let type = req.query.type;
+    //let type = req.query.type;
     let appID = req.query.appID;
-    let { sTime, eTime } = time.computeTimeDivider(type);
-    let result = await perinfo.getKeyPerToday(appID, sTime, eTime);
+    //let { sTime, eTime } = time.computeTimeDivider(type);
+    let result =await perinfo.getKeyPerToday(appID);
     //console.log(result);
-    if (result[0]) {
+    if (result) {
         res.json({
             success: true,
             note: "数据返回成功",
-            data: result[0]
+            data: result
         })
     } else {
         res.json({
