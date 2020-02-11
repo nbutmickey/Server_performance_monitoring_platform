@@ -1,5 +1,5 @@
-function getNowTime(v){
-    const d=new Date(v);
+function getNowTime(v) {
+    const d = new Date(v);
     //d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
     return d;
 }
@@ -13,6 +13,11 @@ function getNowTime(v){
 // //console.log(new Date(new Date().toLocaleDateString().getTime()+8*60*60*1000));
 // console.log(new Date(Date.now()));
 
-let moment=require("moment");
-console.log(moment().format());
-console.log(moment().startOf("day"));
+let moment = require("moment");
+// console.log(moment().format());
+// console.log(moment().startOf("day"));
+
+let yesTime = new Date(new Date(new Date().toLocaleDateString()).getTime() - 16 * 60 * 60 * 1000);
+let toTime = new Date(yesTime.getTime()+24*60*60*1000);
+console.log(yesTime);
+console.log(toTime);

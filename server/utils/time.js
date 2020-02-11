@@ -14,6 +14,18 @@ function getStandardTime(divider) {
     return date;
 }
 
+exports.getToadyTimeDivider = function () {
+    let yesTime = new Date(new Date(new Date().toLocaleDateString()).getTime() - 16 * 60 * 60 * 1000);
+    let toTime = new Date(yesTime.getTime() + 24 * 60 * 60 * 1000);
+    let nowTime=new Date(new Date().getTime()+8*60*60*1000)
+    return {
+        yesTime,
+        toTime,
+        nowTime
+    }
+}
+
+
 exports.computeTimeDivider = function (type) {
     let eTime, sTime, divider;
     switch (parseInt(type)) {

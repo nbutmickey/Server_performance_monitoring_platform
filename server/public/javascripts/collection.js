@@ -78,6 +78,7 @@ function UV_Collect() {
 //拦截所有请求
 function apiInfo_Collection() {
     var start, end;
+    var methods;
     function onLoadStart(data) {
         start = data.timeStamp;
     }
@@ -95,17 +96,21 @@ function apiInfo_Collection() {
             os: OSInfo_Collection(),
             bs: BrowserInfo_Collection(),
             screen: ScreenInfo_Collection(),
-            
+            methods:methods
         }
         uploadData("api", apiInfo);
     }
     (function (xhr) {
         // Capture request before any network activity occurs:
         var send = xhr.send;
-        xhr.send = function (data) {
+        var open=xhr.open;
+        xhr.open=function(method){
+            methods=method;
+            return open.apply(this,arguments);
+        }
+        xhr.send = function () {
             this.addEventListener('loadstart', onLoadStart);
             this.addEventListener('loadend', onLoadEnd);
-            //this.addEventListener('error', onError);
             return send.apply(this, arguments);
         };
     })(XMLHttpRequest.prototype);

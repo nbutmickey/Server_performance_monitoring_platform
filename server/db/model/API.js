@@ -21,7 +21,8 @@ var APIInfo = new Schema({
     ip:String,
     os:String,
     bs:String,
-    screen:String
+    screen:String,
+    methods:String
 })
 
 // 创建一个model

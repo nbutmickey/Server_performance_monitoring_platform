@@ -1,17 +1,17 @@
 <template>
 <div>
-  <h1>
+  <h1 style="color:red">
     {{ msg }}
   </h1>
 </div>
 </template>
 
 <script>
+// import "../common/style/main.less"
 export default {
-  name: 'DashBoard',
   data () {
     return {
-      msg: 'welcome to dashboard 1324'
+      msg: 'PageAnalysis'
     }
   }
 }

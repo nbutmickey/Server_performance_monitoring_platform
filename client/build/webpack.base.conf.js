@@ -36,6 +36,25 @@ module.exports = {
         loader: 'vue-loader',
         options: vueLoaderConfig
       },
+      /*vue-cli3已经完成css-loader相关的配置*/
+      
+      // {
+      //   test:/\.(css|less)$/,
+      //   use:['style-loader',{
+      //     loader:'css-loader',
+      //     options:{
+      //       /*以前开启模块的方式*/
+      //       modules:true, //开启css模块化
+      //       localIdentName: '[local]_[hash:base64:5]'
+      //       //localIdentName:'[name]-[local]-[hash:base64:6]'
+      //       // modules:{
+      //       //   localIdentName:'[path]-[name]-[hash:base64:5]'
+      //       // }
+      //     }
+      //   },{
+      //     loader:'less-loader'
+      //   }] //加载顺序是从右向左的
+      // },
       {
         test: /\.js$/,
         loader: 'babel-loader',

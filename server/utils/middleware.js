@@ -1,8 +1,8 @@
 let ipSearch = require("./ipSearch");
 exports.validate=function (req,res,next) {
-    let type= req.query.type;
+    let type= req.query.dimensionType;
     if(type>5||type<0){
-        req.query.type=0;
+        req.query.dimensionType=0;
     }
     next();
 }

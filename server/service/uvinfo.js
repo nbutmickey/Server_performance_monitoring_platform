@@ -126,229 +126,44 @@ const getUvNum = async function (appID, sTime, eTime) {
     ])
 }
 
-/*获取各时间段的UV数量*/
-const getUvNumByDivider = async function (appID, sTime, eTime,divider) {
-    return await UvInfo.aggregate([
-        {
-            $match: {
-                visitTime: {
-                    $gte: sTime,
-                    $lt: eTime
-                },
-                appID: appID
-            },
-        },
-        {
-            $group: {
-                _id: {
-                    $subtract: [
-                        {
-                            $subtract: ["$visitTime", new Date(0)]
-                        },
-                        {
-                            $mod: [
-                                {
-                                    $subtract: ["$visitTime", new Date(0)]
-                                },
-                                divider
-                            ]
-                        }]
-                },
-                count: {
-                    $sum: 1
+/*根据客户端指定参数获取信息*/
+const getClietnInfo=async function(appID,sTime,eTime,groupType){
+    try {
+        return await UvInfo.aggregate([
+            {
+                $match: {
+                    visitTime: {
+                        $gte: sTime,
+                        $lt: eTime
+                    },
+                    appID: appID
                 }
             },
-        },
-        {
-            $project: {
-                _id: 0,
-                count: "$count",
-                visitTime: {
-                    $add: [new Date(0), "$_id"]
+            {
+                $group: {
+                    _id: "$"+groupType,
+                    count: {
+                        $sum: 1
+                    }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    property: "$_id",
+                    count: "$count"
+                }
+            },
+            {
+                $sort: {
+                    count: 1
                 }
             }
-        },
-        {
-            $sort: {
-                visitTime: 1
-            }
+        ])
+    } catch (error) {
+        throw "数据异常"
+    }
 
-        }
-    ])
 }
 
-/*根据地理位置获取UV数量*/
-const getUvNumByGeo = async function (appID, sTime, eTime) {
-    return await UvInfo.aggregate([
-        {
-            $match: {
-                visitTime: {
-                    $gte: sTime,
-                    $lt: eTime
-                },
-                appID: appID
-            }
-        },
-        {
-            $group: {
-                _id: "$province",
-                count: {
-                    $sum: 1
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0,
-                province: "$_id",
-                count: "$count"
-            }
-        },
-        {
-            $sort:{
-                count:-1
-            }
-        }
-    ])
-}
-/*获取客户端浏览器类型数量占比*/
-const getBsInfo = async function (appID, sTime, eTime) {
-    return await UvInfo.aggregate([
-        {
-            $match: {
-                visitTime: {
-                    $gte: sTime,
-                    $lt: eTime
-                },
-                appID: appID
-            }
-        },
-        {
-            $group: {
-                _id: "$bs",
-                count: {
-                    $sum: 1
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0,
-                bs: "$_id",
-                count: "$count"
-            }
-        },
-        {
-            $sort: {
-                count:1
-            }
-        }
-    ])
-}
-
-/*获取客户端操作系统类型数量占比*/
-const getOsInfo = async function (appID, sTime, eTime) {
-    return await UvInfo.aggregate([
-        {
-            $match: {
-                visitTime: {
-                    $gte: sTime,
-                    $lt: eTime
-                },
-                appID: appID
-            }
-        },
-        {
-            $group: {
-                _id: "$os",
-                count: {
-                    $sum: 1
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0,
-                os: "$_id",
-                count: "$count"
-            }
-        },
-        {
-            $sort: {
-                count: 1
-            }
-        }
-    ])
-}
-/*获取终端屏幕分辨率数量的占比*/
-const getScreenInfo = async function (appID, sTime, eTime) {
-    return await UvInfo.aggregate([
-        {
-            $match: {
-                visitTime: {
-                    $gte: sTime,
-                    $lt: eTime
-                },
-                appID: appID
-            }
-        },
-        {
-            $group: {
-                _id: "$screen",
-                count: {
-                    $sum: 1
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0,
-                screen: "$_id",
-                count: "$count"
-            }
-        },
-        {
-            $sort: {
-                count: 1
-            }
-        }
-    ])
-}
-
-/*获取终端是否为PC的占比*/
-const getIsPCInfo = async function (appID, sTime, eTime) {
-    return await UvInfo.aggregate([
-        {
-            $match: {
-                visitTime: {
-                    $gte: sTime,
-                    $lt: eTime
-                },
-                appID: appID
-            }
-        },
-        {
-            $group: {
-                _id: "$isPC",
-                count: {
-                    $sum: 1
-                }
-            }
-        },
-        {
-            $project: {
-                _id: 0,
-                isPC: "$_id",
-                count: "$count"
-            }
-        },
-        {
-            $sort: {
-                count: 1
-            }
-        }
-    ])
-}
-
-
-module.exports = { saveUv, getScreenInfo, getIsPCInfo, getOsInfo, getBsInfo, getUvNumByGeo, getUvNumByDivider, getUvNum, findUvByIP, deleteAllUvByID, updateOneUv, findUvByClientID, deleteAllUvByAppID }
+module.exports = { saveUv, getClietnInfo, getUvNum, findUvByIP, deleteAllUvByID, updateOneUv, findUvByClientID, deleteAllUvByAppID }
