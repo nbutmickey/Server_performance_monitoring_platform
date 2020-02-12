@@ -2,12 +2,11 @@
   <header class="header">
     <router-link to="/" class="title">服务器性能监控平台 V1.0</router-link>
     <div class="nav">
-      <router-link to="/general">今日概况</router-link>
-      <router-link to="/page">页面</router-link>
-      <router-link to="/performance">性能</router-link>
-      <router-link to="/api">API</router-link>
-      <router-link to="/resource">资源</router-link>
-      <router-link to="/userAction">行为</router-link>
+      <router-link to="/general">应用总览</router-link>
+      <router-link to="/performance">页面性能</router-link>
+      <router-link to="/api">API请求</router-link>
+      <router-link to="/resource">资源加载</router-link>
+      <router-link to="/userAction">行为追踪</router-link>
     </div>
     <div class="user">
       <a-dropdown>

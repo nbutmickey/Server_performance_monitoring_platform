@@ -1,6 +1,7 @@
 <template>
   <div>
     <showPanel :todayData="todayData" :isCompare="isCompare"></showPanel>
+    <chinaMapPanel :title="geo" :showTimeDimension="showTimeDimension"></chinaMapPanel>
     <div style="margin-left:-8px;display: flex;flex-direction: row;flex-wrap: wrap">
       <pineChartPanel :title="bs" :data="bsdata" :showTimeDimension="showTimeDimension"></pineChartPanel>
       <pineChartPanel :title="os" :data="osdata" :showTimeDimension="showTimeDimension"></pineChartPanel>
@@ -15,16 +16,19 @@
 <script>
 import showPanel from "@/components/showPanel";
 import pineChartPanel from "@/components/pineChartPanel";
+import chinaMapPanel from '@/components/chinaMapPanel'
 export default {
   components: {
     showPanel,
-    pineChartPanel
+    pineChartPanel,
+    chinaMapPanel
   },
   data() {
     return {
       todayData: [],
       isCompare: true,
       showTimeDimension:true,
+      geo:"地理位置",
       os: "操作系统",
       bs: "浏览器",
       ispc: "客户端",

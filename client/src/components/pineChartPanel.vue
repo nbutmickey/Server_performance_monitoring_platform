@@ -79,6 +79,9 @@ export default {
     changeShow: function() {
       this.isPine = !this.isPine;
     },
+    changeTimeDimension:function(){
+      
+    },
     renderPineChart: function(data) {
       let sum = this.data.reduce(function(total, cur) {
         return total + cur.count;
@@ -93,7 +96,9 @@ export default {
       });
       chart
         .source(dv)
-        .tooltip(true)
+        .tooltip({
+         showTitle:false
+        })
         .legend({
           position: "right-bottom",
           offsetX: -50
