@@ -6,11 +6,14 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>client</title>
     <style>
-        *{
-            margin:0;
-            padding:0;
+        * {
+            margin: 0;
+            padding: 0;
             box-sizing: border-box;
         }
+        /* body{
+            overflow: hidden;
+        } */
     </style>
 </head>
 
@@ -19,42 +22,42 @@
     <!-- built files will be auto injected -->
 </body>
 <script type="text/javascript">
-    (function () {
-        //一个被检测应用对应一个AppID,AppID由服务端生成
-        window._appID = "kol9l-k5dvol2z-b4cad0ad-k5dvol2z";
-        let appId = window._appID;
-        let xmlHttp;
-        if (window.XMLHttpRequest) {
-            xmlHttp = new XMLHttpRequest();
-        } else {
-            //IE6,IE5浏览器
-            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlHttp.open("GET", "http://192.168.31.88:3000/collect/clientID/?appID=" + appId, true);
-        xmlHttp.send();
-        xmlHttp.onreadystatechange = function () {
-            if (xmlHttp.readyState === 4) {
-                if (xmlHttp.status >= 200 && xmlHttp.status < 300 || xmlHttp.status === 304) {
-                    //写入cookie
-                    let resInfo = JSON.parse(xmlHttp.responseText);
-                   
-                        let exp = new Date();
-                        exp.setTime(exp.getTime() + 365 * 24 * 60 * 60 * 1000);
-                        document.cookie = "userID=" + resInfo.cookie + ";expires=" + exp.toGMTString();
-                        let fp = document.createElement("script");
-                        fp.type = "text/javascript";
-                        fp.async = true;
-                        fp.src = "http://192.168.31.88:3000/static/javascripts/collection.js";
-                        let s = document.getElementsByTagName("script")[0];
-                        s.parentNode.insertBefore(fp, s);
-                    
+    // (function () {
+    //     //一个被检测应用对应一个AppID,AppID由服务端生成
+    //     window._appID = "kol9l-k5dvol2z-b4cad0ad-k5dvol2z";
+    //     let appId = window._appID;
+    //     let xmlHttp;
+    //     if (window.XMLHttpRequest) {
+    //         xmlHttp = new XMLHttpRequest();
+    //     } else {
+    //         //IE6,IE5浏览器
+    //         xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+    //     }
+    //     xmlHttp.open("GET", "http://192.168.31.88:3000/collect/clientID/?appID=" + appId, true);
+    //     xmlHttp.send();
+    //     xmlHttp.onreadystatechange = function () {
+    //         if (xmlHttp.readyState === 4) {
+    //             if (xmlHttp.status >= 200 && xmlHttp.status < 300 || xmlHttp.status === 304) {
+    //                 //写入cookie
+    //                 let resInfo = JSON.parse(xmlHttp.responseText);
 
-                }
-            }
-        }
+    //                 let exp = new Date();
+    //                 exp.setTime(exp.getTime() + 365 * 24 * 60 * 60 * 1000);
+    //                 document.cookie = "userID=" + resInfo.cookie + ";expires=" + exp.toGMTString();
+    //                 let fp = document.createElement("script");
+    //                 fp.type = "text/javascript";
+    //                 fp.async = true;
+    //                 fp.src = "http://192.168.31.88:3000/static/javascripts/collection.js";
+    //                 let s = document.getElementsByTagName("script")[0];
+    //                 s.parentNode.insertBefore(fp, s);
 
 
-    })()
+    //             }
+    //         }
+    //     }
+
+
+    // })()
 </script>
 
 </html>

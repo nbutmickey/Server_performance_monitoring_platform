@@ -89,7 +89,40 @@ export default {
           resource:1211
         },
         {
-          time: "2020-02-10T09:06:00.000Z",
+          time: "2020-02-19T09:06:00.000Z",
+          redirect: 120,
+          dns: 343,
+          tcp: 3345,
+          ssl: 4456,
+          ttfb:321,
+          trans:234,
+          dom:123,
+          resource:1211
+        },
+        {
+          time: "2020-02-10T09:13:00.000Z",
+          redirect: 120,
+          dns: 343,
+          tcp: 3345,
+          ssl: 4456,
+          ttfb:321,
+          trans:234,
+          dom:123,
+          resource:1211
+        },
+        {
+          time: "2020-02-10T09:24:00.000Z",
+          redirect: 120,
+          dns: 343,
+          tcp: 3345,
+          ssl: 4456,
+          ttfb:321,
+          trans:234,
+          dom:123,
+          resource:1211
+        },
+        {
+          time: "2020-02-10T09:34:00.000Z",
           redirect: 120,
           dns: 343,
           tcp: 3345,
@@ -134,15 +167,10 @@ export default {
       .scale({
         time: {
           type: "timeCat",
-          alias: "时间",
           mask: "MM-DD HH:mm:ss",
           tickCount: this.userData.length
         }
       })
-      .tooltip({
-        showTitle: true,
-        itemTpl: "<li>{type} : {duration}</li>"
-      });
 
     chart
       .legend({
@@ -214,8 +242,8 @@ export default {
           }
     
         return {
-          type: name,
-          duration: duration + " ms"
+          name: name,
+          value: duration + " ms"
         };
       })
       .adjust([

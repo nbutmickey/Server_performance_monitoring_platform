@@ -1,12 +1,12 @@
 <template>
-  <div style="width:100%;">
+  <div style="width:50%;padding-left:8px;paddig-right:8px;">
     <div class="content-box">
       <div class="title">
         <span class="box-panel-title-small">{{title}}</span>
         <span class="box-panel-time-dimension">
           <a-popover placement="right" class="radio-gap">
             <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
+              <a-radio-group defaultValue="0" size="small" >
                 <a-radio-button value="0">30分钟</a-radio-button>
                 <a-radio-button value="1">60分钟</a-radio-button>
                 <a-radio-button value="2">12小时</a-radio-button>
@@ -18,12 +18,6 @@
             <a-icon type="clock-circle" />
           </a-popover>
         </span>
-        <!-- <span class="box-panel-change-show">
-          <a-radio-group defaultValue="pine" size="small" @change="changeShow">
-            <a-radio-button value="pine">饼图</a-radio-button>
-            <a-radio-button value="table">表格</a-radio-button>
-          </a-radio-group>
-        </span>-->
       </div>
       <div class="container">
         <div :id="containerId"></div>
@@ -85,6 +79,20 @@ export default {
           ready: 343,
           tti: 2345,
           load: 2456
+        },
+         {
+          time: "2020-02-11T09:04:56.000Z",
+          fpt: 225,
+          ready: 243,
+          tti: 4345,
+          load: 5456
+        },
+        {
+          time: "2020-02-11T09:04:34.000Z",
+          fpt: 325,
+          ready: 343,
+          tti: 2345,
+          load: 2456
         }
       ]
     };
@@ -126,10 +134,10 @@ export default {
           tickCount: this.userData.length
         }
       })
-      .tooltip({
-        showTitle: true,
-        itemTpl: "<li>{type} : {duration}</li>"
-      });
+      // .tooltip({
+      //   showTitle: true,
+      //   itemTpl: "<li>{type} : {duration}</li>"
+      // });
 
     chart
       .legend({
@@ -176,8 +184,8 @@ export default {
             break;
         }
         return {
-          type: name,
-          duration: duration + " ms"
+          name: name,
+          value: duration + " ms"
         };
       })
       .adjust([

@@ -2,7 +2,7 @@
   <div>
     <headerBar></headerBar>
     <div class="dashboard">
-        <router-view />
+        <router-view/>
     </div>
   </div>
 </template>

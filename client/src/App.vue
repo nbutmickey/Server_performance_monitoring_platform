@@ -1,18 +1,17 @@
 <template>
   <div id="app">
-    <router-view/>
+      <router-view />
   </div>
 </template>
 
 <script>
-
 export default {
-  name: 'App'
-}
+  name: "App"
+};
 </script>
 
 <style lang="less">
-  a{
-   text-decoration: none; 
-  }
+a {
+  text-decoration: none;
+}
 </style>

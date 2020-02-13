@@ -6,7 +6,7 @@
         <span class="box-panel-time-dimension" v-if="showTimeDimension">
           <a-popover placement="right" class="radio-gap">
             <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
+              <a-radio-group defaultValue="0" size="small">
                 <a-radio-button value="0">30分钟</a-radio-button>
                 <a-radio-button value="1">60分钟</a-radio-button>
                 <a-radio-button value="2">12小时</a-radio-button>
@@ -71,6 +71,7 @@ export default {
       loading: false
     };
   },
+  created() {},
   mounted() {
     this.renderPineChart(this.data);
   },
@@ -78,60 +79,61 @@ export default {
     changeShow: function() {
       this.isPine = !this.isPine;
     },
-    changeTimeDimension: function(e) {
-      this.$emit("changeTimeDimension",e.target.value);
-    },
+    changeTimeDimension: function() {},
     renderPineChart: function(data) {
       let sum = this.data.reduce(function(total, cur) {
         return total + cur.count;
       }, 0);
-      const ds = new DataSet();
-      const dv = ds.createView().source(data);
+
       const chart = new G2.Chart({
-        container: this.containerId,
+        container:this.containerId,
         forceFit: true,
         height: 350,
         padding: [0, 30, 0, "auto"]
       });
+      chart.source(this.data, {
+        count: {
+          formatter: val => {
+            val = parseInt((val/sum)*100) + "%";
+            return val;
+          }
+        }
+      });
+      
+      chart.coord("theta", {
+        radius: 0.8
+      });
+
       chart
-        .source(dv)
-        .tooltip({
-          showTitle: false
-        })
-        .legend({
+      .tooltip({
+        showTitle: false,
+        itemTpl:
+          '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
+      })
+      .legend({
           position: "right-bottom",
           offsetX: -50
         })
-        .coord("theta", {
-          radius: 0.8,
-          innerRadius: 0.55
-        });
+
       chart
         .intervalStack()
         .position("count")
         .color("type")
-        .opacity(1)
         .label("count", {
-          offset: -25,
-          textStyle: {
-            fill: "white",
-            fontSize: 12,
-            shadowBlur: 2,
-            shadowColor: "rgba(0, 0, 0, .45)"
-          },
-          rotate: 0,
-          autoRotate: false,
-          formatter: (text, item) => {
-            return String(parseInt((item.point.count / sum) * 100)) + "%";
+          formatter: (val, item) => {
+            return item.point.type+ ": " + val;
           }
+        })
+        .tooltip("type*count", (type, count) => {
+          return {
+            name: type,
+            value: count
+          };
+        })
+        .style({
+          lineWidth: 1,
+          stroke: "#fff"
         });
-      chart.guide().html({
-        position: ["50%", "50%"],
-        html:
-          '<div class="g2-guide-html"></span><p style="font-weight:700;font-size:18px">' +
-          sum +
-          "</p></div>"
-      });
       chart.render();
     }
   }
@@ -176,4 +178,4 @@ export default {
     }
   }
 }
-</style>
+</style>f

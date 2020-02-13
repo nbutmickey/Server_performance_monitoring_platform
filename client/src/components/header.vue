@@ -71,7 +71,7 @@ export default {
   .user{
       display: inline-block;
       position: absolute;
-      right: 16px;
+      right: 5px;
   }
 }
 </style>

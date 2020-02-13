@@ -1,8 +1,12 @@
 <template>
   <div>
     <showPanel :todayData="todayData" :isCompare="isCompare"></showPanel>
-    <keyPerPanel :title="keyPer"></keyPerPanel>
-    <intervalTimePanel :title="intervalTime"></intervalTimePanel>
+    <div style="margin-left:-8px;display: flex;flex-direction: row;flex-wrap: wrap">
+      <waterfallLoadingPanel :title="waterfallLoadingTitle"></waterfallLoadingPanel>
+      <keyPerPanel :title="keyPerTitle"></keyPerPanel>
+    </div>
+    <pageListPanel :title="pageListTitle"></pageListPanel>
+    <intervalTimePanel :title="intervalTimeTitle"></intervalTimePanel>
   </div>
 </template>
 
@@ -10,26 +14,32 @@
 import showPanel from "@/components/showPanel";
 import keyPerPanel from "@/components/keyPerPanel"
 import intervalTimePanel from "@/components/intervalTimePanel"
+import pageListPanel from "@/components/pageListPanel"
+import waterfallLoadingPanel from "@/components/waterfallLoadingPanel"
 export default {
   components: {
     showPanel,
     keyPerPanel,
-    intervalTimePanel
+    intervalTimePanel,
+    pageListPanel,
+    waterfallLoadingPanel
   },
   data() {
     return {
       msg: "performance",
       todayData: [],
       isCompare:false,
-      keyPer:"关键性能指标",
-      intervalTime:"区间段耗时"
+      pageListTitle:"页面列表",
+      keyPerTitle:"关键性能指标",
+      intervalTimeTitle:"区间段耗时",
+      waterfallLoadingTitle:"页面加载瀑布图"
     };
   },
   async created() {
     this.todayData = await this.getTodayData();
   },
   methods: {
-    getTodayData: async function() {
+    getTodayData: async function() {0
       let res = await this.axios.get("/data/per");
       let { success, result } = res.data;
       result.forEach(item => {
@@ -54,7 +64,7 @@ export default {
             break;
         }
       });
-      console.log(result);
+      //console.log(result);
       return result;
     }
   }

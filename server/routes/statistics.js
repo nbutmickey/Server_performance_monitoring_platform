@@ -83,7 +83,7 @@ router.get("/pvAndUvNumByGeo", async function (req, res, next) {
 router.get("/clientInfo", async function (req, res, next) {
     try {
         let appID = req.query.appID;
-        let groupType = groupCalc.computeGroupType(req.groupType);
+        let groupType = groupCalc.computeGroupType(req.query.groupType);
         let data = uvinfo.getClietnInfo(appID, sTime, eTime, groupType);
         let { sTime, eTime } = time.computeTimeDivider(req.query.dimensionType);
         res.json({
