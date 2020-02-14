@@ -82,74 +82,10 @@ const columns = [
     scopedSlots: { customRender: "action" }
   }
 ];
-const data = [
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  },
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  },
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  },
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  },
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  },
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  },
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  },
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  },
-  {
-    pageURL: "http:www.mickey.cn:8080/home",
-    fpt: 234,
-    ready: 2222,
-    tti: 111,
-    load: 890
-  }
-];
 export default {
   props: {
-    title: String
+    title: String,
+    data:Array
   },
   components: {
     keyPerPanel,
@@ -164,7 +100,6 @@ export default {
       showIntervalTime: false,
       keyPerPanelWidth: "100%",
       columns,
-      data,
       size: "small",
       pagination: {
         size: "small",
@@ -172,9 +107,17 @@ export default {
       }
     };
   },
+  watch: {
+    data(val){
+      this.data=val;
+    }
+  },
   created() {},
   mounted() {},
   methods: {
+    changeTimeDimension: function(e) {
+        this.$emit("changeTimeDimension",e.target.value);
+    },
     showModal: function(record) {
       this.modalTitle = `页面${record.pageURL}区间段耗时`;
       this.showIntervalTime = true;

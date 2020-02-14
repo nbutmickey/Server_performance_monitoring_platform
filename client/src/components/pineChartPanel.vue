@@ -42,6 +42,7 @@
 </template>
 
 <script>
+//const that=this;
 export default {
   props: {
     title: String,
@@ -71,8 +72,17 @@ export default {
       loading: false
     };
   },
+  watch:{
+    data(val){
+       this.data=val;
+       //重绘图表
+       this.chart.clear();
+       this.renderChart(this.data);
+    }
+  },
   mounted() {
-    this.renderPineChart(this.data);
+    this.initChart(); //图表初始化
+    this.renderChart(this.data); //绘制图表
   },
   methods: {
     changeShow: function() {
@@ -81,19 +91,16 @@ export default {
     changeTimeDimension: function(e) {
       this.$emit("changeTimeDimension",e.target.value);
     },
-    renderPineChart: function(data) {
-      let sum = this.data.reduce(function(total, cur) {
-        return total + cur.count;
-      }, 0);
+    renderChart:function(data){
       const ds = new DataSet();
-      const dv = ds.createView().source(data);
-      const chart = new G2.Chart({
-        container: this.containerId,
-        forceFit: true,
-        height: 350,
-        padding: [0, 30, 0, "auto"]
+      const dv = ds.createView().source(data).transform({
+        type:'percent',
+        field:'count',
+        dimension:'type',
+        as:'percent'
       });
-      chart
+
+      this.chart
         .source(dv)
         .tooltip({
           showTitle: false
@@ -106,12 +113,13 @@ export default {
           radius: 0.8,
           innerRadius: 0.55
         });
-      chart
+
+      this.chart
         .intervalStack()
         .position("count")
         .color("type")
         .opacity(1)
-        .label("count", {
+        .label("percent", {
           offset: -25,
           textStyle: {
             fill: "white",
@@ -122,17 +130,29 @@ export default {
           rotate: 0,
           autoRotate: false,
           formatter: (text, item) => {
-            return String(parseInt((item.point.count / sum) * 100)) + "%";
+            return (item.point.percent*100).toFixed(0)+'%';
           }
         });
-      chart.guide().html({
+        let sum=this.data.reduce((total,cur)=>{return total+cur.count;},0);
+        this.chart.guide().html({
         position: ["50%", "50%"],
         html:
           '<div class="g2-guide-html"></span><p style="font-weight:700;font-size:18px">' +
           sum +
-          "</p></div>"
+          "</p></div>",
+        alignX: 'middle',
+        alignY: 'middle'  
+      });  
+        this.chart.render();
+        
+    },
+    initChart: function() {
+      this.chart = new G2.Chart({
+        container: this.containerId,
+        forceFit: true,
+        height: 350,
+        padding: [0, 30, 0, "auto"]
       });
-      chart.render();
     }
   }
 };

@@ -7,12 +7,12 @@
           <a-popover placement="right" class="radio-gap">
             <template slot="content">
               <a-radio-group defaultValue="0" size="small"  @change="changeTimeDimension">
-                <a-radio-button value="0">30分钟</a-radio-button>
-                <a-radio-button value="1">60分钟</a-radio-button>
-                <a-radio-button value="2">12小时</a-radio-button>
-                <a-radio-button value="3">24小时</a-radio-button>
-                <a-radio-button value="4">最近3天</a-radio-button>
-                <a-radio-button value="5">最近7天</a-radio-button>
+                <a-radio-button value="0" >30分钟</a-radio-button>
+                <a-radio-button value="1" >60分钟</a-radio-button>
+                <a-radio-button value="2" >12小时</a-radio-button>
+                <a-radio-button value="3" >24小时</a-radio-button>
+                <a-radio-button value="4" >最近3天</a-radio-button>
+                <a-radio-button value="5" >最近7天</a-radio-button>
               </a-radio-group>
             </template>
             <a-icon type="clock-circle" />
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+const that=this;
 export default {
   props: {
     data:Array,  
@@ -37,13 +38,15 @@ export default {
       chart: null,
       containerId: Math.random()
         .toString(36)
-        .substr(2)
-    };
+        .substr(2),
+      dimentionType:0
+    }
   },
   watch:{
     data(val){
       this.data=val;
-      this.chart.changeData(val)
+      //重绘图表
+      this.chart.changeData(val);
     }
   },
   created() {
@@ -62,39 +65,38 @@ export default {
       height: 300,
       padding: [10, 30, 30,30 ]
     });
-    this.chart.source(this.data);
-    this.chart.scale("value", {
-      min: 0
-    });
-    this.chart.scale({
-      time: {
-        range: [0, 1],
-        type: "timeCat",
-        mask: "HH:mm",
-        tickCount: this.data.length
-      }
-    });
-    this.chart.tooltip({
-      crosshairs: {
-        type: "line"
-      }
-    });
-    this.chart
-      .line()
-      .position("time*value")
-      .shape("smooth")
-      .color(this.title==="PV数据"?"#1890ff":"#2FC25B");
-    this.chart
-      .point()
-      .position("time*value")
-      .size(3)
-      .color(this.title==="PV数据"?"#1890ff":"#2FC25B")
-      .shape("circle")
-      .style({
-        stroke: "#fff",
-        lineWidth: 1
+      this.chart.source(this.data);
+      this.chart.scale("value", {
+        min: 0
       });
-    this.chart.render();
+      this.chart.scale({
+        time: {
+          type: "timeCat",
+          mask: "HH:mm",
+          tickCount: this.data.length
+        }
+      });
+      this.chart.tooltip({
+        crosshairs: {
+          type: "line"
+        }
+      });
+      this.chart
+        .line()
+        .position("time*value")
+        .shape("smooth")
+        .color(this.title==="PV数据"?"#1890ff":"#2FC25B");
+      this.chart
+        .point()
+        .position("time*value")
+        .size(3)
+        .color(this.title==="PV数据"?"#1890ff":"#2FC25B")
+        .shape("circle")
+        .style({
+          stroke: "#fff",
+          lineWidth: 1
+        });
+      this.chart.render();
     }
   }
 };

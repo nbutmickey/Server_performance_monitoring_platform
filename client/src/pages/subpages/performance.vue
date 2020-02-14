@@ -2,12 +2,12 @@
   <div>
     <showPanel :todayData="todayData" :isCompare="isCompare"></showPanel>
     <div style="margin-left:-8px;display: flex;flex-direction: row;flex-wrap: wrap">
-      <waterfallLoadingPanel :title="waterfallLoadingTitle"></waterfallLoadingPanel>
-      <keyPerPanel :title="keyPerTitle"></keyPerPanel>
+      <waterfallLoadingPanel :title="waterfallLoadingTitle" :data="waterfallLoadingData" v-on:changeTimeDimension="getWaterfallLoadingData"></waterfallLoadingPanel>
+      <keyPerPanel :title="keyPerTitle" :data="keyPerData" v-on:changeTimeDimension="getkeyPerData"></keyPerPanel>
     </div>
-    <pageListPanel :title="pageListTitle"></pageListPanel>
-    <intervalTimePanel :title="intervalTimeTitle"></intervalTimePanel>
-  </div>
+    <pageListPanel :title="pageListTitle" :data="pageListData" v-on:changeTimeDimension="getPageListData"></pageListPanel>
+    <intervalTimePanel :title="intervalTimeTitle" :data="intervalData" v-on:changeTimeDimension="getIntervalData"></intervalTimePanel>
+  </div>                                                  
 </template>
 
 <script>
@@ -28,6 +28,10 @@ export default {
     return {
       msg: "performance",
       todayData: [],
+      waterfallLoadingData:[],
+      keyPerData:[],
+      pageListData:[],
+      intervalData:[],
       isCompare:false,
       pageListTitle:"页面列表",
       keyPerTitle:"关键性能指标",
@@ -37,9 +41,13 @@ export default {
   },
   async created() {
     this.todayData = await this.getTodayData();
+    await this.getWaterfallLoadingData(0);
+    await this.getIntervalData(0);
+    await this.getkeyPerData(0);
+    await this.getPageListData(0);
   },
   methods: {
-    getTodayData: async function() {0
+    getTodayData: async function() {
       let res = await this.axios.get("/data/per");
       let { success, result } = res.data;
       result.forEach(item => {
@@ -66,6 +74,53 @@ export default {
       });
       //console.log(result);
       return result;
+    },
+    getWaterfallLoadingData:async function(dimensionType){
+      let res = await this.axios.get(
+        `/data/waterfallLoading?dimensionType=${dimensionType}`
+      );
+      //console.log(res);
+      let { success, result } = res.data;
+      //console.log(result);
+      if (success) {
+        this.waterfallLoadingData = result;
+      }
+    },
+    getkeyPerData:async function(dimensionType){
+       let res = await this.axios.get(
+        `/data/keyPer?dimensionType=${dimensionType}`
+      );
+      //console.log(res);
+      let { success, result } = res.data;
+      //console.log(result);
+      if (success) {
+        console.log("keyPer"+result);
+        this.keyPerData = result;
+      }
+    },
+    getPageListData:async function (dimensionType) {
+      let res = await this.axios.get(
+        `/data/pageList?dimensionType=${dimensionType}`
+      );
+      //console.log(res);
+      let { success, result } = res.data;
+      //console.log(result);
+      if (success) {
+        //console.log(result);
+        this.pageListData = result;
+      }
+    },
+    getIntervalData:async function(dimensionType){
+      let res = await this.axios.get(
+        `/data/intervalTime?dimensionType=${dimensionType}`
+      );
+      //console.log(res);
+      let { success, result } = res.data;
+      //console.log(result);
+      if (success) {
+        //console.log(result);
+        this.intervalData = result;
+      }
     }
   }
 };

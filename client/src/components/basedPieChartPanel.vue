@@ -6,7 +6,7 @@
         <span class="box-panel-time-dimension" v-if="showTimeDimension">
           <a-popover placement="right" class="radio-gap">
             <template slot="content">
-              <a-radio-group defaultValue="0" size="small">
+              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
                 <a-radio-button value="0">30分钟</a-radio-button>
                 <a-radio-button value="1">60分钟</a-radio-button>
                 <a-radio-button value="2">12小时</a-radio-button>
@@ -71,70 +71,69 @@ export default {
       loading: false
     };
   },
-  created() {},
+  watch: {
+    data(val) {
+      this.data = val;
+      this.chart.changeData(val);
+    }
+  },
   mounted() {
-    this.renderPineChart(this.data);
+    this.renderPineChart();
   },
   methods: {
     changeShow: function() {
       this.isPine = !this.isPine;
     },
-    changeTimeDimension: function() {},
-    renderPineChart: function(data) {
+    changeTimeDimension: function(e) {
+      this.$emit("changeTimeDimension", e.target.value);
+    },
+    renderPineChart: function() {
       let sum = this.data.reduce(function(total, cur) {
         return total + cur.count;
       }, 0);
 
-      const chart = new G2.Chart({
-        container:this.containerId,
+      this.chart = new G2.Chart({
+        container: this.containerId,
         forceFit: true,
         height: 350,
         padding: [0, 30, 0, "auto"]
       });
-      chart.source(this.data, {
-        count: {
-          formatter: val => {
-            val = parseInt((val/sum)*100) + "%";
-            return val;
-          }
-        }
+      //利用dataSet来扩展字段
+      const ds = new DataSet();
+      const dv = ds.createView().source(this.data).transform({
+        type:'percent',
+        field:'count',
+        dimension:'type',
+        as:'percent'
       });
-      
-      chart.coord("theta", {
+
+      this.chart.source(dv);
+
+      this.chart.coord("theta", {
         radius: 0.8
       });
 
-      chart
-      .tooltip({
-        showTitle: false,
-        itemTpl:
-          '<li><span style="background-color:{color};" class="g2-tooltip-marker"></span>{name}: {value}</li>'
-      })
-      .legend({
+      this.chart
+        .tooltip({showTitle: false})
+        .legend({
           position: "right-bottom",
           offsetX: -50
-        })
+        });
 
-      chart
+      this.chart
         .intervalStack()
         .position("count")
         .color("type")
-        .label("count", {
+        .label("percent", {
           formatter: (val, item) => {
-            return item.point.type+ ": " + val;
+            return item.point.type + ": " + (item.point.percent*100).toFixed(0)+'%';
           }
-        })
-        .tooltip("type*count", (type, count) => {
-          return {
-            name: type,
-            value: count
-          };
         })
         .style({
           lineWidth: 1,
           stroke: "#fff"
         });
-      chart.render();
+      this.chart.render();
     }
   }
 };

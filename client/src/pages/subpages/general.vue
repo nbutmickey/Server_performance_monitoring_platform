@@ -35,10 +35,12 @@
         :data="bsdata"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getBsData"
+        v-if="bsdata.length!==0"
       ></pineChartPanel>
       <basedPieChartPanel
         :title="osTitle"
         :data="osdata"
+        v-if="osdata.length!==0"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getOsData"
       ></basedPieChartPanel>
@@ -47,12 +49,14 @@
       <basedPieChartPanel
         :title="isPcTitle"
         :data="ispcdata"
+        v-if="ispcdata.length!==0"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getisPcData"
       ></basedPieChartPanel>
       <pineChartPanel
         :title="screenTitle"
         :data="screendata"
+        v-if="screendata.length!==0"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getScreenData"
       ></pineChartPanel>
@@ -93,36 +97,22 @@ export default {
       pvData: [],
       uvData: [],
       geoData: [],
-      ispcdata: [
-        { type: "PC", count: 123 },
-        { type: "移动端", count: 514 }
-      ],
-      screendata: [
-        { type: "1300*728", count: 23 },
-        { type: "1902*1080", count: 14 },
-        { type: "440*780", count: 34 }
-      ],
-      bsdata: [
-        { type: "200", count: 23 },
-        { type: "301", count: 14 },
-        { type: "404", count: 34 },
-        { type: "500", count: 12 }
-      ],
-      osdata: [
-        { type: "Chrome", count: 123 },
-        { type: "FireFox", count: 124 },
-        { type: "Safari", count: 134 },
-        { type: "IE", count: 120 },
-        { type: "Edge", count: 100 }
-      ]
+      ispcdata: [],
+      screendata: [],
+      bsdata: [],
+      osdata: []
     };
   },
   async created() {
-    this.todayData = await this.getTodayData();
+    this.getTodayData();
     this.getTopPageData(0);
     this.getPvData(0);
     this.getUvData(0);
     this.getGeoData(0);
+    this.getBsData(0);
+    this.getOsData(0);
+    this.getisPcData(0);
+    this.getScreenData(0);
   },
   methods: {
     getTodayData: async function() {
@@ -151,7 +141,7 @@ export default {
             break;
         }
       });
-      return result;
+      this.todayData=result;
     },
     getTopPageData: async function(dimensionType) {
       let res = await this.axios.get(
@@ -166,7 +156,6 @@ export default {
       }
     },
     getPvData: async function(dimensionType) {
-      console.log(dimensionType);
       let res = await this.axios.get(
         `/data/pvDataByDivider?dimensionType=${dimensionType}`
       );
@@ -192,17 +181,44 @@ export default {
       );
       let { success, result } = res.data;
       if (success) {
-        this.geoData = result;
+        this.geoData=result;
       }
     },
-    getOsData: async function(dimensionType) {},
-    getBsData: async function(dimensionType) {
-      //console.log('父组件收到获取浏览器'+timeDimension);
-      //this.axios.get();
+    getOsData: async function(dimensionType) {
+      let res = await this.axios.get(
+        `/data/osDataByDivider?dimensionType=${dimensionType}`
+      );
+      let { success, result } = res.data;
+      if (success) {
+        this.osdata=result;
+      }
     },
-    getisPcData: async function(dimensionType) {},
+    getBsData: async function(dimensionType) {
+      let res = await this.axios.get(
+        `/data/bsDataByDivider?dimensionType=${dimensionType}`
+      );
+      let { success, result } = res.data;
+      if (success) {
+        this.bsdata=result;
+      }
+    },
+    getisPcData: async function(dimensionType) {
+      let res = await this.axios.get(
+        `/data/isPCDataByDivider?dimensionType=${dimensionType}`
+      );
+      let { success, result } = res.data;
+      if (success) {
+        this.ispcdata=result;
+      }
+    },
     getScreenData: async function(dimensionType) {
-      //console.log('父组件收到获取屏幕信息'+timeDimension);
+      let res = await this.axios.get(
+        `/data/screenDataByDivider?dimensionType=${dimensionType}`
+      );
+      let { success, result } = res.data;
+      if (success) {
+        this.screendata=result;
+      }
     }
   }
 };

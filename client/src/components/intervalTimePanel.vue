@@ -18,12 +18,6 @@
             <a-icon type="clock-circle" />
           </a-popover>
         </span>
-        <!-- <span class="box-panel-change-show">
-          <a-radio-group defaultValue="pine" size="small" @change="changeShow">
-            <a-radio-button value="pine">饼图</a-radio-button>
-            <a-radio-button value="table">表格</a-radio-button>
-          </a-radio-group>
-        </span>-->
       </div>
       <div class="container">
         <div :id="containerId"></div>
@@ -35,7 +29,8 @@
 <script>
 export default {
   props: {
-    title: String
+    title: String,
+    data:Array
   },
   data() {
     return {
@@ -43,216 +38,112 @@ export default {
       containerId:Math.random()
         .toString(36)
         .substr(2),
-      userData: [
-        {
-          time: "2020-02-10T09:02:00.000Z",
-          redirect: 120,
-          dns: 343,
-          tcp: 3345,
-          ssl: 4456,
-          ttfb:321,
-          trans:234,
-          dom:123,
-          resource:1211
-        },
-        {
-          time: "2020-02-10T09:08:00.000Z",
-          redirect: 120,
-          dns: 343,
-          tcp: 3345,
-          ssl: 4456,
-          ttfb:321,
-          trans:234,
-          dom:123,
-          resource:1211
-        },
-        {
-          time: "2020-02-10T09:12:00.000Z",
-          redirect: 120,
-          dns: 343,
-          tcp: 3345,
-          ssl: 4456,
-          ttfb:321,
-          trans:234,
-          dom:123,
-          resource:1211
-        },
-        {
-          time: "2020-02-10T09:05:00.000Z",
-          redirect: 120,
-          dns: 343,
-          tcp: 3345,
-          ssl: 4456,
-          ttfb:321,
-          trans:234,
-          dom:123,
-          resource:1211
-        },
-        {
-          time: "2020-02-19T09:06:00.000Z",
-          redirect: 120,
-          dns: 343,
-          tcp: 3345,
-          ssl: 4456,
-          ttfb:321,
-          trans:234,
-          dom:123,
-          resource:1211
-        },
-        {
-          time: "2020-02-10T09:13:00.000Z",
-          redirect: 120,
-          dns: 343,
-          tcp: 3345,
-          ssl: 4456,
-          ttfb:321,
-          trans:234,
-          dom:123,
-          resource:1211
-        },
-        {
-          time: "2020-02-10T09:24:00.000Z",
-          redirect: 120,
-          dns: 343,
-          tcp: 3345,
-          ssl: 4456,
-          ttfb:321,
-          trans:234,
-          dom:123,
-          resource:1211
-        },
-        {
-          time: "2020-02-10T09:34:00.000Z",
-          redirect: 120,
-          dns: 343,
-          tcp: 3345,
-          ssl: 4456,
-          ttfb:321,
-          trans:234,
-          dom:123,
-          resource:1211
-        }
-      ]
     };
   },
   created() {},
+  watch:{
+    data(val){
+      this.chart.clear();
+      this.renderChart(val);
+    }
+  },
   mounted() {
-    const chart = new G2.Chart({
+    this.initChart();
+    this.renderChart(this.data);
+    console.log(this.data);
+  },
+  methods: {
+    changeTimeDimension: function(e) {
+        this.$emit("changeTimeDimension",e.target.value);
+    },
+    renderChart:function (data) {
+          //数据展开
+        const dv = new DataSet()
+          .createView()
+          .source(data)
+          .transform({
+            type: "fold",
+            fields: ["redirect", "dns", "tcp", "ssl","ttfb","trans","dom","resource"],
+            key: "type",
+            value: "duration",
+            retains: ["time"]
+          })
+          .transform({
+            type: "map",
+            callback(row) {
+              switch (row.type) {
+                case "redirect":
+                  row.type = "重定向";
+                  break;
+                case "dns":
+                  row.type = "DNS解析";
+                  break;
+                case "tcp":
+                  row.type = "TCP连接";
+                  break;
+                case "ssl":
+                  row.type = "SSL连接";
+                  break;
+                case "ttfb":
+                  row.type = "请求响应";
+                  break;
+                case "trans":
+                  row.type = "数据传输";
+                  break;
+                case "dom":
+                  row.type = "DOM解析";
+                  break;
+                case "resource":
+                 row.type = "资源加载";
+                  break;
+                default:
+                  break;
+              }  
+              row.time = new Date(row.time).getTime() - 8 * 60 * 60 * 1000;
+              return row;
+            }
+          });
+        //console.log(this.userData.length);
+        this.chart
+          .source(dv)
+          .scale({
+            time: {
+              type: "timeCat",
+              mask: "MM-DD HH:mm:ss",
+              tickCount: data.length
+            }
+          })
+
+        this.chart
+          .interval()
+          .position("time*duration")
+          .color("type")
+          .tooltip("type*duration", (type, duration) => {
+            return {
+              type,
+              duration
+            };
+          })
+          .adjust([
+            {
+              type: "dodge",
+              marginRatio: 1 / 32
+            }
+          ]);
+        this.chart.render();
+    },
+    initChart:function () {
+      this.chart= new G2.Chart({
       container: this.containerId,
       forceFit: true,
       height: 350,
       padding: ["auto", 10, "auto", "auto"]
-    });
-    //数据展开
-    const dv = new DataSet()
-      .createView()
-      .source(this.userData)
-      .transform({
-        type: "fold",
-        fields: ["redirect", "dns", "tcp", "ssl","ttfb","trans","dom","resource"],
-        key: "type",
-        value: "duration",
-        retains: ["time"]
-      })
-      .transform({
-        type: "map",
-        callback(row) {
-          row.time = new Date(row.time).getTime() - 8 * 60 * 60 * 1000;
-          return row;
-        }
       });
-    //console.log(this.userData.length);
-    chart
-      .source(dv.rows)
-      .scale({
-        time: {
-          type: "timeCat",
-          mask: "MM-DD HH:mm:ss",
-          tickCount: this.userData.length
-        }
-      })
-
-    chart
-      .legend({
-        itemFormatter: field => {
-          switch (field) {
-            case "redirect":
-              field = "重定向";
-              break;
-            case "dns":
-              field = "DNS解析";
-              break;
-            case "tcp":
-              field = "TCP连接";
-              break;
-            case "ssl":
-              field = "https请求";
-              break;
-            case "ttfb":
-              field = "请求响应";
-              break;
-            case "trans":
-              field = "数据传输";
-              break;
-            case "dom":
-              field = "DOM解析";
-              break;
-            case "resource":
-              field = "资源加载";
-              break;
-            default:
-              break;
-          }
-          // 这里的field是字段名
-          return field;
-        }
-      })
-      .interval()
-      .position("time*duration")
-      .color("type")
-      .tooltip("type*duration", (type, duration) => {
-        let name = "";
-        switch (type) {
-          case "redirect":
-              name = "重定向";
-              break;
-            case "dns":
-              name = "DNS解析";
-              break;
-            case "tcp":
-              name = "TCP连接";
-              break;
-            case "ssl":
-              name = "https请求";
-              break;
-            case "ttfb":
-              name = "请求响应";
-              break;
-            case "trans":
-              name = "数据传输";
-              break;
-            case "dom":
-              name = "DOM解析";
-              break;
-            case "resource":
-              name = "资源加载";
-              break;
-            default:
-              break;
-          }
-    
-        return {
-          name: name,
-          value: duration + " ms"
-        };
-      })
-      .adjust([
-        {
-          type: "dodge",
-          marginRatio: 1 / 32
-        }
-      ]);
-    chart.render();
+      this.chart
+        .tooltip({
+          itemTpl: '<li data-index={index}><span style="background-color:{color};width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px;"></span>{type}: {duration} ms</li>'
+        })
+    }
   }
 };
 </script>

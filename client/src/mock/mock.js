@@ -96,9 +96,6 @@ Mock.mock('/data/pageTop?dimensionType=1',{
       },
       ]
 })
-
-
-
 Mock.mock("/data/pvDataByDivider?dimensionType=0",{
     success:true,
     note:"数据返回成功",
@@ -108,7 +105,6 @@ Mock.mock("/data/pvDataByDivider?dimensionType=0",{
         { time: "2020-02-19T09:08:00.000Z", value: 20 },
         { time: "2020-02-19T09:23:00.000Z", value: 34 },
         { time: "2020-02-19T09:20:00.000Z", value: 20 },
-        { time: "2020-02-19T09:06:00.000Z", value: 28 },
         { time: "2020-02-19T09:34:00.000Z", value: 29 },
         { time: "2020-02-20T09:12:00.000Z", value: 12 },
         { time: "2020-02-19T09:45:00.000Z", value: 23 },
@@ -220,6 +216,568 @@ Mock.mock('/data/geoDataByDivider?dimensionType=1',{
     { province: '黑龙江省', pv: 94,uv:22 }
     ]
 })
+
+Mock.mock('/data/bsDataByDivider?dimensionType=0',{
+  success:true,
+  result:[
+    { type: "Chrome", count: 123 },
+    { type: "FireFox", count: 124 },
+    { type: "Safari", count: 134 },
+    { type: "IE", count: 120 },
+    { type: "Edge", count: 100 }
+  ]
+})
+
+Mock.mock('/data/bsDataByDivider?dimensionType=1',{
+  success:true,
+  result:[
+    { type: "Chrome", count: 23 },
+    { type: "FireFox", count: 24 },
+    { type: "Safari", count: 34 },
+    { type: "IE", count: 20 },
+    { type: "Edge", count: 10}
+  ]
+})
+
+Mock.mock('/data/osDataByDivider?dimensionType=0',{
+  success:true,
+  result:[
+    { type: "Mac OS", count: 3 },
+    { type: "Windows", count: 14 },
+    { type: "LINUX", count: 34 },
+    { type: "UNIX", count: 2 },
+    { type: "Android", count: 12 }
+  ]
+})
+
+Mock.mock('/data/osDataByDivider?dimensionType=1',{
+  success:true,
+  result:[
+    { type: "Mac OS", count: 193 },
+    { type: "Windows", count: 14 },
+    { type: "LINUX", count: 34 },
+    { type: "UNIX", count: 2 },
+    { type: "Android", count: 2 }
+  ]
+})
+
+Mock.mock('/data/screenDataByDivider?dimensionType=0',{
+  success:true,
+  result:[
+    { type: "1300*728", count: 23 },
+    { type: "1902*1080", count: 14 },
+    { type: "440*780", count: 34 }
+  ]
+})
+
+Mock.mock('/data/screenDataByDivider?dimensionType=1',{
+  success:true,
+  result:[
+    { type: "1300*728", count: 24 },
+    { type: "1902*1080", count: 24 },
+    { type: "440*780", count: 34 }
+  ]
+})
+
+Mock.mock('/data/isPCDataByDivider?dimensionType=0',{
+  success:true,
+  result:[
+    { type: "PC", count: 123 },
+    { type: "移动端", count: 514 }
+  ]
+})
+
+Mock.mock('/data/isPCDataByDivider?dimensionType=1',{
+  success:true,
+  result:[
+    { type: "PC", count: 23 },
+    { type: "移动端", count: 14 }
+  ]
+})
+
+Mock.mock('/data/waterfallLoading?dimensionType=0',{
+  success:true,
+  result:[
+    {
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb: 321,
+      trans: 1234,
+      dom: 3123,
+      resource: 1211,
+      total:14153
+    }
+  ]
+})
+
+Mock.mock('/data/waterfallLoading?dimensionType=1',{
+  success:true,
+  result:[
+    {
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb: 321,
+      trans: 1234,
+      dom: 3123,
+      resource: 1111,
+      total:14053
+    }
+  ]
+})
+
+Mock.mock('/data/intervalTime?dimensionType=0',{
+  success:true,
+  result:[
+    {
+      time: "2020-02-10T09:02:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:08:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:12:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:05:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-19T09:06:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:13:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:24:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:34:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    }
+  ]
+})
+
+Mock.mock('/data/intervalTime?dimensionType=1',{
+  success:true,
+  result:[
+    {
+      time: "2020-02-10T09:02:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:08:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:12:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:05:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-19T09:06:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:13:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:24:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:34:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    }
+  ]
+})
+
+Mock.mock('/data/keyPer?dimensionType=0',{
+  success:true,
+  result:[
+    {
+      time: "2020-02-10T09:00:00.000Z",
+      fpt: 120,
+      ready: 343,
+      tti: 3345,
+      load: 4456
+    },
+    {
+      time: "2020-02-11T09:01:00.000Z",
+      fpt: 123,
+      ready: 353,
+      tti: 2345,
+      load: 3456
+    },
+    {
+      time: "2020-02-11T09:02:00.000Z",
+      fpt: 122,
+      ready: 343,
+      tti: 1345,
+      load: 2456
+    },
+    {
+      time: "2020-02-11T09:03:00.000Z",
+      fpt: 121,
+      ready: 143,
+      tti: 845,
+      load: 1456
+    },
+    {
+      time: "2020-02-11T09:04:03.000Z",
+      fpt: 225,
+      ready: 243,
+      tti: 4345,
+      load: 5456
+    },
+    {
+      time: "2020-02-11T09:04:02.000Z",
+      fpt: 325,
+      ready: 343,
+      tti: 2345,
+      load: 2456
+    },
+     {
+      time: "2020-02-11T09:04:56.000Z",
+      fpt: 225,
+      ready: 243,
+      tti: 4345,
+      load: 5456
+    },
+    {
+      time: "2020-02-11T09:04:34.000Z",
+      fpt: 325,
+      ready: 343,
+      tti: 2345,
+      load: 2456
+    }
+  ]
+})
+Mock.mock('/data/keyPer?dimensionType=1',{
+  success:true,
+  result:[
+    {
+      time: "2020-02-10T09:00:00.000Z",
+      fpt: 120,
+      ready: 34223,
+      tti: 3345,
+      load: 4456
+    },
+    {
+      time: "2020-02-11T09:01:00.000Z",
+      fpt: 123,
+      ready: 353,
+      tti: 2345,
+      load: 3456
+    },
+    {
+      time: "2020-02-11T09:02:00.000Z",
+      fpt: 122,
+      ready: 343,
+      tti: 1345,
+      load: 2456
+    },
+    {
+      time: "2020-02-11T09:03:00.000Z",
+      fpt: 121,
+      ready: 143,
+      tti: 845,
+      load: 1456
+    },
+    {
+      time: "2020-02-11T09:04:03.000Z",
+      fpt: 225,
+      ready: 243,
+      tti: 4345,
+      load: 5456
+    },
+    {
+      time: "2020-02-11T09:04:02.000Z",
+      fpt: 325,
+      ready: 343,
+      tti: 2345,
+      load: 2456
+    },
+     {
+      time: "2020-02-11T09:04:56.000Z",
+      fpt: 225,
+      ready: 243,
+      tti: 4345,
+      load: 5456
+    },
+    {
+      time: "2020-02-11T09:04:34.000Z",
+      fpt: 325,
+      ready: 343,
+      tti: 2345,
+      load: 2456
+    }
+  ]
+})
+
+Mock.mock('/data/pageList?dimensionType=0',{
+  success:true,
+  result:[
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    }
+  ]
+})
+Mock.mock('/data/pageList?dimensionType=1',{
+  success:true,
+  result:[
+    {
+      pageURL: "http:www.mickey.cn:8080/user",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    },
+    {
+      pageURL: "http:www.mickey.cn:8080/home",
+      fpt: 234,
+      ready: 2222,
+      tti: 111,
+      load: 890
+    }
+  ]
+})
+
+
 
 Mock.mock('/data/todayGeneral',{
     success:true,

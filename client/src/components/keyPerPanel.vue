@@ -6,7 +6,7 @@
         <span class="box-panel-time-dimension">
           <a-popover placement="right" class="radio-gap">
             <template slot="content">
-              <a-radio-group defaultValue="0" size="small" >
+              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
                 <a-radio-button value="0">30分钟</a-radio-button>
                 <a-radio-button value="1">60分钟</a-radio-button>
                 <a-radio-button value="2">12小时</a-radio-button>
@@ -29,173 +29,107 @@
 <script>
 export default {
   props: {
-    title: String
+    title: String,
+    data:Array
   },
   data() {
     return {
       chart: null,
       containerId:Math.random()
         .toString(36)
-        .substr(2),
-      userData: [
-        {
-          time: "2020-02-10T09:00:00.000Z",
-          fpt: 120,
-          ready: 343,
-          tti: 3345,
-          load: 4456
-        },
-        {
-          time: "2020-02-11T09:01:00.000Z",
-          fpt: 123,
-          ready: 353,
-          tti: 2345,
-          load: 3456
-        },
-        {
-          time: "2020-02-11T09:02:00.000Z",
-          fpt: 122,
-          ready: 343,
-          tti: 1345,
-          load: 2456
-        },
-        {
-          time: "2020-02-11T09:03:00.000Z",
-          fpt: 121,
-          ready: 143,
-          tti: 845,
-          load: 1456
-        },
-        {
-          time: "2020-02-11T09:04:03.000Z",
-          fpt: 225,
-          ready: 243,
-          tti: 4345,
-          load: 5456
-        },
-        {
-          time: "2020-02-11T09:04:02.000Z",
-          fpt: 325,
-          ready: 343,
-          tti: 2345,
-          load: 2456
-        },
-         {
-          time: "2020-02-11T09:04:56.000Z",
-          fpt: 225,
-          ready: 243,
-          tti: 4345,
-          load: 5456
-        },
-        {
-          time: "2020-02-11T09:04:34.000Z",
-          fpt: 325,
-          ready: 343,
-          tti: 2345,
-          load: 2456
-        }
-      ]
+        .substr(2)
     };
   },
   created() {},
+  watch: {
+    data(val){
+      this.chart.clear();
+      this.renderChart(val);
+    }
+  },
   mounted() {
-    const chart = new G2.Chart({
-      container: this.containerId,
-      forceFit: true,
-      height: 350,
-      padding: ["auto", 10, "auto", "auto"]
-    });
-    //数据展开
-    const dv = new DataSet()
-      .createView()
-      .source(this.userData)
-      .transform({
-        type: "fold",
-        fields: ["fpt", "ready", "tti", "load"],
-        key: "type",
-        value: "duration",
-        retains: ["time"]
-      })
-      .transform({
-        type: "map",
-        callback(row) {
-          row.time = new Date(row.time).getTime() - 8 * 60 * 60 * 1000;
-          return row;
-        }
+    this.initChart();
+    this.renderChart(this.data);
+  },
+  methods: {
+    changeTimeDimension: function(e) {
+        this.$emit("changeTimeDimension",e.target.value);
+    },
+    initChart:function(){
+      this.chart = new G2.Chart({
+        container: this.containerId,
+        forceFit: true,
+        height: 350,
+        padding: ["auto", 10, "auto", "auto"]
       });
-    //console.log(this.userData.length);
-    chart
-      .source(dv.rows)
-      .scale({
-        time: {
-          type: "timeCat",
-          alias: "时间",
-          mask: "MM-DD HH:mm:ss",
-          tickCount: this.userData.length
-        }
-      })
-      // .tooltip({
-      //   showTitle: true,
-      //   itemTpl: "<li>{type} : {duration}</li>"
-      // });
-
-    chart
-      .legend({
-        itemFormatter: field => {
-          switch (field) {
-            case "fpt":
-              field = "白屏耗时";
-              break;
-            case "ready":
-              field = "首屏耗时";
-              break;
-            case "tti":
-              field = "可交互耗时";
-              break;
-            case "load":
-              field = "完全加载耗时";
-              break;
-            default:
-              break;
+      this.chart
+          .tooltip({
+            itemTpl: '<li data-index={index}><span style="background-color:{color};width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px;"></span>{type}: {duration} ms</li>'
+          })
+      },
+    renderChart:function(data){
+      //数据展开
+      const dv = new DataSet()
+        .createView()
+        .source(data)
+        .transform({
+          type: "fold",
+          fields: ["fpt", "ready", "tti", "load"],
+          key: "type",
+          value: "duration",
+          retains: ["time"]
+        })
+        .transform({
+          type: "map",
+          callback(row) {
+            switch (row.type) {
+              case "fpt":
+                row.type = "白屏耗时";
+                break;
+              case "ready":
+                row.type = "首屏耗时";
+                break;
+              case "tti":
+                row.type = "可交互耗时";
+                break;
+              case "load":
+                row.type = "完全加载耗时";
+                break;
+              default:
+                break;
+            }
+            row.time = new Date(row.time).getTime() - 8 * 60 * 60 * 1000;
+            return row;
           }
-          // 这里的field是字段名
-          return field;
-        }
-      })
-      .interval()
-      .position("time*duration")
-      .color("type")
-      .tooltip("type*duration", (type, duration) => {
-        let name = "";
-        switch (type) {
-          case "fpt":
-            name = "白屏耗时";
-            break;
-          case "ready":
-            name = "首屏耗时";
-            break;
-          case "tti":
-            name = "可交互耗时";
-            break;
-          case "load":
-            name = "完全加载耗时";
-            break;
-          default:
-            break;
-        }
-        return {
-          name: name,
-          value: duration + " ms"
-        };
-      })
-      .adjust([
-        {
-          type: "dodge",
-          marginRatio: 1 / 32
-        }
-      ]);
-    chart.render();
-  }
+        });
+
+        
+      //有待改进  
+      this.chart
+        .source(dv)
+        .scale({
+          time: {
+            type: "timeCat",
+            alias: "时间",
+            mask: "MM-DD HH:mm:ss",
+            tickCount:data.length
+          }
+        })
+
+      this.chart
+        .interval()
+        .position("time*duration")
+        .color("type")
+        .tooltip("type*duration",(type,duration)=>{return {type,duration}})
+        .adjust([
+          {
+            type: "dodge",
+            marginRatio: 1 / 32
+          }
+        ]);
+      this.chart.render();
+      }
+    }
 };
 </script>
 
