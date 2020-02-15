@@ -1,31 +1,15 @@
 <template>
   <div style="width:50%;padding-left:8px;paddig-right:8px;">
     <div class="content-box">
-      <div class="title">
-        <span class="box-panel-title-small">{{title}}</span>
-        <span class="box-panel-time-dimension" v-if="showTimeDimension">
-          <a-popover placement="right" class="radio-gap">
-            <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
-                <a-radio-button value="0">30分钟</a-radio-button>
-                <a-radio-button value="1">60分钟</a-radio-button>
-                <a-radio-button value="2">12小时</a-radio-button>
-                <a-radio-button value="3">24小时</a-radio-button>
-                <a-radio-button value="4">最近3天</a-radio-button>
-                <a-radio-button value="5">最近7天</a-radio-button>
+         <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension">
+            <span class="box-panel-change-show">
+              <a-radio-group defaultValue="pine" size="small" @change="changeShow">
+                <a-radio-button value="pine">饼图</a-radio-button>
+                <a-radio-button value="table">表格</a-radio-button>
               </a-radio-group>
-            </template>
-            <a-icon type="clock-circle" />
-          </a-popover>
-        </span>
-        <span class="box-panel-change-show">
-          <a-radio-group defaultValue="pine" size="small" @change="changeShow">
-            <a-radio-button value="pine">饼图</a-radio-button>
-            <a-radio-button value="table">表格</a-radio-button>
-          </a-radio-group>
-        </span>
-      </div>
-      <div class="cotainer">
+          </span>
+        </timeDimension>
+      <div class="container">
         <div :id="containerId" v-show="isPine"></div>
         <div style="height:355px" v-show="!isPine">
           <a-table
@@ -42,12 +26,15 @@
 </template>
 
 <script>
-//const that=this;
+import timeDimension from "@/components/timeDimension"
 export default {
   props: {
     title: String,
     data: Array,
     showTimeDimension: Boolean
+  },
+  components: {
+    timeDimension
   },
   data() {
     return {
@@ -75,9 +62,9 @@ export default {
   watch:{
     data(val){
        this.data=val;
-       //重绘图表
-       this.chart.clear();
-       this.renderChart(this.data);
+       let dv=this.processData(val);
+       this.chart.changeData(dv); //向chart的changeData中传入dv（转化之后的数据）
+       this.drawGuideHtml(val,true);
     }
   },
   mounted() {
@@ -88,18 +75,22 @@ export default {
     changeShow: function() {
       this.isPine = !this.isPine;
     },
-    changeTimeDimension: function(e) {
-      this.$emit("changeTimeDimension",e.target.value);
+    changeTimeDimension: function(value) {
+      this.$emit("changeTimeDimension",value);
     },
-    renderChart:function(data){
+    processData:function(rawData){
       const ds = new DataSet();
-      const dv = ds.createView().source(data).transform({
+      const dv = ds.createView().source(rawData)
+      .transform({
         type:'percent',
         field:'count',
         dimension:'type',
         as:'percent'
-      });
-
+      })
+      return dv;
+    },
+    renderChart:function(rawData){
+      let dv=this.processData(rawData);
       this.chart
         .source(dv)
         .tooltip({
@@ -133,18 +124,23 @@ export default {
             return (item.point.percent*100).toFixed(0)+'%';
           }
         });
-        let sum=this.data.reduce((total,cur)=>{return total+cur.count;},0);
-        this.chart.guide().html({
-        position: ["50%", "50%"],
-        html:
-          '<div class="g2-guide-html"></span><p style="font-weight:700;font-size:18px">' +
-          sum +
-          "</p></div>",
-        alignX: 'middle',
-        alignY: 'middle'  
-      });  
+        this.drawGuideHtml(rawData,false);
         this.chart.render();
         
+    },
+    drawGuideHtml:function(data,repaint){
+      this.chart.guide().clear();
+      let sum=data.reduce((total,cur)=>{return total+cur.count;},0);
+        this.chart.guide().html({
+            position: ["50%", "50%"],
+            html:
+              '<div class="g2-guide-html"><span class="title">总计</span></span><p style="font-weight:700;font-size:18px">' +
+              sum +
+              "</p></div>",
+      });  
+      if(repaint){
+        this.chart.repaint(); 
+      }
     },
     initChart: function() {
       this.chart = new G2.Chart({
@@ -170,29 +166,25 @@ export default {
   border-radius: 4px;
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
   .title {
-    height: 30px;
-    color: #314659;
-    .box-panel-title-small {
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .box-panel-time-dimension {
-      margin-left: 20px;
-      font-size: 14px;
-    }
     .box-panel-change-show {
-      float: right;
+      margin-left: 30px;
     }
   }
   .container {
     height: 358px;
     padding: 8px 5px 0;
     .g2-guide-html {
-      width: 100px;
-      height: 80px;
-      vertical-align: middle;
-      text-align: center;
-      line-height: 0.2;
+        width: 100px;
+        height: 80px;
+        vertical-align: middle;
+        text-align: center;
+        line-height: 0.4;
+       .title {
+        text-align: center;
+        font-size: 12px;
+        color: #8c8c8c;
+        font-weight: 300;
+    }
     }
   }
 }

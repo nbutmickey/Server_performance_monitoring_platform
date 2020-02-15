@@ -1,7 +1,7 @@
 <template>
-  <div style="width:50%;padding-left:8px;padding-right:8px">
+  <div style="width:50%;padding-left:8px;">
     <div class="content-box">
-       <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
+      <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
         <a-table :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="record => record.type"></a-table>
       </div>
@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import timeDimension from "@/components/timeDimension"
 const columns = [
   {
     title:"#",
@@ -18,38 +19,46 @@ const columns = [
     
   },  
   {
-    title: "页面URL",
-    dataIndex: "pageURL",
-    key: "pageURL",
+    title: "API",
+    dataIndex: "apiURL",
+    key: "apiURL",
     //align: "center"
   },
   {
-    title: "pv",
-    dataIndex: "pv",
-    key: "pv",
+    title: "请求次数",
+    dataIndex: "request",
+    key: "request",
     align: "center"
   },
   {
-    title: "uv",
-    dataIndex: "uv",
-    key: "uv",
+    title: "请求耗时",
+    dataIndex: "duration",
+    key: "duration",
     align: "center"
   }
 ];
-import timeDimension from "@/components/timeDimension"
+
 export default {
   props: {
     title: String,
     data:Array
   },
   components: {
-    timeDimension
+    timeDimension  
   },
   data() {
     return {
       columns,
-      pagination:false
+      pagination:{
+          pageSize:8
+      },
+      
   }
+  },
+  watch: {
+    data(val){
+        this.data=val;
+    }  
   },
   methods: {
       changeTimeDimension: function(value) {
@@ -66,9 +75,25 @@ export default {
   background: #fff;
   padding: 16px;
   border-radius: 4px;
+  height: 450px;
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
-    // .container {
-    //   width: 100%;
-    // }
+  .title {
+    height: 30px;
+    color: #314659;
+    .box-panel-title-small {
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .box-panel-time-dimension {
+      margin-left: 20px;
+      font-size: 14px;
+    }
+    .container {
+      width: 100%;
+      height: 350px;
+      display: flex;
+      flex-direction: row;
+    }
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
-  <div style="width:50%;padding-left:8px;padding-right:8px">
+  <div style="width:50%;padding-left:8px;">
     <div class="content-box">
-       <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
+      <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
         <a-table :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="record => record.type"></a-table>
       </div>
@@ -18,21 +18,21 @@ const columns = [
     
   },  
   {
-    title: "页面URL",
-    dataIndex: "pageURL",
-    key: "pageURL",
+    title: "API",
+    dataIndex: "apiURL",
+    key: "apiURL",
     //align: "center"
   },
   {
-    title: "pv",
-    dataIndex: "pv",
-    key: "pv",
+    title: "失败次数",
+    dataIndex: "fail",
+    key: "fail",
     align: "center"
   },
   {
-    title: "uv",
-    dataIndex: "uv",
-    key: "uv",
+    title: "失败耗时",
+    dataIndex: "duration",
+    key: "duration",
     align: "center"
   }
 ];
@@ -48,12 +48,19 @@ export default {
   data() {
     return {
       columns,
-      pagination:false
+      pagination:{
+          pageSize:8
+      },
   }
   },
+  watch: {
+    data(val){
+        this.data=val;
+    }  
+  },
   methods: {
-      changeTimeDimension: function(value) {
-        this.$emit("changeTimeDimension",value);
+      changeTimeDimension: function(e) {
+        this.$emit("changeTimeDimension",e.target.value);
     },
   }
 };
@@ -66,9 +73,24 @@ export default {
   background: #fff;
   padding: 16px;
   border-radius: 4px;
+  height: 450px;
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
-    // .container {
-    //   width: 100%;
-    // }
+  .title {
+    height: 30px;
+    color: #314659;
+    .box-panel-title-small {
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .box-panel-time-dimension {
+      margin-left: 20px;
+      font-size: 14px;
+    }
+    .container {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+    }
+  }
 }
 </style>

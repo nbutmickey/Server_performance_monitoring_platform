@@ -164,19 +164,6 @@ Mock.mock("/data/uvDataByDivider?dimensionType=1",{
   result:[
       { time: "2020-02-18T09:06:00.000Z", value: 25 },
       { time: "2020-02-19T09:07:00.000Z", value: 13 },
-      { time: "2020-02-19T09:08:00.000Z", value: 10 },
-      { time: "2020-02-19T09:23:00.000Z", value: 14 },
-      { time: "2020-02-19T09:20:00.000Z", value: 2 },
-      { time: "2020-02-19T09:06:00.000Z", value: 18 },
-      { time: "2020-02-19T09:34:00.000Z", value: 19 },
-      { time: "2020-02-20T09:12:00.000Z", value: 2 },
-      { time: "2020-02-19T09:45:00.000Z", value: 13 },
-      { time: "2020-02-19T09:11:00.000Z", value: 11 },
-      { time: "2020-02-19T09:09:00.000Z", value: 31 },
-      { time: "2020-02-19T09:12:00.000Z", value: 32 },
-      { time: "2020-02-19T09:45:00.000Z", value: 23 },
-      { time: "2020-02-19T09:56:00.000Z", value: 11 },
-      { time: "2020-02-21T09:59:00.000Z", value: 33 }
     ]
 })
 Mock.mock('/data/geoDataByDivider?dimensionType=0',{
@@ -644,74 +631,6 @@ Mock.mock('/data/pageList?dimensionType=0',{
   success:true,
   result:[
     {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    },
-    {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    },
-    {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    },
-    {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    },
-    {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    },
-    {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    },
-    {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    },
-    {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    },
-    {
-      pageURL: "http:www.mickey.cn:8080/home",
-      fpt: 234,
-      ready: 2222,
-      tti: 111,
-      load: 890
-    }
-  ]
-})
-Mock.mock('/data/pageList?dimensionType=1',{
-  success:true,
-  result:[
-    {
       pageURL: "http:www.mickey.cn:8080/user",
       fpt: 234,
       ready: 2222,
@@ -776,8 +695,325 @@ Mock.mock('/data/pageList?dimensionType=1',{
     }
   ]
 })
+Mock.mock('/data/interValDataByPage?dimensionType=0&pageURL=http:www.mickey.cn:8080/home',{
+  success:true,
+  result:[
+    {
+      time: "2020-02-10T09:02:00.000Z",
+      redirect: 33120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:08:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:12:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:05:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-19T09:06:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:13:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:24:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:34:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    }
+  ]
+})
 
 
+Mock.mock('/data/interValDataByPage?dimensionType=0&pageURL=http:www.mickey.cn:8080/user',{
+  success:true,
+  result:[
+    {
+      time: "2020-02-10T09:02:00.000Z",
+      redirect: 1200,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:121100
+    },
+    {
+      time: "2020-02-10T09:08:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:12:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:05:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-19T09:06:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:13:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:24:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:121100
+    },
+    {
+      time: "2020-02-10T09:34:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:121100
+    }
+  ]
+})
+Mock.mock('/data/interValDataByPage?dimensionType=1&pageURL=http:www.mickey.cn:8080/user',{
+  success:true,
+  result:[
+    {
+      time: "2020-02-10T09:02:00.000Z",
+      redirect: 1200,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:08:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:12:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:05:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-19T09:06:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:13:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:1211
+    },
+    {
+      time: "2020-02-10T09:24:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:121100
+    },
+    {
+      time: "2020-02-10T09:34:00.000Z",
+      redirect: 120,
+      dns: 343,
+      tcp: 3345,
+      ssl: 4456,
+      ttfb:321,
+      trans:234,
+      dom:123,
+      resource:121100
+    }
+  ]
+})
+
+Mock.mock('/data/allApiURL?dimensionType=0',{
+  success:true,
+  result:[
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',request:34,duration:2131},
+  ]
+})
+Mock.mock('/data/failApiURL?dimensionType=0',{
+  success:true,
+  result:[
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+    {apiURL:'http://fsdfsdf/fsdfsdfsdf',fail:34,duration:2131},
+  ]
+})
+
+// Mock.mock('/data/failApiURL?dimensionType=0',{
+//   success:true,
+//   result:[
+//     {}
+//   ]
+// })
 
 Mock.mock('/data/todayGeneral',{
     success:true,

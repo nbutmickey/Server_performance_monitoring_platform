@@ -1,24 +1,7 @@
 <template>
   <div style="width:50%;padding-left:8px">
     <div class="content-box">
-      <div class="title">
-        <span class="box-panel-title-small">{{title}}</span>
-        <span class="box-panel-time-dimension">
-          <a-popover placement="right" class="radio-gap">
-            <template slot="content">
-              <a-radio-group defaultValue="0" size="small"  @change="changeTimeDimension">
-                <a-radio-button value="0" >30分钟</a-radio-button>
-                <a-radio-button value="1" >60分钟</a-radio-button>
-                <a-radio-button value="2" >12小时</a-radio-button>
-                <a-radio-button value="3" >24小时</a-radio-button>
-                <a-radio-button value="4" >最近3天</a-radio-button>
-                <a-radio-button value="5" >最近7天</a-radio-button>
-              </a-radio-group>
-            </template>
-            <a-icon type="clock-circle" />
-          </a-popover>
-        </span>
-      </div>
+       <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
         <div :id="containerId"></div>
       </div>
@@ -27,7 +10,7 @@
 </template>
 
 <script>
-const that=this;
+import timeDimension from "@/components/timeDimension"
 export default {
   props: {
     data:Array,  
@@ -42,40 +25,73 @@ export default {
       dimentionType:0
     }
   },
+  components: {
+    timeDimension
+  },
   watch:{
     data(val){
       this.data=val;
       //重绘图表
+      this.processData(val);
+      if(this.dimentionType==4||this.dimentionType==5){
+          this.chart.scale({
+          time:{
+            type:'timeCat',
+            mask:'MM-DD',
+            tickCount:val.length
+          }
+        })
+      }else {
+
+        this.chart.scale({
+        time:{
+          type:'timeCat',
+          mask:'HH:mm',
+          tickCount:val.length
+        }
+      })
+      }
       this.chart.changeData(val);
     }
   },
   created() {
   },
   mounted() {
-    this.renderChart();
+    this.initChart();
+    this.renderChart(this.data);
+
   },
   methods: {
-    changeTimeDimension: function(e) {
-      this.$emit("changeTimeDimension",e.target.value);
+    changeTimeDimension: function(value) {
+      this.dimentionType=value;
+      this.$emit("changeTimeDimension",value);
     },
-    renderChart:function () {
-      this.chart= new G2.Chart({
-      container: this.containerId,
-      forceFit: true,
-      height: 300,
-      padding: [10, 30, 30,30 ]
-    });
-      this.chart.source(this.data);
-      this.chart.scale("value", {
-        min: 0
+    initChart:function(){
+        this.chart= new G2.Chart({
+        container: this.containerId,
+        forceFit: true,
+        height: 300,
+        padding: [10, 30, 30,30 ]
       });
+    },
+    processData:function(rawData){
+      const ds=new DataSet();
+      // console.log(rawData);
+      const dv=ds.createView().source(rawData)
+      // console.log(dv);
+      return dv;
+    },
+    renderChart:function (rawData) {
+      let dv=this.processData(rawData);
+      //console.log(rawData.length);
+      this.chart.source(dv);
       this.chart.scale({
-        time: {
-          type: "timeCat",
-          mask: "HH:mm",
-          tickCount: this.data.length
+        time:{
+          type:'timeCat',
+          mask:'HH:mm',
+          tickCount:rawData.length
         }
-      });
+      })
       this.chart.tooltip({
         crosshairs: {
           type: "line"

@@ -1,24 +1,7 @@
 <template>
   <div style="width:50%;padding-left:8px;paddig-right:8px;">
     <div class="content-box">
-      <div class="title">
-        <span class="box-panel-title-small">{{title}}</span>
-        <span class="box-panel-time-dimension">
-          <a-popover placement="right" class="radio-gap">
-            <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
-                <a-radio-button value="0">30分钟</a-radio-button>
-                <a-radio-button value="1">60分钟</a-radio-button>
-                <a-radio-button value="2">12小时</a-radio-button>
-                <a-radio-button value="3">24小时</a-radio-button>
-                <a-radio-button value="4">最近3天</a-radio-button>
-                <a-radio-button value="5">最近7天</a-radio-button>
-              </a-radio-group>
-            </template>
-            <a-icon type="clock-circle" />
-          </a-popover>
-        </span>
-      </div>
+      <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
         <div :id="containerId"></div>
       </div>
@@ -27,10 +10,14 @@
 </template>
 
 <script>
+import timeDimension from "@/components/timeDimension"
 export default {
   props: {
     title: String,
     data:Array
+  },
+  components: {
+    timeDimension
   },
   data() {
     return {
@@ -52,8 +39,8 @@ export default {
     this.renderChart(this.data);
   },
   methods: {
-    changeTimeDimension: function(e) {
-        this.$emit("changeTimeDimension",e.target.value);
+    changeTimeDimension: function(value) {
+        this.$emit("changeTimeDimension",value);
     },
     initChart:function(){
       this.chart = new G2.Chart({

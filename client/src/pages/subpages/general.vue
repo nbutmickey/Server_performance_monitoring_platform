@@ -144,6 +144,8 @@ export default {
       this.todayData=result;
     },
     getTopPageData: async function(dimensionType) {
+      console.log(dimensionType);
+      console.log(typeof dimensionType);
       let res = await this.axios.get(
         `/data/pageTop?dimensionType=${dimensionType}`
       );

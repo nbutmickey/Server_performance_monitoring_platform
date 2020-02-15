@@ -6,7 +6,7 @@
       <keyPerPanel :title="keyPerTitle" :data="keyPerData" v-on:changeTimeDimension="getkeyPerData"></keyPerPanel>
     </div>
     <pageListPanel :title="pageListTitle" :data="pageListData" v-on:changeTimeDimension="getPageListData"></pageListPanel>
-    <intervalTimePanel :title="intervalTimeTitle" :data="intervalData" v-on:changeTimeDimension="getIntervalData"></intervalTimePanel>
+    <intervalTimePanel :showTimeDimension="showTimeDimension" :title="intervalTimeTitle" :data="intervalData" v-on:changeTimeDimension="getIntervalData" :showTitle="showTitle"></intervalTimePanel>
   </div>                                                  
 </template>
 
@@ -32,7 +32,9 @@ export default {
       keyPerData:[],
       pageListData:[],
       intervalData:[],
+      showTitle:true,
       isCompare:false,
+      showTimeDimension:true,
       pageListTitle:"页面列表",
       keyPerTitle:"关键性能指标",
       intervalTimeTitle:"区间段耗时",

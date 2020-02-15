@@ -1,24 +1,7 @@
 <template>
   <div style="width:100%;">
     <div class="content-box">
-      <div class="title">
-        <span class="box-panel-title-small">{{title}}</span>
-        <span class="box-panel-time-dimension">
-          <a-popover placement="right" class="radio-gap">
-            <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
-                <a-radio-button value="0">30分钟</a-radio-button>
-                <a-radio-button value="1">60分钟</a-radio-button>
-                <a-radio-button value="2">12小时</a-radio-button>
-                <a-radio-button value="3">24小时</a-radio-button>
-                <a-radio-button value="4">最近3天</a-radio-button>
-                <a-radio-button value="5">最近7天</a-radio-button>
-              </a-radio-group>
-            </template>
-            <a-icon type="clock-circle" />
-          </a-popover>
-        </span>
-      </div>
+      <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
         <div style="width:50%" id="c1"></div>
         <div style="height:335px;width:50%">
@@ -26,8 +9,9 @@
             :columns="columns"
             :dataSource="data"
             :loading="loading"
+            :scroll="{ y: 320 }"
             :pagination="pagination"
-            :size="size"
+            size="middle"
             :rowKey="record => record.type"
           ></a-table>
         </div>
@@ -38,10 +22,14 @@
 
 <script>
 import china from "@/common/json/china.json";
+import timeDimension from "@/components/timeDimension"
 export default {
   props: {
     title: String,
     data: Array
+  },
+  components: {
+    timeDimension
   },
   data() {
     return {
@@ -57,18 +45,15 @@ export default {
         {
           title: "pv",
           dataIndex: "pv",
-          align: "center"
+          // align: "center"
         },
         {
           title: "uv",
           dataIndex: "uv",
-          align: "center"
+          // align: "center"
         }
       ],
-      pagination: {
-        pageSize: 7
-      },
-      size: "middle",
+      pagination:false,
       loading: false
     };
   },
@@ -102,6 +87,7 @@ export default {
       userView
         .polygon()
         .tooltip("province*pv*uv")
+        // .size("pv",[0,100])
         .color("pv", "#0050B3-#1890FF-#40A9FF-#69C0FF-#BAE7FF")
         .position("longitude*latitude");
       this.chart.render();
@@ -111,7 +97,7 @@ export default {
         container: "c1",
         forceFit: true,
         height: 400,
-        padding: 0
+        padding: 'auto'
       });
       this.chart.tooltip({
         showTitle: false
@@ -127,8 +113,7 @@ export default {
       });
       //关闭所有坐标轴
       this.chart.axis(false);
-      //关闭图例
-      this.chart.legend(false);
+
 
       // 绘制中国地图背景
       this.ds = new DataSet();
@@ -163,18 +148,6 @@ export default {
   padding: 16px;
   border-radius: 4px;
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
-  .title {
-    height: 30px;
-    color: #314659;
-    .box-panel-title-small {
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .box-panel-time-dimension {
-      margin-left: 20px;
-      font-size: 14px;
-    }
-  }
   .container {
     width: 100%;
     display: flex;

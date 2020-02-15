@@ -1,31 +1,15 @@
 <template>
   <div style="width:50%;padding-left:8px;paddig-right:8px;">
     <div class="content-box">
-      <div class="title">
-        <span class="box-panel-title-small">{{title}}</span>
-        <span class="box-panel-time-dimension" v-if="showTimeDimension">
-          <a-popover placement="right" class="radio-gap">
-            <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
-                <a-radio-button value="0">30分钟</a-radio-button>
-                <a-radio-button value="1">60分钟</a-radio-button>
-                <a-radio-button value="2">12小时</a-radio-button>
-                <a-radio-button value="3">24小时</a-radio-button>
-                <a-radio-button value="4">最近3天</a-radio-button>
-                <a-radio-button value="5">最近7天</a-radio-button>
-              </a-radio-group>
-            </template>
-            <a-icon type="clock-circle" />
-          </a-popover>
-        </span>
+      <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension">
         <span class="box-panel-change-show">
           <a-radio-group defaultValue="pine" size="small" @change="changeShow">
             <a-radio-button value="pine">饼图</a-radio-button>
             <a-radio-button value="table">表格</a-radio-button>
           </a-radio-group>
         </span>
-      </div>
-      <div class="cotainer">
+      </timeDimension>
+      <div class="container">
         <div :id="containerId" v-show="isPine"></div>
         <div style="height:355px" v-show="!isPine">
           <a-table
@@ -42,11 +26,15 @@
 </template>
 
 <script>
+import timeDimension from "@/components/timeDimension"
 export default {
   props: {
     title: String,
     data: Array,
     showTimeDimension: Boolean
+  },
+  components: {
+    timeDimension
   },
   data() {
     return {
@@ -74,52 +62,56 @@ export default {
   watch: {
     data(val) {
       this.data = val;
-      this.chart.changeData(val);
+      let dv=this.processData(val);
+      this.chart.changeData(dv);
     }
   },
   mounted() {
-    this.renderPineChart();
+    this.initChart();
+    this.renderPineChart(this.data);
   },
   methods: {
     changeShow: function() {
       this.isPine = !this.isPine;
     },
-    changeTimeDimension: function(e) {
-      this.$emit("changeTimeDimension", e.target.value);
+    changeTimeDimension: function(value) {
+      this.$emit("changeTimeDimension", value);
     },
-    renderPineChart: function() {
-      let sum = this.data.reduce(function(total, cur) {
-        return total + cur.count;
-      }, 0);
-
-      this.chart = new G2.Chart({
-        container: this.containerId,
-        forceFit: true,
-        height: 350,
-        padding: [0, 30, 0, "auto"]
-      });
-      //利用dataSet来扩展字段
-      const ds = new DataSet();
-      const dv = ds.createView().source(this.data).transform({
+    //数据处理
+    processData:function(rawData){
+       const ds = new DataSet();
+       const dv = ds.createView().source(rawData).transform({
         type:'percent',
         field:'count',
         dimension:'type',
         as:'percent'
       });
+      return dv;
+    },
+    //初始化图表
+    initChart:function(){
+       this.chart = new G2.Chart({
+        container: this.containerId,
+        forceFit: true,
+        height: 350,
+        padding: [0, 30, 0, "auto"]
+      });
+    },
+    renderPineChart: function(rawData) {
+      //数据处理
+      let dv=this.processData(rawData);
 
+      //装载数据并绘制图表
       this.chart.source(dv);
-
       this.chart.coord("theta", {
         radius: 0.8
       });
-
       this.chart
         .tooltip({showTitle: false})
         .legend({
           position: "right-bottom",
           offsetX: -50
         });
-
       this.chart
         .intervalStack()
         .position("count")
@@ -151,18 +143,8 @@ export default {
   border-radius: 4px;
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
   .title {
-    height: 30px;
-    color: #314659;
-    .box-panel-title-small {
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .box-panel-time-dimension {
-      margin-left: 20px;
-      font-size: 14px;
-    }
     .box-panel-change-show {
-      float: right;
+      margin-left: 30px;
     }
   }
   .container {

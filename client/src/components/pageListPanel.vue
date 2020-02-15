@@ -1,24 +1,7 @@
 <template>
   <div style="width:100%;">
     <div class="content-box">
-      <div class="title">
-        <span class="box-panel-title-small">{{title}}</span>
-        <span class="box-panel-time-dimension">
-          <a-popover placement="right" class="radio-gap">
-            <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
-                <a-radio-button value="0">30分钟</a-radio-button>
-                <a-radio-button value="1">60分钟</a-radio-button>
-                <a-radio-button value="2">12小时</a-radio-button>
-                <a-radio-button value="3">24小时</a-radio-button>
-                <a-radio-button value="4">最近3天</a-radio-button>
-                <a-radio-button value="5">最近7天</a-radio-button>
-              </a-radio-group>
-            </template>
-            <a-icon type="clock-circle" />
-          </a-popover>
-        </span>
-      </div>
+      <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
         <a-table :columns="columns" :dataSource="data" :size="size" :pagination="pagination">
           <span slot="action" slot-scope="record">
@@ -35,8 +18,7 @@
         :width="modalWidth"
         @ok="handleOk"
       >
-        <keyPerPanel v-show="showKeyPer" :width="keyPerPanelWidth"></keyPerPanel>
-        <intervalTimePanel v-show="showIntervalTime"></intervalTimePanel>
+        <intervalTimePanel :showTimeDimension="showTimeDimension"  v-show="showIntervalTime" :showTitle="showTitle" v-on:changeTimeDimension="changeTimeDimension" :data="intervalDataByPage" :rowKey="record => record.type"></intervalTimePanel>
       </a-modal>
     </div>
   </div>
@@ -45,6 +27,7 @@
 <script>
 import keyPerPanel from "@/components/keyPerPanel";
 import intervalTimePanel from "@/components/intervalTimePanel";
+import timeDimension from "@/components/timeDimension"
 const columns = [
   {
     title: "页面URL",
@@ -89,22 +72,27 @@ export default {
   },
   components: {
     keyPerPanel,
-    intervalTimePanel
+    intervalTimePanel,
+    timeDimension
   },
   data() {
     return {
+      columns,
       visible: false,
       modalWidth: "80%",
       modalTitle: "",
       showKeyPer: false,
       showIntervalTime: false,
       keyPerPanelWidth: "100%",
-      columns,
+      showTimeDimension:false,
+      showTitle:false,
+      dimensionType:0,
       size: "small",
       pagination: {
         size: "small",
         pageSize: 6
-      }
+      },
+      intervalDataByPage:[]
     };
   },
   watch: {
@@ -115,16 +103,28 @@ export default {
   created() {},
   mounted() {},
   methods: {
-    changeTimeDimension: function(e) {
-        this.$emit("changeTimeDimension",e.target.value);
+    changeTimeDimension: function(value) {
+        this.dimensionType=value;
+        this.$emit("changeTimeDimension",value);
     },
     showModal: function(record) {
+      this.getInterValDataByPage(record.pageURL);
       this.modalTitle = `页面${record.pageURL}区间段耗时`;
       this.showIntervalTime = true;
       this.visible = true;
     },
     handleOk: function() {
       this.visible = false;
+    },
+    async getInterValDataByPage(pageURL){
+      alert(this.dimensionType)
+      let res = await this.axios.get(
+        `/data/interValDataByPage?dimensionType=${this.dimensionType}&pageURL=${pageURL}`
+      );
+      let { success, result } = res.data;
+      if (success) {
+        this.intervalDataByPage = result;
+      }
     }
   }
 };
