@@ -38,24 +38,28 @@ const columns = [
     title: "白屏耗时",
     dataIndex: "fpt",
     key: "fpt",
+    customRender:(text, record, index)=>{return text+' ms'},
     align: "center"
   },
   {
     title: "首屏耗时",
     dataIndex: "ready",
     key: "ready",
+    customRender:(text, record, index)=>{return text+' ms'},
     align: "center"
   },
   {
     title: "可交互耗时",
     dataIndex: "tti",
     key: "tti",
+    customRender:(text, record, index)=>{return text+' ms'},
     align: "center"
   },
   {
     title: "完全加载耗时",
     key: "load",
     dataIndex: "load",
+    customRender:(text, record, index)=>{return text+' ms'},
     align: "center"
   },
   {

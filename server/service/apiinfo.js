@@ -1,6 +1,6 @@
 let APIInfo = require("../db/model/API");
 let time = require("../utils/time");
-let dao = require("../utils/dao");
+let APIDao = require("../dao/apiDao");
 const saveApi = function (apiinfo) {
     let api = new APIInfo({
         clientID: apiinfo.clientID,
@@ -43,32 +43,20 @@ const deleteAllApiByAppID = function (appID) {
 const getAPIToday = async function (appID) {
     try {
         let { yesTime, toTime, nowTime } = time.getToadyTimeDivider();
-        let yesTotal = await APIInfo.countDocuments({ appID: appID, visitTime: { $gte: yesTime, $lt: toTime } }).exec();
-        let todayTotal = await APIInfo.countDocuments({ appID: appID, visitTime: { $gte: yesTime, $lt: nowTime } }).exec();
-        let yesSuccessTotal = await APIInfo.countDocuments({ appID: appID, visitTime: { $gte: yesTime, $lt: toTime }, statusCode: { $gte: 200, $lt: 400 } }).exec();
-        let todaySuccessTotal = await APIInfo.countDocuments({ appID: appID, visitTime: { $gte: yesTime, $lt: nowTime }, statusCode: { $gte: 200, $lt: 400 } }).exec();
-        let yesFailTotal = await APIInfo.countDocuments({ appID: appID, visitTime: { $gte: yesTime, $lt: toTime }, statusCode: { $gte: 400, $lt: 600 } }).exec();
-        let todayFailTotal = await APIInfo.countDocuments({ appID: appID, visitTime: { $gte: yesTime, $lt: toTime }, statusCode: { $gte: 400, $lt: 600 } }).exec();
-        let yesDuration = await dao.getAPISuccessDuration(APIInfo, appID, yesTime, toTime);
-        let todayDuration = await dao.getAPISuccessDuration(APIInfo, appID, toTime, nowTime);
-        return {
-            total: {
-                yesTotal,
-                todayTotal
-            },
-            successTotal: {
-                yesSuccessTotal,
-                todaySuccessTotal
-            },
-            failTotal: {
-                yesFailTotal,
-                todayFailTotal
-            },
-            duration: {
-                yesDuration,
-                todayDuration,
-            }
-        }
+        let result=[];
+        let yesTotal=await APIDao.getAPITotalCountByTime(appID,yesTime,toTime);
+        let todayTotal=await APIDao.getAPITotalCountByTime(appID,toTime,nowTime);
+        result.push({title:"apiTotal",today:todayTotal,yesterday:yesTotal});
+        let yesSuccessTotal=await APIDao.getAPISuccessCountByTime(appID,yesTime,toTime);
+        let todaySuccessTotal=await APIDao.getAPISuccessCountByTime(appID,toTime,nowTime);
+        result.push({title:"apiSuccess",today:todaySuccessTotal,yesterday:yesSuccessTotal});
+        let yesFailedTotal=await APIDao.getAPIFailedCountByTime(appID,yesTime,toTime);
+        let todayFailedTotal=await APIDao.getAPIFailedCountByTime(appID,toTime,nowTime);
+        result.push({title:"apiFailed",today:todayFailedTotal,yesterday:yesFailedTotal});
+        let yesSuccessDuration=await APIDao.getAPISuccessDurationByTime(appID,yesTime,toTime);
+        let todaySuccessDuration=await APIDao.getAPISuccessDurationByTime(appID,toTime,nowTime);
+        result.push({title:"apiDuration",today:todaySuccessDuration.length===0?0:todaySuccessDuration[0].duration,yesterday:yesSuccessDuration.length===0?0:yesSuccessDuration[0].duration});
+        return result;
     } catch (error) {
         throw error;
     }

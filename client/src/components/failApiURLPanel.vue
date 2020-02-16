@@ -14,8 +14,8 @@ const columns = [
   {
     title:"#",
     dataIndex:"key",
-    key:"key"
-    
+    key:"key",
+    customRender:(text, record, index)=>{return index+1},
   },  
   {
     title: "API",
@@ -33,6 +33,7 @@ const columns = [
     title: "失败耗时",
     dataIndex: "duration",
     key: "duration",
+    customRender:(text, record, index)=>{return text+' ms'},
     align: "center"
   }
 ];

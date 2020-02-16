@@ -13,9 +13,7 @@
 const columns = [
   {
     title:"#",
-    dataIndex:"key",
-    key:"key"
-    
+    customRender:(text, record, index)=>{return index+1},
   },  
   {
     title: "页面URL",

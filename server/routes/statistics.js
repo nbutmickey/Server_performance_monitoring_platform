@@ -8,97 +8,6 @@ let time = require("../utils/time");
 let groupCalc = require("../utils/groupType")
 let middleware = require("../utils/middleware");
 
-/*请求页面相关数据*/
-router.get("/pageTop", middleware.validate, async function (req, res, next) {
-    try {
-        let appID = req.query.appID;
-        let { sTime, eTime } = time.computeTimeDivider(req.query.dimensionType);
-        let data = await pvinfo.getPageTop(appID, sTime, eTime);
-        res.json({
-            success: true,
-            note: "数据返回成功",
-            data
-        })
-    } catch (error) {
-        res.json({
-            success: false,
-            note: error
-        })
-    }
-});
-
-router.get("/pvAndUvNumToday", middleware.validate, async function (req, res, next) {
-    try {
-        let appID = req.query;
-        let data = await pvinfo.getPVAndUVNumToday(appID);
-        res.json({
-            success: true,
-            note: "数据返回成功",
-            data
-        })
-    } catch (error) {
-        res.json({
-            success: false,
-            note: error
-        })
-    }
-});
-
-router.get("/pvAndUvNumByDivider", async function (req, res, next) {
-    try {
-        let appID = req.query.appID;
-        let { sTime, eTime, divider } = time.computeTimeDivider(req.query.dimensionType);
-        let data = pvinfo.getPvNumByDivider(appID, sTime, eTime, divider);
-        res.json({
-            success: true,
-            note: "数据返回成功",
-            data
-        })
-    } catch (error) {
-        res.json({
-            success: false,
-            note: error
-        })
-    }
-})
-
-router.get("/pvAndUvNumByGeo", async function (req, res, next) {
-    try {
-        let appID = req.query.appID;
-        let { sTime, eTime } = time.computeTimeDivider(req.query.dimensionType);
-        let data = pvinfo.getPvAndUvNumByGeo(appID, sTime, eTime);
-        res.json({
-            success: true,
-            note: "数据返回成功",
-            data
-        })
-    } catch (error) {
-        res.json({
-            success: false,
-            note: error
-        })
-    }
-})
-
-router.get("/clientInfo", async function (req, res, next) {
-    try {
-        let appID = req.query.appID;
-        let groupType = groupCalc.computeGroupType(req.query.groupType);
-        let data = uvinfo.getClietnInfo(appID, sTime, eTime, groupType);
-        let { sTime, eTime } = time.computeTimeDivider(req.query.dimensionType);
-        res.json({
-            success: true,
-            note: "数据返回成功",
-            data
-        })
-    } catch (error) {
-        res.json({
-            success: false,
-            note: error
-        })
-    }
-});
-
 /*请求性能相关数据*/
 router.get("/keyPerToday", async function (req, res, next) {
     try {
@@ -302,4 +211,159 @@ router.get("/getAPIInfoByGroupType", async function (req, res, next) {
     }
 
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+router.get("/todayGeneral", async function (req, res, next) {
+    try {
+        let result=await pvinfo.getTodayGeneral(req.query.appID);
+        res.json({
+            success: true,
+            note: "数据返回成功",
+            result
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            note: "数据发生异常"
+        })
+    }
+
+})
+
+router.get("/todayPerformance", async function (req, res, next) {
+    try {
+        let result=await perinfo.getPerToday(req.query.appID);
+        res.json({
+            success: true,
+            note: "数据返回成功",
+            result
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            note: "数据发生异常"
+        })
+    }
+
+})
+
+router.get("/todayAPI", async function (req, res, next) {
+    try {
+        let result=await apiinfo.getAPIToday(req.query.appID);
+        res.json({
+            success: true,
+            note: "数据返回成功",
+            result
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            note: "数据发生异常"
+        })
+    }
+
+})
+
+
+/*请求页面相关数据*/
+router.get("/pageTop", middleware.validate, async function (req, res, next) {
+    try {
+        let appID = req.query.appID;
+        let { sTime, eTime } = time.computeTimeDivider(req.query.dimensionType);
+        let result = await pvinfo.getPageTop(appID, sTime, eTime);
+        res.json({
+            success: true,
+            note: "数据返回成功",
+            result
+        })
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            note: "数据异常"
+        })
+    }
+});
+
+router.get("/pvAndUvNumByDivider", async function (req, res, next) {
+    try {
+        let appID = req.query.appID;
+        let { sTime, eTime, divider } = time.computeTimeDivider(req.query.dimensionType);
+        let result =await vinfo.getPvAndUvNumByDivider(appID, sTime, eTime, divider);
+        res.json({
+            success: true,
+            note: "数据返回成功",
+            result
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            note: error
+        })
+    }
+})
+
+router.get("/pvAndUvNumByGeo", async function (req, res, next) {
+    try {
+        let appID = req.query.appID;
+        let { sTime, eTime } = time.computeTimeDivider(req.query.dimensionType);
+        let result =await  pvinfo.getPvAndUvNumByGeo(appID, sTime, eTime);
+        res.json({
+            success: true,
+            note: "数据返回成功",
+            result
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            note: "数据返回异常"
+        })
+    }
+})
+
+router.get("/clientInfo", async function (req, res, next) {
+    try {
+        let appID = req.query.appID;
+        let groupType = groupCalc.computeGroupType(req.query.groupType);
+        let { sTime, eTime } = time.computeTimeDivider(req.query.dimensionType);
+        let result = uvinfo.getClietnInfo(appID, sTime, eTime, groupType);
+        res.json({
+            success: true,
+            note: "数据返回成功",
+            result
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            note:"数据返回异常"
+        })
+    }
+});
+
+
 module.exports = router;

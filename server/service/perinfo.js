@@ -1,6 +1,6 @@
 let Performance = require("../db/model/Performance");
 let time = require("../utils/time");
-let dao = require("../utils/dao");
+let performanceDao = require("../dao/performanceDao");
 const savePerformance = function (data) {
   let perTemp = new Performance({
     clientID: data.clientID,
@@ -55,24 +55,17 @@ const deleteAllPerByAppID = function (appID) {
   });
 }
 
-const getKeyPerToday = async function (appID) {
+const getPerToday = async function (appID) {
   try {
     let { yesTime, toTime, nowTime } = time.getToadyTimeDivider();
-    let resultYesterday = await dao.getKeyPerTodayDao(Performance, appID, yesTime, toTime);
-    let resultToday = await dao.getKeyPerTodayDao(Performance, appID, toTime, nowTime);
-    let result = {
-      fpt: {},
-      ready: {},
-      tti: {},
-      load: {}
-    };
-    let yesterday = resultYesterday[0];
-    let today = resultToday[0];
-    for (key in today) {
-      result[key].duration = today[key];
-      result[key].rate = ((today[key] - yesterday[key]) / yesterday[key]);
+    let result= await performanceDao.getPerTodayByTime(appID, toTime, nowTime);
+    let res=[];
+    if(result.length!==0){
+      Object.keys(result[0]).forEach((key)=>{
+        res.push({title:key,today:result[0][key]});
+      })
     }
-    return result;
+    return res;
   } catch (error) {
     throw "数据异常"
   }
@@ -410,8 +403,8 @@ const getApdex = async function (appID, sTime, eTime, page) {
 }
 
 module.exports = {
+  getPerToday,
   savePerformance,
-  getKeyPerToday,
   getKeyPerDividerByPage,
   getWaterfallDividerByPage,
   getFullyLoadPerByGroupType,

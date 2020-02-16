@@ -1,5 +1,6 @@
 let UvInfo = require("../db/model/UV");
 let time = require("../utils/time");
+let UVDao=require("../dao/uvDao");
 const updateOneUv = (clientID, appID, os, screen, bs, isPC) => {
     return new Promise((resolve, reject) => {
         UvInfo.updateOne({ clientID: clientID, appID: appID }, { os: os, screen: screen, bs: bs, isPC: isPC }, (err) => {
@@ -129,41 +130,10 @@ const getUvNum = async function (appID, sTime, eTime) {
 /*根据客户端指定参数获取信息*/
 const getClietnInfo=async function(appID,sTime,eTime,groupType){
     try {
-        return await UvInfo.aggregate([
-            {
-                $match: {
-                    visitTime: {
-                        $gte: sTime,
-                        $lt: eTime
-                    },
-                    appID: appID
-                }
-            },
-            {
-                $group: {
-                    _id: "$"+groupType,
-                    count: {
-                        $sum: 1
-                    }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    property: "$_id",
-                    count: "$count"
-                }
-            },
-            {
-                $sort: {
-                    count: 1
-                }
-            }
-        ])
+        return UVDao.getClientInfoBuGroupType(appID,sTime,eTime,groupType);
     } catch (error) {
-        throw "数据异常"
+        throw error;
     }
-
 }
 
 module.exports = { saveUv, getClietnInfo, getUvNum, findUvByIP, deleteAllUvByID, updateOneUv, findUvByClientID, deleteAllUvByAppID }

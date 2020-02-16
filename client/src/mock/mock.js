@@ -1025,6 +1025,7 @@ Mock.mock('/data/todayGeneral',{
         { title: "api", today: 244, yesterday: 244}
     ]
 })
+
 Mock.mock('/data/per',{
     success:true,
     note:'数据返回成功',

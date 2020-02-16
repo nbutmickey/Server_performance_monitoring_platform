@@ -45,12 +45,12 @@ export default {
         {
           title: "pv",
           dataIndex: "pv",
-          // align: "center"
+          width:150
         },
         {
           title: "uv",
           dataIndex: "uv",
-          // align: "center"
+          width:150
         }
       ],
       pagination:false,
