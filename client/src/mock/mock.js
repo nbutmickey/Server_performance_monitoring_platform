@@ -215,6 +215,17 @@ Mock.mock('/data/bsDataByDivider?dimensionType=0',{
   ]
 })
 
+Mock.mock('/data/bsDataByDivider?dimensionType=2',{
+  success:true,
+  result:[
+    // { type: "Chrome", count: 123 },
+    // { type: "FireFox", count: 124 },
+    // { type: "Safari", count: 134 },
+    // { type: "IE", count: 120 },
+    // { type: "Edge", count: 100 }
+  ]
+})
+
 Mock.mock('/data/bsDataByDivider?dimensionType=1',{
   success:true,
   result:[

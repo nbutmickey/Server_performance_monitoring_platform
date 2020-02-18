@@ -1,16 +1,5 @@
 <template>
-    <div>
-          <div :id="containerId" v-show="isPine"></div>
-          <div style="height:355px" v-show="!isPine">
-              <a-table
-                :columns="columns"
-                :dataSource="data"
-                :loading="loading"
-                :pagination="pagination"
-                :rowKey="record => record.type"
-              ></a-table>
-        </div>
-    </div>
+    <div :id="containerId"></div>
 </template>
 
 <script>
@@ -24,21 +13,7 @@ export default {
       containerId: Math.random()
         .toString(36)
         .substr(2),
-      chart: null,
-      columns: [
-        {
-          title: this.title,
-          dataIndex: "type"
-        },
-        {
-          title: "数量",
-          dataIndex: "count",
-          align: "center"
-        }
-      ],
-      pagination: false,
-      size: "middle",
-      loading: false
+      chart: null
     };
   },
   watch:{
@@ -49,8 +24,11 @@ export default {
             this.drawGuideHtml(val,true);
     },
     isPine(val){
-        console.log("改变啦");
-    } 
+        //跟踪是否为图表显示，然后强制其适应父容器宽度
+        if(val){
+            this.chart.forceFit();
+        } 
+    }
   },
   mounted() {
             this.initChart(); //图表初始化
@@ -124,7 +102,7 @@ export default {
       this.chart = new G2.Chart({
         container: this.containerId,
         forceFit: true,
-        // width:'100%',
+        //width:825,
         height: 350,
         padding: [0, 30, 0, "auto"]
       });

@@ -3,7 +3,7 @@
         <span class="box-panel-title-small" v-if="title">{{title}}</span>
         <span class="box-panel-time-dimension">
           <span>{{timeDimension}}</span>
-          <a-popover placement="left" class="radio-gap">
+          <a-popover placement="left" class="radio-gap" trigger="click">
             <template slot="content">
               <a-radio-group defaultValue="0" size="small" @change="timeDimensionChange">
                 <a-radio-button value="0">30分钟</a-radio-button>
@@ -56,7 +56,7 @@ export default {
               default:
                   break;
           }
-           console.log("timeDimension Componets"+e.target.value);
+           //console.log("timeDimension Componets"+e.target.value);
            this.$emit("changeTimeDimension",e.target.value);
       }
   }
