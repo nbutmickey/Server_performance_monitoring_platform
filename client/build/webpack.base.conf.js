@@ -22,9 +22,9 @@ module.exports = {
       ? config.build.assetsPublicPath
       : config.dev.assetsPublicPath
   },
-  resolve: {
+  resolve: {    //配置决定如何解析模块
     extensions: ['.js', '.vue', '.json'],
-    alias: {
+    alias: {     //简写某些模块文件的路径
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
     }
@@ -56,9 +56,9 @@ module.exports = {
       //   }] //加载顺序是从右向左的
       // },
       {
-        test: /\.js$/,
-        loader: 'babel-loader',
-        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]
+        test: /\.(js)$/,
+        loader: 'babel-loader', //将ES6代码转化成ES5代码
+        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')]//指定需要执行babel-loader的文件目录
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -84,7 +84,10 @@ module.exports = {
           name: utils.assetsPath('fonts/[name].[hash:7].[ext]')
         }
       }
-    ]
+    ],
+    noParse:function (content) {
+      return /jquery/.test(content); //对于jquery的npm包内部没有require与import，所以不需要去解析这些文件     
+    }
   },
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue

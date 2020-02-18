@@ -35,7 +35,7 @@
         :data="bsdata"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getBsData"
-        v-if="bsdata.length!==0"
+        
       ></pineChartPanel>
       <basedPieChartPanel
         :title="osTitle"
@@ -56,7 +56,6 @@
       <pineChartPanel
         :title="screenTitle"
         :data="screendata"
-        v-if="screendata.length!==0"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getScreenData"
       ></pineChartPanel>

@@ -1,7 +1,5 @@
 let PvInfo = require("../db/model/PV");
-let UvInfo = require("../db/model/UV");
 let time = require("../utils/time");
-let dao=require("../utils/dao")
 let PVDao=require("../dao/pvDao");
 let UVDao=require("../dao/uvDao");
 let PerformanceDao=require("../dao/performanceDao");
@@ -71,7 +69,6 @@ const getTodayGeneral=async function(appID){
     }
 }
 
-
 /*获取各时间段的PV*/
 const getPvAndUvNumByDivider = async function (appID, sTime, eTime, divider) {
     try {
@@ -102,4 +99,4 @@ const getPvAndUvNumByGeo = async function (appID, sTime, eTime) {
     }
 }
 
-module.exports = { savePv,getTodayGeneral, getPvAndUvNumByGeo, deleteAllPvByAppID, getPageTop, getPVAndUVNumToday, getPvAndUvNumByDivider };
+module.exports = { savePv,getTodayGeneral, getPvAndUvNumByGeo, deleteAllPvByAppID, getPageTop,  getPvAndUvNumByDivider };

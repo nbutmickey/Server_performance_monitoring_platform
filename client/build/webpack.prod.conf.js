@@ -23,6 +23,14 @@ const webpackConfig = merge(baseWebpackConfig, {
       usePostCSS: true
     })
   },
+  devServer:{  //配置控制台需要控制输出哪些信息
+    stats:{
+      warnings:false, //取消警告信息
+      children:false, //取消子级信息
+      modules:false, //取消模块构建信息
+      entrypoints:false  //不显示入口起点
+    }
+  },
   devtool: config.build.productionSourceMap ? config.build.devtool : false,
   output: {
     path: config.build.assetsRoot,
@@ -34,7 +42,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': env
     }),
-    new UglifyJsPlugin({
+    new UglifyJsPlugin({      //对js代码进行压缩、混淆、tree-shaking
       uglifyOptions: {
         compress: {
           warnings: false

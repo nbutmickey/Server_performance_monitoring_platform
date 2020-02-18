@@ -1,23 +1,5 @@
 <template>
     <div class="content-box">
-      <!-- <div class="title">
-        <span class="box-panel-title-small">{{title}}</span>
-        <span class="box-panel-time-dimension">
-          <a-popover placement="right" class="radio-gap">
-            <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="changeTimeDimension">
-                <a-radio-button value="0">30分钟</a-radio-button>
-                <a-radio-button value="1">60分钟</a-radio-button>
-                <a-radio-button value="2">12小时</a-radio-button>
-                <a-radio-button value="3">24小时</a-radio-button>
-                <a-radio-button value="4">最近3天</a-radio-button>
-                <a-radio-button value="5">最近7天</a-radio-button>
-              </a-radio-group>
-            </template>
-            <a-icon type="clock-circle" />
-          </a-popover>
-        </span>
-      </div> -->
         <div :id="containerId"></div>
     </div>
 </template>

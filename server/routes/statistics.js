@@ -230,11 +230,6 @@ router.get("/getAPIInfoByGroupType", async function (req, res, next) {
 
 
 
-
-
-
-
-
 router.get("/todayGeneral", async function (req, res, next) {
     try {
         let result=await pvinfo.getTodayGeneral(req.query.appID);
@@ -365,5 +360,22 @@ router.get("/clientInfo", async function (req, res, next) {
     }
 });
 
+router.post("/waterfallLoadTime", async function (req, res, next) {
+    try {
+        let { dimensionType, appID} = req.query;
+        let { sTime, eTime } = time.computeTimeDivider(dimensionType);
+        let result = await perinfo.getWaterfallByTime(appID, sTime, eTime);
+        res.json({
+            success: true,
+            note: "数据返回成功",
+            result
+        })
+    } catch (error) {
+        res.json({
+            success: false,
+            note: "数据返回异常"
+        })
+    }
+})
 
 module.exports = router;

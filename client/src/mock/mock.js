@@ -207,11 +207,11 @@ Mock.mock('/data/geoDataByDivider?dimensionType=1',{
 Mock.mock('/data/bsDataByDivider?dimensionType=0',{
   success:true,
   result:[
-    { type: "Chrome", count: 123 },
-    { type: "FireFox", count: 124 },
-    { type: "Safari", count: 134 },
-    { type: "IE", count: 120 },
-    { type: "Edge", count: 100 }
+    // { type: "Chrome", count: 123 },
+    // { type: "FireFox", count: 124 },
+    // { type: "Safari", count: 134 },
+    // { type: "IE", count: 120 },
+    // { type: "Edge", count: 100 }
   ]
 })
 
@@ -251,9 +251,9 @@ Mock.mock('/data/osDataByDivider?dimensionType=1',{
 Mock.mock('/data/screenDataByDivider?dimensionType=0',{
   success:true,
   result:[
-    { type: "1300*728", count: 23 },
-    { type: "1902*1080", count: 14 },
-    { type: "440*780", count: 34 }
+    // { type: "1300*728", count: 23 },
+    // { type: "1902*1080", count: 14 },
+    // { type: "440*780", count: 34 }
   ]
 })
 
@@ -1047,4 +1047,3 @@ Mock.mock('/data/api',{
         { title: "apiDuration", today: 244, yesterday: 244}
     ]
 })
-

@@ -61,6 +61,49 @@ const getAPIToday = async function (appID) {
         throw error;
     }
 }
+
+const getAllRequestAPIByTime=async function(appID,sTime,eTime){
+    try {
+        return await APIDao.getAllRequestAPIByTime(appID,sTime,eTime);
+    } catch (error) {
+     throw error;   
+    }
+}
+const getALLRequestFailedAPIByTime=async function(appID,sTime,eTime){
+    try {
+        return await APIDao.getALLRequestFailedAPIByTime(appID,sTime,eTime);
+    } catch (error) {
+        throw error;
+    }
+}
+const getSuccessAPIRateByTimeDivider=async function(appID,sTime,eTime,divider){
+    try {
+        let allCount=await APIDao.getAllAPICountDividerByTime(appID,sTime,eTime,divider);
+        let successCount=await APIDao.getSuccessAPICountDividerByTime(appID,sTime,eTime,divider);
+        let result=[];
+        for(let u of allCount){
+            let temp=successCount.filter(item=>new Date(item.visitTime).getTime()===new Date(item.visitTime).getTime())[0];
+            result.push({...u,...temp})
+        }
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
+const getAPISuccessDurationByTimeDivider=async function(appID,sTime,eTime,divider){
+    try {
+        return await APIDao.getSuccessAPIDurationDividerByTime(appID,sTime,eTime,divider);
+    } catch (error) {
+        throw error;
+    }
+}
+const getAPIFailedDurationByTimeDivider=async function(appID,sTime,eTime,divider){
+    try {
+        return await APIDao.getFailedAPIDurationDividerByTime(appID,sTime,eTime,divider);
+    } catch (error) {
+        throw error;
+    }
+}
 const getFailAPITop = async function (appID, sTime, eTime) {
     try {
         return await APIInfo.aggregate([
@@ -267,4 +310,4 @@ const getAPIInfoByGroupType = async function (appID, sTime, eTime, groupType) {
     }
 }
 
-module.exports = { saveApi, getAPIToday, getFailAPITop, getSuccessAPIByDivider, getFailAPIByDivider, getAPIInfoByGroupType, deleteAllApiByAppID }
+module.exports = { saveApi, getAPIToday,getAPIFailedDurationByTimeDivider,getAPISuccessDurationByTimeDivider,getSuccessAPIRateByTimeDivider, getFailAPITop,getAllRequestAPIByTime,getALLRequestFailedAPIByTime ,getSuccessAPIByDivider, getFailAPIByDivider, getAPIInfoByGroupType, deleteAllApiByAppID }
