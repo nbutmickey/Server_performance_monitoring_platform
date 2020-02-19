@@ -8,6 +8,7 @@
             <a-button type="link" @click="showModal(record)">区间段耗时</a-button>
           </span>
         </a-table>
+        <!-- <a-empty v-else description="暂无数据哦，换一个时间维度试一试！"></a-empty> -->
       </div>
       <!-- 对话弹出框 -->
       <a-modal

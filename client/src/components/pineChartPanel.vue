@@ -12,7 +12,7 @@
       <div class="container">
         <div v-if="data.length!==0">
           <pineChart :data="data" v-show="isPine" :isPine="isPine"></pineChart>
-          <PineChartTable :data="data" v-show="!isPine"></PineChartTable>
+          <displayTable :data="data" v-show="!isPine"></displayTable>
         </div>
         <a-empty v-else description="暂无数据哦，换一个时间维度试一试！"></a-empty>
       </div>
@@ -22,8 +22,8 @@
 
 <script>
 import timeDimension from "@/components/timeDimension"
-import pineChart from "@/components/pineChart"
-import PineChartTable from "@/components/PineChartTable"
+import pineChart from "@/components/chart/pineChart"
+import displayTable from "@/components/table/displayTable"
 export default {
   props: {
     title: String,
@@ -33,7 +33,7 @@ export default {
   components: {
      timeDimension,
      pineChart,
-     PineChartTable
+     displayTable
   },
   data() {
     return {
@@ -42,20 +42,6 @@ export default {
         .substr(2),
       chart: null,
       isPine: true,
-      columns: [
-        {
-          title: this.title,
-          dataIndex: "type"
-        },
-        {
-          title: "数量",
-          dataIndex: "count",
-          align: "center"
-        }
-      ],
-      pagination: false,
-      size: "middle",
-      loading: false
     };
   },
   methods: {
@@ -99,9 +85,6 @@ export default {
     .ant-empty{
       margin-top: 100px;
     }
-    //display: flex;
-    //justify-content: center; /* 水平居中 */
-    //align-items: center;     /* 垂直居中 */
   }
 }
 </style>

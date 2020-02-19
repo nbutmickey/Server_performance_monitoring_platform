@@ -11,49 +11,23 @@ import resourceTypeItem from "@/components/resourceTypeItem"
 export default {
   data() {
     return {
-      resData:{
-         fileSize:{
-            title:"各类型资源文件大小",
-            content:[
-             {type:'CSS',value:51},
-             {type:'XHR',value:41},
-             {type:'JS',value:31},
-             {type:'IMG',value:12},
-             {type:'Other',value:21},
-         ]
-         },
-         resDuration:{
-           title:"各类型资源平均耗时",
-            content:[
-             {type:'css',value:51},
-             {type:'xhr',value:41},
-             {type:'js',value:31},
-             {type:'img',value:12},
-             {type:'other',value:21},
-         ]
-         },
-         resNum:{
-           title:"各类型资源请求数目",
-            content:[
-             {type:'css',value:51},
-             {type:'xhr',value:41},
-             {type:'js',value:31},
-             {type:'img',value:12},
-             {type:'other',value:21},
-         ]
-         }
-     }
+      resData:{}
     }
   },
   components: {
     resourceTypeItem  
   },
   created() {},
-  async mounted() { },
+  async mounted() {
+    this.getResTypeInfo();
+   },
   methods: {
     getResTypeInfo:async function(){
-      let {success,result}=await this.axios.get('/data/resTypeInfo');
-      
+      let res=await this.axios.get('/data/resTypeInfo');
+      let {success,result}=res.data;
+      if(success){
+        this.resData=result;
+      }
    }
   }
 };

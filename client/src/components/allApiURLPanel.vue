@@ -78,23 +78,5 @@ export default {
   border-radius: 4px;
   height: 450px;
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
-  .title {
-    height: 30px;
-    color: #314659;
-    .box-panel-title-small {
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .box-panel-time-dimension {
-      margin-left: 20px;
-      font-size: 14px;
-    }
-    .container {
-      width: 100%;
-      height: 350px;
-      display: flex;
-      flex-direction: row;
-    }
-  }
 }
 </style>

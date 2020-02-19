@@ -30,10 +30,9 @@
 <script>
 // import "../common/style/main.less"
 export default {
+
   data() {
     return {
-      msg: "PageAnalysis",
-      placement:''
     };
   }
 };

@@ -1,9 +1,10 @@
 <template>
-  <div style="width:50%;padding-left:8px;padding-right:8px">
+  <div style="width:50%;padding-left:8px;">
     <div class="content-box">
        <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
-        <a-table :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="record => record.type"></a-table>
+         <a-table v-if="data.length!==0" :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="record => record.type"></a-table>
+         <a-empty v-else description="暂无数据哦，换一个时间维度试一试！"></a-empty>
       </div>
     </div>
   </div>
@@ -65,8 +66,11 @@ export default {
   padding: 16px;
   border-radius: 4px;
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
-    // .container {
-    //   width: 100%;
-    // }
+  height: 405px;
+    .container {
+      .ant-empty{
+      margin-top: 100px;
+    }
+    }
 }
 </style>

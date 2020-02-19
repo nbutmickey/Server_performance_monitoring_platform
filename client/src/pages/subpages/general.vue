@@ -2,29 +2,19 @@
   <div>
     <showPanel :todayData="todayData" :isCompare="isCompare"></showPanel>
     <div style="margin-left:-8px;display: flex;flex-direction: row;flex-wrap: wrap">
+      <lineChartPanel
+        :title="pvAnduvTitle"
+        :data="uvData"
+        v-on:changeTimeDimension="getUvData"
+      ></lineChartPanel>
       <topPageListPanel
         :title="topPageTitle"
         :data="topPageData"
         v-on:changeTimeDimension="getTopPageData"
       ></topPageListPanel>
     </div>
-    <div style="margin-left:-8px;display: flex;flex-direction: row;flex-wrap: wrap">
-      <lineChartPanel
-        :title="pvTitle"
-        v-if="pvData.length!==0"
-        :data="pvData"
-        v-on:changeTimeDimension="getPvData"
-      ></lineChartPanel>
-      <lineChartPanel
-        :title="uvTitle"
-        v-if="uvData.length!==0"
-        :data="uvData"
-        v-on:changeTimeDimension="getUvData"
-      ></lineChartPanel>
-    </div>
     <chinaMapPanel
       :title="geoTitle"
-      v-if="geoData.length!==0"
       :data="geoData"
       :showTimeDimension="showTimeDimension"
       v-on:changeTimeDimension="getGeoData"
@@ -35,12 +25,10 @@
         :data="bsdata"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getBsData"
-        
       ></pineChartPanel>
       <basedPieChartPanel
         :title="osTitle"
         :data="osdata"
-        v-if="osdata.length!==0"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getOsData"
       ></basedPieChartPanel>
@@ -49,7 +37,6 @@
       <basedPieChartPanel
         :title="isPcTitle"
         :data="ispcdata"
-        v-if="ispcdata.length!==0"
         :showTimeDimension="showTimeDimension"
         v-on:changeTimeDimension="getisPcData"
       ></basedPieChartPanel>
@@ -84,8 +71,7 @@ export default {
       todayData: [],
       isCompare: true,
       showTimeDimension: true,
-      pvTitle: "PV数据",
-      uvTitle: "UV数据",
+      pvAnduvTitle: "PV & UV",
       geoTitle: "地理位置",
       osTitle: "操作系统",
       bsTitle: "浏览器",

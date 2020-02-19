@@ -7,6 +7,8 @@ import api from '@/pages/subpages/api'
 import performance from '@/pages/subpages/performance'
 import resource from '@/pages/subpages/resource'
 import userAction from '@/pages/subpages/userAction'
+import home from '@/pages/subpages/home'
+import login from "@/pages/login"
 
 Vue.use(Router)
 
@@ -15,13 +17,21 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect:'/dashboard'
+      redirect:'/login'
+    },
+    {
+      path:'/login',
+      component:login
     },
     {
       path: '/dashboard',
-      redirect:'/general',
+      redirect:'/home',
       component: dashBoard,
       children:[
+        {
+          path:'/home',
+          component:home
+        },
         {
           path:'/general',
           component:general

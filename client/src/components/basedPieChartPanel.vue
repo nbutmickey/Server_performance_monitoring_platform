@@ -3,23 +3,18 @@
     <div class="content-box">
       <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension">
         <span class="box-panel-change-show">
-          <a-radio-group defaultValue="pine" size="small" @change="changeShow">
+          <a-radio-group defaultValue="pine" size="small" class="type-radio" @change="changeShow">
             <a-radio-button value="pine">饼图</a-radio-button>
             <a-radio-button value="table">表格</a-radio-button>
           </a-radio-group>
         </span>
       </timeDimension>
       <div class="container">
-        <div :id="containerId" v-show="isPine"></div>
-        <div style="height:355px" v-show="!isPine">
-          <a-table
-            :columns="columns"
-            :dataSource="data"
-            :loading="loading"
-            :pagination="pagination"
-            :rowKey="record => record.type"
-          ></a-table>
+         <div v-if="data.length!==0">
+          <basedChart :data="data" v-show="isPine" :isPine="isPine"></basedChart>
+          <displayTable :data="data" v-show="!isPine"></displayTable>
         </div>
+        <a-empty v-else description="暂无数据哦，换一个时间维度试一试！"></a-empty>
       </div>
     </div>
   </div>
@@ -27,6 +22,8 @@
 
 <script>
 import timeDimension from "@/components/timeDimension"
+import basedChart from "@/components/chart/basedChart"
+import displayTable from "@/components/table/displayTable"
 export default {
   props: {
     title: String,
@@ -34,7 +31,9 @@ export default {
     showTimeDimension: Boolean
   },
   components: {
-    timeDimension
+    timeDimension,
+    basedChart,
+    displayTable
   },
   data() {
     return {
@@ -42,33 +41,8 @@ export default {
         .toString(36)
         .substr(2),
       chart: null,
-      isPine: true,
-      columns: [
-        {
-          title: this.title,
-          dataIndex: "type"
-        },
-        {
-          title: "数量",
-          dataIndex: "count",
-          align: "center"
-        }
-      ],
-      pagination: false,
-      size: "middle",
-      loading: false
+      isPine: true
     };
-  },
-  watch: {
-    data(val) {
-      this.data = val;
-      let dv=this.processData(val);
-      this.chart.changeData(dv);
-    }
-  },
-  mounted() {
-    this.initChart();
-    this.renderPineChart(this.data);
   },
   methods: {
     changeShow: function() {
@@ -76,56 +50,6 @@ export default {
     },
     changeTimeDimension: function(value) {
       this.$emit("changeTimeDimension", value);
-    },
-    //数据处理
-    processData:function(rawData){
-       const ds = new DataSet();
-       const dv = ds.createView().source(rawData).transform({
-        type:'percent',
-        field:'count',
-        dimension:'type',
-        as:'percent'
-      });
-      return dv;
-    },
-    //初始化图表
-    initChart:function(){
-       this.chart = new G2.Chart({
-        container: this.containerId,
-        forceFit: true,
-        height: 350,
-        padding: [0, 30, 0, "auto"]
-      });
-    },
-    renderPineChart: function(rawData) {
-      //数据处理
-      let dv=this.processData(rawData);
-
-      //装载数据并绘制图表
-      this.chart.source(dv);
-      this.chart.coord("theta", {
-        radius: 0.8
-      });
-      this.chart
-        .tooltip({showTitle: false})
-        .legend({
-          position: "right-bottom",
-          offsetX: -50
-        });
-      this.chart
-        .intervalStack()
-        .position("count")
-        .color("type")
-        .label("percent", {
-          formatter: (val, item) => {
-            return item.point.type + ": " + (item.point.percent*100).toFixed(0)+'%';
-          }
-        })
-        .style({
-          lineWidth: 1,
-          stroke: "#fff"
-        });
-      this.chart.render();
     }
   }
 };
@@ -133,9 +57,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-.ant-radio-group-small .ant-radio-button-wrapper {
-  margin-right: 5px !important;
-}
 .content-box {
   margin-bottom: 16px;
   background: #fff;
@@ -144,18 +65,25 @@ export default {
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
   .title {
     .box-panel-change-show {
+      .type-radio{
+          .ant-radio-button-wrapper {
+            margin-right: 5px;
+          }
+          .ant-radio-button-wrapper:first-child{
+            border-radius: 0 !important;
+          }
+          .ant-radio-button-wrapper:last-child{
+            border-radius: 0 !important;
+          }
+      }
       margin-left: 30px;
     }
   }
   .container {
     height: 358px;
     padding: 8px 5px 0;
-    .g2-guide-html {
-      width: 100px;
-      height: 80px;
-      vertical-align: middle;
-      text-align: center;
-      line-height: 0.2;
+    .ant-empty{
+      margin-top: 100px;
     }
   }
 }

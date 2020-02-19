@@ -16,7 +16,7 @@ export default {
   },
   data() {
     return {
-      current: ["mail"]
+   
     };
   }
 };
@@ -30,11 +30,5 @@ export default {
   margin-top:46px;
   padding: 18px 80px 30px 80px;
   min-height: 0;
-  // .content {
-  //   background-color: rgb(255, 255, 255);
-  //   width: 100%;
-  //   height: 100%;
-  //   min-height: 550px;
-  // }
 }
 </style>

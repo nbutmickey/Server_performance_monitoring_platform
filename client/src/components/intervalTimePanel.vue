@@ -2,8 +2,9 @@
   <div style="width:100%;">
     <div class="content-box">
        <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension" v-if="showTimeDimension"></timeDimension>
-      <div class="container">
-        <div :id="containerId"></div>
+       <div class="container">
+         <intervalTimeChart :data="data" v-if="data.length!==0"></intervalTimeChart>
+         <a-empty v-else description="暂无数据哦，换一个时间维度试一试！"></a-empty>
       </div>
     </div>
   </div>
@@ -11,6 +12,7 @@
 
 <script>
 import timeDimension from "@/components/timeDimension"
+import intervalTimeChart from "@/components/chart/intervalTimeChart"
 export default {
   props: {
     title: String,
@@ -19,118 +21,12 @@ export default {
     showTimeDimension:Boolean
   },
   components: {
-    timeDimension
-  },
-  data() {
-    return {
-      chart: null,
-      containerId:Math.random()
-        .toString(36)
-        .substr(2),
-    };
-  },
-  created() {},
-  watch:{
-    data(val){
-      this.chart.clear();
-      this.renderChart(val);
-    }
-  },
-  mounted() {
-    this.initChart();
-    this.renderChart(this.data);
+    timeDimension,
+    intervalTimeChart
   },
   methods: {
     changeTimeDimension: function(value) {
         this.$emit("changeTimeDimension",value);
-    },
-    renderChart:function (data) {
-          //数据展开
-        const dv = new DataSet()
-          .createView()
-          .source(data)
-          .transform({
-            type: "fold",
-            fields: ["redirect", "dns", "tcp", "ssl","ttfb","trans","dom","resource"],
-            key: "type",
-            value: "duration",
-            retains: ["time"]
-          })
-          .transform({
-            type: "map",
-            callback(row) {
-              switch (row.type) {
-                case "redirect":
-                  row.type = "重定向";
-                  break;
-                case "dns":
-                  row.type = "DNS解析";
-                  break;
-                case "tcp":
-                  row.type = "TCP连接";
-                  break;
-                case "ssl":
-                  row.type = "SSL连接";
-                  break;
-                case "ttfb":
-                  row.type = "请求响应";
-                  break;
-                case "trans":
-                  row.type = "数据传输";
-                  break;
-                case "dom":
-                  row.type = "DOM解析";
-                  break;
-                case "resource":
-                 row.type = "资源加载";
-                  break;
-                default:
-                  break;
-              }  
-              row.time = new Date(row.time).getTime() - 8 * 60 * 60 * 1000;
-              return row;
-            }
-          });
-        //console.log(this.userData.length);
-        this.chart
-          .source(dv)
-          .scale({
-            time: {
-              type: "timeCat",
-              mask: "MM-DD HH:mm:ss",
-              tickCount: data.length
-            }
-          })
-
-        this.chart
-          .interval()
-          .position("time*duration")
-          .color("type")
-          .tooltip("type*duration", (type, duration) => {
-            return {
-              type,
-              duration
-            };
-          })
-          .adjust([
-            {
-              type: "dodge",
-              marginRatio: 1 / 32
-            }
-          ]);
-        this.chart.render();
-    },
-    initChart:function () {
-      this.chart= new G2.Chart({
-      container: this.containerId,
-      forceFit: true,
-      height: 350,
-      padding: ["auto", 10, "auto", "auto"]
-      });
-      this.chart
-        .tooltip({
-          itemTpl: '<li data-index={index}><span style="background-color:{color};width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:8px;"></span>{type}: {duration} ms</li>'
-        })
     }
   }
 };
@@ -144,22 +40,5 @@ export default {
   padding: 16px;
   border-radius: 4px;
   box-shadow: 0 0 4px rgba(82, 94, 102, 0.15);
-  .title {
-    height: 30px;
-    color: #314659;
-    .box-panel-title-small {
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .box-panel-time-dimension {
-      margin-left: 20px;
-      font-size: 14px;
-    }
-    .container {
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-    }
-  }
 }
 </style>
