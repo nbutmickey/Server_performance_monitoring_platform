@@ -53,7 +53,7 @@ export default {
         container: this.containerId,
         forceFit: true,
         height: 350,
-        padding: [0, 30, 0, "auto"]
+        padding: [0, 40, 0, "auto"]
       });
     },
     renderPineChart: function(rawData) {

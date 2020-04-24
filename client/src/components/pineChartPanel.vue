@@ -12,7 +12,7 @@
       <div class="container">
         <div v-if="data.length!==0">
           <pineChart :data="data" v-show="isPine" :isPine="isPine"></pineChart>
-          <displayTable :data="data" v-show="!isPine"></displayTable>
+          <displayTable :title="title" :data="data" v-show="!isPine"></displayTable>
         </div>
         <a-empty v-else description="暂无数据哦，换一个时间维度试一试！"></a-empty>
       </div>

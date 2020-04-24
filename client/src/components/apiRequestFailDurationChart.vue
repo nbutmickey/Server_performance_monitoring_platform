@@ -34,25 +34,25 @@ export default {
     },
     renderChart:function(dv){
         this.chart.source(dv);
-        this.chart.scale('time',{
+        this.chart.scale('visitTime',{
             type:'timeCat',
-            mask:'HH:mm',
-             tickInterval:500
+            mask:'MM-DD HH:mm',
+            tickInterval:500
         });
         this.chart.scale('failDuration',{
           alias:'失败耗时',
         })
-        this.chart.scale('fail',{
+        this.chart.scale('failed',{
           alias:'失败数',
         })
-        this.chart.line().position("time*failDuration").shape("smooth").color("#00BFFF");
-        this.chart.axis('time',{
+        this.chart.line().position("visitTime*failDuration").shape("smooth").color("#00BFFF");
+        this.chart.axis('visitTime',{
           line:{
             lineWidth:1,
             stroke:'#DC143C'
           }
         });
-        this.chart.axis('fail',{
+        this.chart.axis('failed',{
           line:{
             lineWidth:1,
             stroke:'#DC143C'
@@ -64,7 +64,7 @@ export default {
             stroke:'#DC143C'
           }
         });
-        this.chart.interval().color('#DC143C').position('time*fail');
+        this.chart.interval().color('#DC143C').position('visitTime*failed');
         this.chart.render();
     }
   }

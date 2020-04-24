@@ -2,7 +2,6 @@ let UserInfo= require("../db/model/User");
 const findUser = (username) => {
     return new Promise((resolve, reject) => {
         UserInfo.findOne({ username: username }, (err, result) => {
-            
             try {
                 if (result !== null) {
                     resolve(result);
@@ -17,7 +16,7 @@ const findUser = (username) => {
 }
 
 const saveUser = (userdata) => {
-    let user = new userInfo({
+    let user = new UserInfo({
         username: userdata.username,
         phonenumber:userdata.phonenumber,
         password: userdata.password,
@@ -35,7 +34,23 @@ const saveUser = (userdata) => {
     })
 }
 
+const updateUser=(userName,newToken)=>{
+    return new Promise((resolve,reject)=>{
+        UserInfo.updateOne({userName:userName,token:newToken},(err,result)=>{
+            try {
+                if(result!==null){
+                    resolve(true);
+                }
+            } catch (error) {
+                reject(false);
+            }
+        });
+    })
+}
+
+
 module.exports={
+    updateUser,
     findUser,
     saveUser
 }

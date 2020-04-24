@@ -2,6 +2,18 @@ let Resource = require("../db/model/Resource");
 
 exports.getResDetailByType = async function (appID, sTime, eTime, type) {
     try {
+        let matchConfig = type === 'all' ? {
+            $match: {
+                "detail.InitiatorType": {
+                    "$regex":new RegExp(`([\w\W]*)`,`gi`)
+                }
+            }
+        } : {
+            $match: {
+                "detail.InitiatorType": type
+            }
+        }
+
         return await Resource.aggregate([
             {
                 $match: {
@@ -10,7 +22,6 @@ exports.getResDetailByType = async function (appID, sTime, eTime, type) {
                         $lt: eTime
                     },
                     appID: appID
-
                 }
             },
             {
@@ -22,11 +33,7 @@ exports.getResDetailByType = async function (appID, sTime, eTime, type) {
             {
                 $unwind: "$detail"
             },
-            {
-                $match: {
-                    "detail.InitiatorType":type
-                }
-            },
+            matchConfig,
             {
                 $project: {
                     _id: 0,
@@ -43,17 +50,12 @@ exports.getResDetailByType = async function (appID, sTime, eTime, type) {
     }
 }
 
-exports.getResDetailByUrl = async function (appID, sTime, eTime, url) {
+exports.getResDetailByUrl = async function (appID, url) {
     try {
         return await Resource.aggregate([
             {
                 $match: {
-                    visitTime: {
-                        $gte: sTime,
-                        $lt: eTime
-                    },
-                    appID: appID,
-                    Url: url
+                    appID: appID
                 }
             },
             {
@@ -64,6 +66,13 @@ exports.getResDetailByUrl = async function (appID, sTime, eTime, url) {
             },
             {
                 $unwind: "$detail"
+            },
+            {
+                $match: {
+                    "detail.Url": {
+                        "$regex":new RegExp(`${url}.*`,`gi`)
+                    }
+                }
             },
             {
                 $project: {
@@ -118,15 +127,14 @@ exports.getAllResDetail = async function (appID, sTime, eTime) {
 }
 
 
-exports.getResDuration = async function (appID, sTime, eTime) {
+
+
+
+exports.getResDuration = async function (appID) {
     try {
         return await Resource.aggregate([
             {
                 $match: {
-                    visitTime: {
-                        $gte: sTime,
-                        $lt: eTime
-                    },
                     appID: appID
                 },
 
@@ -146,6 +154,21 @@ exports.getResDuration = async function (appID, sTime, eTime) {
                         $avg: "$detail.Duration"
                     }
                 }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    type:"$_id",
+                    value:"$duration"
+                }
+            },
+            {
+                $sort:{
+                    value:-1
+                }
+            },
+            {
+                $limit:5
             }
         ])
     } catch (error) {
@@ -153,15 +176,11 @@ exports.getResDuration = async function (appID, sTime, eTime) {
     }
 }
 
-exports.getResCount = async function (appID, sTime, eTime) {
+exports.getResCount = async function (appID) {
     try {
         return await Resource.aggregate([
             {
                 $match: {
-                    visitTime: {
-                        $gte: sTime,
-                        $lt: eTime
-                    },
                     appID: appID
                 },
 
@@ -181,6 +200,21 @@ exports.getResCount = async function (appID, sTime, eTime) {
                         $sum: 1
                     }
                 }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    type:"$_id",
+                    value:"$count"
+                }
+            },
+            {
+                $sort:{
+                    value:-1
+                }
+            },
+            {
+                $limit:5
             }
         ])
     } catch (error) {
@@ -188,18 +222,13 @@ exports.getResCount = async function (appID, sTime, eTime) {
     }
 }
 
-exports.getResFileSize = async function (appID, sTime, eTime) {
+exports.getResFileSize = async function (appID) {
     try {
         return await Resource.aggregate([
             {
                 $match: {
-                    visitTime: {
-                        $gte: sTime,
-                        $lt: eTime
-                    },
                     appID: appID
                 },
-
             },
             {
                 $project: {
@@ -216,6 +245,21 @@ exports.getResFileSize = async function (appID, sTime, eTime) {
                         $avg: "$detail.FileSize"
                     }
                 }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    type:"$_id",
+                    value:"$fileSize"
+                }
+            },
+            {
+                $sort:{
+                    value:-1
+                }
+            },
+            {
+                $limit:5
             }
         ])
     } catch (error) {

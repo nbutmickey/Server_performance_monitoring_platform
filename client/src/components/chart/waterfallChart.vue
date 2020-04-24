@@ -24,6 +24,7 @@ export default {
   mounted() {
     this.initChart();
     this.renderChart(this.data);
+    this.chart.forceFit();
   },
   methods: {
     renderChart: function(userData) {
@@ -50,6 +51,7 @@ export default {
         .transform({
           type: "map",
           callback(row) {
+            row.duration=parseInt(row.duration);
             switch (row.type) {
               case "redirect":
                 row.type = "重定向";
@@ -182,26 +184,6 @@ export default {
               path: rectPath
             })
           });
-
-          if (cfg.nextPoints) {
-            let linkPath = [
-              ["M", cfg.points[2].x, cfg.points[2].y],
-              ["L", cfg.nextPoints[0].x, cfg.nextPoints[0].y]
-            ];
-
-            if (cfg.nextPoints[0].y === 0) {
-              linkPath[1] = ["L", cfg.nextPoints[1].x, cfg.nextPoints[1].y];
-            }
-            linkPath = this.parsePath(linkPath);
-            container.addShape("path", {
-              attrs: {
-                path: linkPath,
-                stroke: "#8c8c8c",
-                lineDash: [4, 2]
-              }
-            });
-          }
-
           return interval;
         }
       });

@@ -40,7 +40,7 @@ export default {
       successDurationData:[],
       failDurationData:[],
       tabKey:0,
-      timeDimensionType:0
+      timeDimensionType:5
     };
   },
   mounted() {
@@ -61,7 +61,6 @@ export default {
         }
       },
       changeTab(tabKey) {
-       // console.log();
        this.tabKey=tabKey;
         if(tabKey==0){
           this.getReqSuccessData();
@@ -72,25 +71,27 @@ export default {
         }
       },
       async getReqSuccessData(){
-        let res=await this.axios.get(`/data/reqSuccess?dimensionType=${this.timeDimensionType}`);
-        console.log(res.data);
-        let {success,result}=res.data;
+        let {success,result}=await this.$get('/info/getAllSuccessAPIRate',{appID:'kol9l-k5dvol2z-b4cad0ad-k5dvol2z',dimensionType:this.timeDimensionType});
         if(success){
           this.reqSuccessData=result;
         }
       },
       async getReqSuccessDurationData(){
-        let res=await this.axios.get(`/data/reqSuccessDuration?dimensionType=${this.timeDimensionType}`);
-        let {success,result}=res.data;
+        let {success,result}=await this.$get('/info/getAllSuccessAPIDuration',{appID:'kol9l-k5dvol2z-b4cad0ad-k5dvol2z',dimensionType:this.timeDimensionType});
         if(success){
-          this.successDurationData=result;
+         this.successDurationData=result.map((item)=>{
+            item.successDuration=parseInt(item.successDuration);
+            return item;
+          })
         }
       },
       async getReqFailDurationData(){
-        let res=await this.axios.get(`/data/reqFailDuration?dimensionType=${this.timeDimensionType}`);
-        let {success,result}=res.data;
+        let {success,result}=await this.$get('/info/getAllFailedAPIDuration',{appID:'kol9l-k5dvol2z-b4cad0ad-k5dvol2z',dimensionType:this.timeDimensionType});
         if(success){
-          this.failDurationData=result;
+          this.failDurationData=result.map(item=>{
+            item.failDuration=parseInt(item.failDuration);
+            return item;
+          });
         }
       }
   }

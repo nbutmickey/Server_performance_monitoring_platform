@@ -1,7 +1,6 @@
 <template>
   <div :id="containerId"></div>
 </template>
-
 <script>
 export default {
   props: {
@@ -17,7 +16,6 @@ export default {
   },
   watch: {
     data(val) {
-      this.data=val;
       //重绘图表
       this.processData(val);
       this.chart.changeData(val);
@@ -29,7 +27,6 @@ export default {
   },
   methods: {
     initChart:function(){
-        console.log(this.data);
         this.chart= new G2.Chart({
         container: this.containerId,
         forceFit: true,
@@ -46,9 +43,9 @@ export default {
       let dv=this.processData(rawData);
       this.chart.source(dv);
       this.chart.scale({
-        time:{
+        visitTime:{
           type:'timeCat',
-          mask:'HH:mm',
+          mask:'MM-DD HH:mm',
           tickCount:rawData.length
         }
       })
@@ -60,45 +57,23 @@ export default {
 
       this.chart
         .line()
-        .position("time*pv")
+        .position("visitTime*pv")
         .shape("smooth")
         .color('blue')
         
 
       this.chart
         .line()
-        .position("time*uv")
+        .position("visitTime*uv")
         .shape("smooth")
         .color('red')
-
-    //   this.chart
-    //     .point()
-    //     .position("time*pv")
-    //     .size(3)
-    //     .color()
-    //     .shape("circle")
-    //     .style({
-    //       stroke: "#fff",
-    //       lineWidth: 1
-    //     });
-
-        // this.chart
-        // .point()
-        // .position("time*pv*uv")
-        // .size(3)
-        // .color()
-        // .shape("circle")
-        // .style({
-        //   stroke: "#fff",
-        //   lineWidth: 1
-        // });
       this.chart.render();
     }
   }
 };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped lang="less">
 .g2-guide-html {
   width: 100px;
@@ -107,4 +82,4 @@ export default {
   text-align: center;
   line-height: 0.2;
 }
-</style>f
+</style>

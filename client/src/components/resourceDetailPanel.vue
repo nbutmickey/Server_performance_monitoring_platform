@@ -5,16 +5,17 @@
       <div class="item">
         <span>按资源URL查询</span>
         <span style="display:inline-block;width:295px;">
-            <a-input v-model="searchStr" placeholder="请输入要查询的资源URL" />
+            <a-input v-model="searchStr" placeholder="请输入要查询的资源URL" @change="()=>{this.showError=false}"/>
+            <p v-if="showError" style="color:red;margin:0">输入值不能为空</p>
         </span>
         <span style="margin-left:10px">
-            <a-button type="primary" icon="search" @click="searchRes">搜索</a-button>
+            <a-button type="primary" icon="search" @click="searchResByURL">搜索</a-button>
         </span>
       </div>
       <div class="item">
         <span>按类型查询</span>
         <span>
-            <a-radio-group @change="searchByResType"  defaultValue="0" buttonStyle="solid" class="custom-radio"> 
+            <a-radio-group @change="typeChange"  defaultValue="0" buttonStyle="solid" class="custom-radio"> 
                 <a-radio-button value="0">全部</a-radio-button>
                 <a-radio-button value="1">JS</a-radio-button>
                 <a-radio-button value="2">XHR</a-radio-button>
@@ -27,7 +28,7 @@
       <div class="item">
         <span>按时间查询</span>
         <span>
-            <a-radio-group @change="searchResByTimeDimension"  defaultValue="0" buttonStyle="solid" class="custom-radio">
+            <a-radio-group @change="timeChange"  defaultValue="0" buttonStyle="solid" class="custom-radio">
                 <a-radio-button value="0">30分钟</a-radio-button>
                 <a-radio-button value="1">60分钟</a-radio-button>
                 <a-radio-button value="2">12小时</a-radio-button>
@@ -40,11 +41,13 @@
     </div>
     <div class="content">
         <a-table
+                :loading="isLoading"
                 :columns="columns"
-                :rowKey="record => record.url"
-                :dataSource="data"
+                :rowKey="(record,index) => index "
+                :dataSource="resDetailData"
                 :pagination="pagination"
             >
+        <div :title="record.url" :style="{maxWidth: '350px',whiteSpace: 'nowrap',textOverflow: 'ellipsis',overflow: 'hidden', wordWrap: 'break-word', wordBreak: 'break-all' }" slot="preCondition" slot-scope="text, record">{{record.url}}</div>   
         </a-table>
     </div>
   </div>
@@ -55,23 +58,28 @@ const columns=[
     {
       title: '资源URL',
       dataIndex: 'url',
+      scopedSlots: { customRender: 'preCondition' }
     },
     {
       title: '访问时间',
       dataIndex: 'visitTime',
+      align:'center'
     },
     {
       title: '资源类型',
       dataIndex: 'initiatorType',
+      align:'center'
     },
     {
       title: '资源大小',
-      dataIndex: 'size',
+      dataIndex: 'fileSize',
+      align:'center',
       customRender:(text)=>`${text} KB`
     },
     {
       title: '访问耗时',
       dataIndex: 'duration',
+      align:'center',
       customRender:(text)=>`${text} ms`
     },
 ]
@@ -79,67 +87,53 @@ export default {
   data() {
     return {
         searchStr:'',
+        showError:false,
+        resDetailData:[],
+        isLoading:false,
         columns,
-        data:[
-            {url:"http://192.168.31.88:8080/app.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/acp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/abp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/adp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/agp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/afp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/ahp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/aip.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/ajp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/akp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/alp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/amp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/anp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/aop.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/aqp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/arp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/asp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-            {url:"http://192.168.31.88:8080/atp.js",visitTime:"",initiatorType:"css",size:34,duration:1234},
-        ],
         pagination:{
             pageSize:8,
             hideOnSinglePage:true,
             size:"small",
             showTotal:(total)=>`总计 ${total} 条数据`
+        },
+        queryParams:{
+          type:0,
+          timeDimension:0
         }
     };
   },
-  created() {},
+  created() {
+    this.getResourceDetail();
+  },
   async mounted() {},
   methods: {
-      searchByResType:async function(e){
-         let {success,result} = await this.axios.post({
-             url:'/data/resDetail',
-             data:{
-                 url:'',
-                 type:e.target.value,
-                 dimension:''
-             }
-         })
+      timeChange:function(e){
+        this.queryParams.timeDimension=parseInt(e.target.value);
+        this.getResourceDetail();
       },
-      searchResByTimeDimension:async function(e){
-          let {success,result} = await this.axios.post({
-             url:'/data/resDetail',
-             data:{
-                 url:'',
-                 type:'',
-                 dimension:e.target.value
-             }
-         })
+      typeChange:function(e){
+         this.queryParams.type=parseInt(e.target.value);
+         this.getResourceDetail();
+      },
+      getResourceDetail:async function(){
+        this.isLoading=true;
+         let {success , result}=await this.$get('info/getResDetailByCondition',this.queryParams);
+         if(success){
+           this.resDetailData=result;
+           this.isLoading=false;
+         } 
       },
       searchResByURL:async function(){
-        let {success,result} = await this.axios.post({
-             url:'/data/resDetail',
-             data:{
-                 url:this.searchStr,
-                 type:'',
-                 dimension:''
-             }
-         })
+        if(this.searchStr!==''){
+          let {success,result}=await this.$get('info/getResByURL',{url:this.searchStr});
+          if(success){
+            this.resDetailData=result;
+            this.isLoading=false;
+          }
+        }else{
+          this.showError=true;
+        }
       }
   }
 };
@@ -158,7 +152,7 @@ export default {
     font-weight: 700;
   }
   .content{
-      height: 550px
+      height: 550px;
   }
   .query {
     width: 100%;
@@ -188,4 +182,6 @@ export default {
     }
   }
 }
+
+
 </style>

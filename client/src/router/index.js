@@ -7,7 +7,7 @@ import api from '@/pages/subpages/api'
 import performance from '@/pages/subpages/performance'
 import resource from '@/pages/subpages/resource'
 import userAction from '@/pages/subpages/userAction'
-import home from '@/pages/subpages/home'
+import application from '@/pages/subpages/application'
 import login from "@/pages/login"
 
 Vue.use(Router)
@@ -24,18 +24,23 @@ export default new Router({
       component:login
     },
     {
+      path:'/application',
+      component:application
+    },
+    {
+      path:'/setting',
+      component:()=>import('@/pages/subpages/setting')
+    },
+    {
       path: '/dashboard',
-      redirect:'/home',
+      redirect:'/general',
       component: dashBoard,
-      children:[
-        {
-          path:'/home',
-          component:home
-        },
+      children:[  
         {
           path:'/general',
           component:general
         },
+        
         {
           path:'/page',
           component:page
@@ -60,3 +65,4 @@ export default new Router({
   }
   ]
 })
+

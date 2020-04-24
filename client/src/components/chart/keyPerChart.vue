@@ -48,11 +48,12 @@ export default {
           fields: ["fpt", "ready", "tti", "load"],
           key: "type",
           value: "duration",
-          retains: ["time"]
+          retains: ["visitTime"]
         })
         .transform({
           type: "map",
           callback(row) {
+            row.duration=parseInt(row.duration);
             switch (row.type) {
               case "fpt":
                 row.type = "白屏耗时";
@@ -79,7 +80,7 @@ export default {
       this.chart
         .source(dv)
         .scale({
-          time: {
+          visitTime: {
             type: "timeCat",
             alias: "时间",
             mask: "MM-DD HH:mm:ss",
@@ -89,7 +90,7 @@ export default {
 
       this.chart
         .interval()
-        .position("time*duration")
+        .position("visitTime*duration")
         .color("type")
         .tooltip("type*duration",(type,duration)=>{return {type,duration}})
         .adjust([

@@ -17,22 +17,15 @@ router.post('/login', async function (req, res, next) {
       note: "用户名不存在!"
     })
   } else if (doc.password === password) {
-    // 密码正确，生成一个token
-    let token = createToken(username);
-    doc.token = token;
-    let result = await userinfo.saveUser(doc);
-    if (result) {
+    let newToken=createToken(username);
+    let updateResult=await userinfo.updateUser(username,newToken);
+    if(updateResult){
       res.json({
         success: true,
         username,
-        token,
+        token:newToken,
         create_time: doc.create_time,
         note: "登录成功！"
-      })
-    } else {
-      res.json({
-        success: false,
-        note: "内部错误！"
       })
     }
   } else {

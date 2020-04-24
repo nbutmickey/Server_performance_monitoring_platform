@@ -15,7 +15,11 @@ export default {
     };
   },
   watch: {
-    
+    data(val){
+      let dv=this.processData(val);
+      this.chart.clear();
+      this.renderChart(dv);
+    }
   },
   mounted() {
     this.initChart();
@@ -31,7 +35,7 @@ export default {
             container: this.containerId,
             forceFit: true,
             height: 360,
-            padding:['auto','auto','auto','auto']
+            padding:'auto'
         })
     },
     processData:function(rawData){
@@ -41,11 +45,9 @@ export default {
     },
     renderChart:function(dv){
         this.chart.source(dv);
-        this.chart.scale('time',{
+        this.chart.scale('visitTime',{
             type:'timeCat',
-            mask:'HH:mm',
-            //tickCount:46,
-             tickInterval:500
+            mask:'MM-DD HH:mm',
         });
         this.chart.scale('successDuration',{
           alias:'成功耗时',
@@ -53,8 +55,8 @@ export default {
         this.chart.scale('success',{
           alias:'成功数',
         })
-        this.chart.line().position("time*successDuration").shape("smooth").color("#F4A460");
-        this.chart.axis('time',{
+        this.chart.line().position("visitTime*successDuration").shape("smooth").color("#F4A460");
+        this.chart.axis('visitTime',{
           line:{
             lineWidth:1,
             stroke:'#1E90FF'
@@ -72,7 +74,7 @@ export default {
             stroke:'#1E90FF'
           }
         });
-        this.chart.interval().position('time*success');
+        this.chart.interval().position('visitTime*success');
         this.chart.render();
     }
   }

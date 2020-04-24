@@ -83,7 +83,8 @@ exports.getAllRequestFailedAPIByTime=async function(appID,sTime,eTime){
             },
             {
                 $project: {
-                    _id: "$_id",
+                    _id: 0,
+                    apiURL:"$_id",
                     duration: "$failedDuration",
                     fail:"$failedCount"
                 }
@@ -116,7 +117,8 @@ exports.getAllRequestAPIByTime=async function(appID,sTime,eTime){
             },
             {
                 $project: {
-                    _id: "$id",
+                    _id: 0,
+                    apiURL:"$_id",
                     request: "$allCount",
                     duration:"$reqDuration"
                 }

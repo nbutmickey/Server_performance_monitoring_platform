@@ -130,10 +130,18 @@ const getUvNum = async function (appID, sTime, eTime) {
 /*根据客户端指定参数获取信息*/
 const getClietnInfo=async function(appID,sTime,eTime,groupType){
     try {
-        return UVDao.getClientInfoBuGroupType(appID,sTime,eTime,groupType);
+        return await UVDao.getClientInfoBuGroupType(appID,sTime,eTime,groupType);
     } catch (error) {
         throw error;
     }
 }
 
-module.exports = { saveUv, getClietnInfo, getUvNum, findUvByIP, deleteAllUvByID, updateOneUv, findUvByClientID, deleteAllUvByAppID }
+const getVisitorList=async function(appID){
+    try {
+        return await UVDao.getVisitorList(appID);
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { saveUv, getClietnInfo, getUvNum, findUvByIP, deleteAllUvByID, updateOneUv,getVisitorList, findUvByClientID, deleteAllUvByAppID }

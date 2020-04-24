@@ -17,8 +17,7 @@ var AppInfo = new Schema({
     monitoringDomain: {
         type: String
     },
-    createTime:Date,
-    
+    createTime:Date
 })
 
 // 创建一个model

@@ -34,6 +34,7 @@ const savePv = function (pvdata) {
         throw "插入数据异常"
     }   
 }
+
 /*根据appID删除所有PV信息*/
 const deleteAllPvByAppID = function (appID) {
     return new Promise((resolve, reject) => {
@@ -72,7 +73,7 @@ const getTodayGeneral=async function(appID){
 /*获取各时间段的PV*/
 const getPvAndUvNumByDivider = async function (appID, sTime, eTime, divider) {
     try {
-        let result=PVDao.getPvAndUvNumByDivider(appID,sTime,eTime,divider);
+        let result=PVDao.getPVAndUVByDivider(appID,sTime,eTime,divider);
         return result;
     } catch (error) {
         throw error
@@ -93,10 +94,19 @@ const getPageTop = async function (appID, sTime, eTime) {
 /*根据地理位置获取PV数量*/
 const getPvAndUvNumByGeo = async function (appID, sTime, eTime) {
     try {
-       return PVDao.getPVAndUVByGeo(appID,sTime,eTime);
+       let result= await PVDao.getPVAndUVByGeo(appID,sTime,eTime);
+       return result;   
     } catch (error) {
         throw error        
     }
 }
 
-module.exports = { savePv,getTodayGeneral, getPvAndUvNumByGeo, deleteAllPvByAppID, getPageTop,  getPvAndUvNumByDivider };
+const getVisitorPath=async function(appID,clientID){
+    try {
+        return await PVDao.getVisitorPath(appID,clientID);
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { savePv,getVisitorPath,getTodayGeneral, getPvAndUvNumByGeo, deleteAllPvByAppID, getPageTop,  getPvAndUvNumByDivider };

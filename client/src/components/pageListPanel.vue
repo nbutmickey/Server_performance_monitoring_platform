@@ -3,9 +3,10 @@
     <div class="content-box">
       <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
-        <a-table :columns="columns" :dataSource="data" :size="size" :pagination="pagination">
+        <a-table :columns="columns" :dataSource="data" :size="size" :pagination="pagination" :rowKey="(record,index) => index ">
+          <div :title="record.pageUrl" :style="{maxWidth: '350px',whiteSpace: 'nowrap',textOverflow: 'ellipsis',overflow: 'hidden', wordWrap: 'break-word', wordBreak: 'break-all' }" slot="preCondition" slot-scope="text, record">{{record.pageUrl}}</div>
           <span slot="action" slot-scope="record">
-            <a-button type="link" @click="showModal(record)">区间段耗时</a-button>
+            <a-button type="link" @click="showModal(record)">瀑布图加载</a-button>
           </span>
         </a-table>
         <!-- <a-empty v-else description="暂无数据哦，换一个时间维度试一试！"></a-empty> -->
@@ -13,13 +14,13 @@
       <!-- 对话弹出框 -->
       <a-modal
         :title="modalTitle"
-        style="top:50px"
+        style="top:100px"
         v-model="visible"
         :footer="null"
         :width="modalWidth"
         @ok="handleOk"
       >
-        <intervalTimePanel :showTimeDimension="showTimeDimension"  v-show="showIntervalTime" :showTitle="showTitle" v-on:changeTimeDimension="changeTimeDimension" :data="intervalDataByPage" :rowKey="record => record.type"></intervalTimePanel>
+        <waterfallChart :data="intervalDataByPage" v-show="showIntervalTime"></waterfallChart>
       </a-modal>
     </div>
   </div>
@@ -27,40 +28,41 @@
 
 <script>
 import keyPerPanel from "@/components/keyPerPanel";
-import intervalTimePanel from "@/components/intervalTimePanel";
+import waterfallChart from "@/components/chart/waterfallChart";
 import timeDimension from "@/components/timeDimension"
 const columns = [
   {
     title: "页面URL",
-    dataIndex: "pageURL",
-    key: "pageURL"
+    dataIndex: "pageUrl",
+    key: "pageUrl",
+    scopedSlots: { customRender: 'preCondition' }
   },
   {
     title: "白屏耗时",
     dataIndex: "fpt",
     key: "fpt",
-    customRender:(text, record, index)=>{return text+' ms'},
+    customRender:(text, record, index)=>{return parseInt(text)+' ms'},
     align: "center"
   },
   {
     title: "首屏耗时",
     dataIndex: "ready",
     key: "ready",
-    customRender:(text, record, index)=>{return text+' ms'},
+    customRender:(text, record, index)=>{return parseInt(text)+' ms'},
     align: "center"
   },
   {
     title: "可交互耗时",
     dataIndex: "tti",
     key: "tti",
-    customRender:(text, record, index)=>{return text+' ms'},
+    customRender:(text, record, index)=>{return parseInt(text)+' ms'},
     align: "center"
   },
   {
     title: "完全加载耗时",
     key: "load",
     dataIndex: "load",
-    customRender:(text, record, index)=>{return text+' ms'},
+    customRender:(text, record, index)=>{return parseInt(text)+' ms'},
     align: "center"
   },
   {
@@ -77,21 +79,21 @@ export default {
   },
   components: {
     keyPerPanel,
-    intervalTimePanel,
+    waterfallChart,
     timeDimension
   },
   data() {
     return {
       columns,
       visible: false,
-      modalWidth: "80%",
+      modalWidth: "50%",
       modalTitle: "",
       showKeyPer: false,
       showIntervalTime: false,
       keyPerPanelWidth: "100%",
       showTimeDimension:false,
       showTitle:false,
-      dimensionType:0,
+      dimensionType:5,
       size: "small",
       pagination: {
         size: "small",
@@ -113,20 +115,21 @@ export default {
         this.$emit("changeTimeDimension",value);
     },
     showModal: function(record) {
-      this.getInterValDataByPage(record.pageURL);
-      this.modalTitle = `页面${record.pageURL}区间段耗时`;
+      this.getWaterFallLoadTimeByPage(record.pageUrl);
+      this.modalTitle = `页面 ${record.pageUrl} 瀑布图加载耗时`;
       this.showIntervalTime = true;
       this.visible = true;
     },
     handleOk: function() {
       this.visible = false;
     },
-    async getInterValDataByPage(pageURL){
-      alert(this.dimensionType)
-      let res = await this.axios.get(
-        `/data/interValDataByPage?dimensionType=${this.dimensionType}&pageURL=${pageURL}`
-      );
-      let { success, result } = res.data;
+    async getWaterFallLoadTimeByPage(pageURL){
+       let {success,result}=await this.$post('/info/waterfallLoadTime',
+       {
+         appID:'kol9l-k5dvol2z-b4cad0ad-k5dvol2z',
+         page:pageURL,
+         dimensionType:this.dimensionType
+       });
       if (success) {
         this.intervalDataByPage = result;
       }
@@ -134,7 +137,6 @@ export default {
   }
 };
 </script>
-
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
 .content-box {

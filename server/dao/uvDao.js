@@ -7,9 +7,39 @@ exports.getUVCountByTime=async function(appID,sTime,eTime){
     }
 }
 
+exports.getVisitorList=async function(appID){
+    try {
+        return await UVInfo.aggregate([
+            {
+                $match: {
+                    appID: appID
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    clientID: "$clientID",
+                    province:"$province",
+                    baseInfo:{
+                        ip: "$ipAddr",
+                        country:"$country",
+                        province: "$province",
+                        city:"$city",
+                        os:"$os",
+                        bs:"$bs",
+                        isp:"$isp",
+                        screen:"$screen"
+                    }
+                }
+            }])
+    } catch (error) {
+        throw error;
+    }
+}
+
 exports.getClientInfoBuGroupType=async function(appID,sTime,eTime,groupType){
     try {
-        return await UvInfo.aggregate([
+        return await UVInfo.aggregate([
             {
                 $match: {
                     visitTime: {

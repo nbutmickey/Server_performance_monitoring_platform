@@ -15,7 +15,11 @@ export default {
     };
   },
   watch: {
-    
+    data(val){
+      let dv=this.processData(val);
+      this.chart.clear();
+      this.renderChart(dv);
+    }
   },
   mounted() {
     this.initChart();
@@ -36,8 +40,7 @@ export default {
         const dv=ds.createView().source(rawData).transform({
             type:'map',
             callback(row){
-                row.successRate=((row.success/row.request).toFixed(2))*100+'%';
-                row.failRate=((row.fail/row.request).toFixed(2))*100+'%';
+                row.successRate=((row.success/row.allCount).toFixed(2))*100+'%';
                 return row;
            }
         }
@@ -46,25 +49,24 @@ export default {
     },
     renderChart:function(dv){
         this.chart.source(dv);
-        this.chart.scale('time',{
+        this.chart.scale('visitTime',{
             type:'timeCat',
-            mask:'HH:mm',
-            tickInterval:500
+            mask:'MM-DD HH:mm',
         });
         this.chart.scale('successRate',{
           alias:'成功比例',
         })
-        this.chart.scale('request',{
+        this.chart.scale('allCount',{
           alias:'请求总数',
         })
-        this.chart.line().position("time*successRate").shape("smooth").color("#2FC25B");
-        this.chart.axis('time',{
+        this.chart.line().position("visitTime*successRate").shape("smooth").color("#2FC25B");
+        this.chart.axis('visitTime',{
           line:{
             lineWidth:1,
             stroke:'#0000CD'
           }
         });
-        this.chart.axis('request',{
+        this.chart.axis('allCount',{
           line:{
             lineWidth:1,
             stroke:'#0000CD'
@@ -76,7 +78,7 @@ export default {
             stroke:'#0000CD'
           }
         });
-        this.chart.interval().color('#4169E1').position('time*request');
+        this.chart.interval().color('#4169E1').position('visitTime*allCount');
         this.chart.render();
     }
   }

@@ -3,7 +3,9 @@
     <div class="content-box">
       <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
-        <a-table :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="record => record.type"></a-table>
+        <a-table :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="(record,index)=> index">
+          <div :title="record.apiURL" :style="{maxWidth: '350px',whiteSpace: 'nowrap',textOverflow: 'ellipsis',overflow: 'hidden', wordWrap: 'break-word', wordBreak: 'break-all' }" slot="preCondition" slot-scope="text, record">{{record.apiURL}}</div>
+        </a-table>
       </div>
     </div>
   </div>
@@ -21,7 +23,7 @@ const columns = [
     title: "API",
     dataIndex: "apiURL",
     key: "apiURL",
-    //align: "center"
+    scopedSlots: { customRender: 'preCondition' }
   },
   {
     title: "失败次数",
@@ -33,7 +35,7 @@ const columns = [
     title: "失败耗时",
     dataIndex: "duration",
     key: "duration",
-    customRender:(text, record, index)=>{return text+' ms'},
+    customRender:(text, record, index)=>{return parseInt(text)+' ms'},
     align: "center"
   }
 ];
@@ -60,8 +62,8 @@ export default {
     }  
   },
   methods: {
-      changeTimeDimension: function(e) {
-        this.$emit("changeTimeDimension",e.target.value);
+      changeTimeDimension: function(val) {
+        this.$emit("changeTimeDimension",val);
     },
   }
 };

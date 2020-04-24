@@ -19,20 +19,24 @@ app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'content-type,Authorization');
   res.header('Content-Type', 'application/json;charset=utf-8');
+
+
   if (req.method == "OPTIONS") res.sendStatus(200); /*让options请求快速返回*/
   else next();
+
+
+
+  
 });
 
 // 设置要访问资源的url必须经过token的验证才可访问
 app.all("/manage/*", function (req, res, next) {
   const auth = req.get("Authorization");
-  //console.log(auth);
   if (auth === ' ' || auth === undefined) {
     res.json({
       success: false,
       note: "未提供token"
     })
-    //res.end();
   }
   try {
     jwt.verify(auth, "mickey_2020");

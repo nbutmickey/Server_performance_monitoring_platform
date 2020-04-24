@@ -50,7 +50,6 @@ router.get('/clientID', async function (req, res, next) {
     }
   }
 });
-//13731950807
 
 //处理用户上传收集数据信息
 router.get('/upload',middleware.setIPInfo, async function (req, res, next) {

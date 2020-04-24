@@ -3,7 +3,9 @@
     <div class="content-box">
       <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
-        <a-table :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="record => record.type"></a-table>
+        <a-table :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="(record,index) => index">
+          <div :title="record.apiURL" :style="{maxWidth: '350px',whiteSpace: 'nowrap',textOverflow: 'ellipsis',overflow: 'hidden', wordWrap: 'break-word', wordBreak: 'break-all' }" slot="preCondition" slot-scope="text, record">{{record.apiURL}}</div>
+        </a-table>
       </div>
     </div>
   </div>
@@ -21,20 +23,22 @@ const columns = [
   {
     title: "API",
     dataIndex: "apiURL",
-    key: "apiURL",  
-    //align: "center"
+    key: "apiURL", 
+    scopedSlots: { customRender: 'preCondition' }
   },
   {
-    title: "请求次数",
+    title: "次数",
     dataIndex: "request",
+    width:50,
     key: "request",
     align: "center"
   },
   {
-    title: "请求耗时",
+    title: "耗时",
     dataIndex: "duration",
+    width:80,
     key: "duration",
-    customRender:(text, record, index)=>{return text+' ms'},
+    customRender:(text, record, index)=>{return parseInt(text)+' ms'},
     align: "center"
   }
 ];

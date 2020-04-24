@@ -5,7 +5,7 @@
           <span>{{timeDimension}}</span>
           <a-popover placement="left" class="radio-gap" trigger="click">
             <template slot="content">
-              <a-radio-group defaultValue="0" size="small" @change="timeDimensionChange">
+              <a-radio-group defaultValue="5" size="small" @change="timeDimensionChange">
                 <a-radio-button value="0">30分钟</a-radio-button>
                 <a-radio-button value="1">60分钟</a-radio-button>
                 <a-radio-button value="2">12小时</a-radio-button>
@@ -28,7 +28,7 @@ export default {
   },
   data() {
     return {
-        timeDimension:'30分钟'
+        timeDimension:'最近7天'
     };
   },
   created() {},

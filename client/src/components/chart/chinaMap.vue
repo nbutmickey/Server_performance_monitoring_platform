@@ -1,5 +1,5 @@
 <template>
-  <div id="c1" style="width:49%;display:inline-block"></div>
+  <div id="c1" style="width:49%;height:450px;display:inline-block"></div>
 </template>
 
 <script>
@@ -43,7 +43,6 @@ export default {
       userView
         .polygon()
         .tooltip("province*pv*uv")
-        // .size("pv",[0,100])
         .color("pv", "#0050B3-#1890FF-#40A9FF-#69C0FF-#BAE7FF")
         .position("longitude*latitude");
       this.chart.render();
@@ -52,8 +51,7 @@ export default {
       this.chart= new G2.Chart({
         container: "c1",
         forceFit: true,
-        height: 400,
-        padding: 'auto'
+        height: 450
       });
       this.chart.tooltip({
         showTitle: false

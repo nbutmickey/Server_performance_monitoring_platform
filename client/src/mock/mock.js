@@ -1444,7 +1444,7 @@ Mock.mock('/data/resTypeInfo',{
     ]
     },
     resNum:{
-      title:"各类型资源请求数目",
+       title:"各类型资源请求数目",
        content:[
         {type:'css',value:51},
         {type:'xhr',value:41},

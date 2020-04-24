@@ -1,7 +1,7 @@
 <template>
   <header class="header">
     <router-link to="/" class="title">服务器性能监控平台 V1.0</router-link>
-    <div class="nav">
+    <div class="nav" v-if="showNav">
       <router-link to="/general">应用总览</router-link>
       <router-link to="/performance">页面性能</router-link>
       <router-link to="/api">API请求</router-link>
@@ -10,17 +10,11 @@
     </div>
     <div class="user">
       <a-dropdown>
-        <a-button>Mickey</a-button>
-        <a-menu slot="overlay">
-          <a-menu-item>
-            <a target="_blank" rel="noopener noreferrer" href="http://www.alipay.com/">个人信息</a>
-          </a-menu-item>
-          <a-menu-item>
-            <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">我的配置</a>
-          </a-menu-item>
-          <a-menu-item>
-            <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">退出登录</a>
-          </a-menu-item>
+        <a-button type="link" ghost>Mickey</a-button>
+        <a-menu slot="overlay" @click="handleMenuClick">
+            <a-menu-item key="1"><a-icon type="setting" />我的配置</a-menu-item>
+            <a-menu-item key="2"><a-icon type="appstore" />我的应用</a-menu-item>
+            <a-menu-item key="3"><a-icon type="logout" />退出登录</a-menu-item>
         </a-menu>
       </a-dropdown>
     </div>
@@ -30,10 +24,35 @@
 <script>
 // import "../common/style/main.less"
 export default {
-
+  props: {
+    showNav:Boolean
+  },
   data() {
     return {
     };
+  },
+  methods: {
+    handleMenuClick(e){
+      //console.log(`click ${e}`);
+      switch (e.key) {
+        case '1':
+          this.$router.push("/setting");
+          break;
+        case '2':
+          this.$router.push("/application");
+          break;
+        case '3':
+          this.logout();
+          break;    
+        default:
+          break;
+      }
+    },
+    logout(){
+      //退出设置token为空
+      localStorage.setItem("token","");
+      this.$router.push("/login");
+    }
   }
 };
 </script>

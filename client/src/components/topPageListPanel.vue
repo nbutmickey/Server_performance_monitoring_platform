@@ -3,7 +3,7 @@
     <div class="content-box">
        <timeDimension :title="title" v-on:changeTimeDimension="changeTimeDimension"></timeDimension>
       <div class="container">
-         <a-table v-if="data.length!==0" :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="record => record.type"></a-table>
+         <a-table v-if="data.length!==0" :columns="columns" :dataSource="data" size="small" :pagination="pagination" :rowKey="(record,index) => index "></a-table>
          <a-empty v-else description="暂无数据哦，换一个时间维度试一试！"></a-empty>
       </div>
     </div>
@@ -18,9 +18,8 @@ const columns = [
   },  
   {
     title: "页面URL",
-    dataIndex: "pageURL",
-    key: "pageURL",
-    //align: "center"
+    dataIndex: "page",
+    key: "page",
   },
   {
     title: "pv",

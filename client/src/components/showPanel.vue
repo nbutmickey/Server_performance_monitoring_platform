@@ -1,10 +1,13 @@
 <template>
+  <div>
+  <updateTimeWidget></updateTimeWidget>  
   <div class="text-board content-box">
-    <div class="text-board-item solid" v-for="(item,index) in todayData" :key="index">
+    <a-empty v-if="todayData.length===0" description="暂无数据"/>
+    <div  else class="text-board-item solid" v-for="(item,index) in todayData" :key="index">
       <div class="text-style text-center">
         <h5 class="text-title">{{item.title}}</h5>
         <div class="text-value">
-          <span class="label">{{item.today.toLocaleString()}}</span>
+          <span class="label">{{parseInt(item.today).toLocaleString()}}</span>
           <span class="suffix" v-if="item.unit">ms</span>
           <div class="text-sub-value" v-if="isCompare">
             <span class="text-help">
@@ -25,18 +28,18 @@
       </div>
     </div>
   </div>
+  </div>
 </template>
 
 <script>
+import updateTimeWidget from "@/components/updateTimeWidget"
 export default {
   props:{
       todayData:Array,
       isCompare:Boolean
   },
-  data() {
-    return {
-      msg: "api"
-    };
+  components: {
+    updateTimeWidget
   }
 };
 </script>

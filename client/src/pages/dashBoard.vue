@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <headerBar></headerBar>
+  <div style="height:100%">
+    <headerBar :showNav="showNav"></headerBar>
     <div class="dashboard">
         <router-view/>
     </div>
@@ -16,7 +16,7 @@ export default {
   },
   data() {
     return {
-   
+      showNav:true
     };
   }
 };
@@ -28,7 +28,7 @@ export default {
   width: 100%;
   background-color: #f0f2f5;
   margin-top:46px;
-  padding: 18px 80px 30px 80px;
+  padding: 18px 30px 30px 30px;
   min-height: 0;
 }
 </style>

@@ -16,6 +16,7 @@ import keyPerPanel from "@/components/keyPerPanel"
 import intervalTimePanel from "@/components/intervalTimePanel"
 import pageListPanel from "@/components/pageListPanel"
 import waterfallLoadingPanel from "@/components/waterfallLoadingPanel"
+import { EventBus } from "@/common/js/eventBus"
 export default {
   components: {
     showPanel,
@@ -42,16 +43,20 @@ export default {
     };
   },
   async created() {
-    this.todayData = await this.getTodayData();
-    await this.getWaterfallLoadingData(0);
-    await this.getIntervalData(0);
-    await this.getkeyPerData(0);
-    await this.getPageListData(0);
+    await this.getTodayData();
+    await this.getWaterfallLoadingData(5);
+    await this.getkeyPerData(5);
+    await this.getIntervalData(5);
+    await this.getPageListData(5);
+  },
+  mounted () {
+    EventBus.$on("updateInfo",()=>{
+      this.getTodayData();
+    })
   },
   methods: {
     getTodayData: async function() {
-      let res = await this.axios.get("/data/per");
-      let { success, result } = res.data;
+      let {success,result}=await this.$get('/info/todayPerformance');
       result.forEach(item => {
         switch (item.title) {
           case 'fpt':
@@ -74,53 +79,29 @@ export default {
             break;
         }
       });
-      //console.log(result);
-      return result;
+     this.todayData=result;
     },
     getWaterfallLoadingData:async function(dimensionType){
-      let res = await this.axios.get(
-        `/data/waterfallLoading?dimensionType=${dimensionType}`
-      );
-      //console.log(res);
-      let { success, result } = res.data;
-      //console.log(result);
+     let {success,result}=await this.$get('/info/waterfallLoadTime',{dimensionType:dimensionType});
       if (success) {
         this.waterfallLoadingData = result;
       }
     },
     getkeyPerData:async function(dimensionType){
-       let res = await this.axios.get(
-        `/data/keyPer?dimensionType=${dimensionType}`
-      );
-      //console.log(res);
-      let { success, result } = res.data;
-      //console.log(result);
+      let {success,result}=await this.$get('/info/keyPerByDivider',{dimensionType:dimensionType});
       if (success) {
-        console.log("keyPer"+result);
         this.keyPerData = result;
       }
     },
     getPageListData:async function (dimensionType) {
-      let res = await this.axios.get(
-        `/data/pageList?dimensionType=${dimensionType}`
-      );
-      //console.log(res);
-      let { success, result } = res.data;
-      //console.log(result);
+      let {success,result}=await this.$get('/info/pageListPer',{dimensionType:dimensionType});
       if (success) {
-        //console.log(result);
         this.pageListData = result;
       }
     },
     getIntervalData:async function(dimensionType){
-      let res = await this.axios.get(
-        `/data/intervalTime?dimensionType=${dimensionType}`
-      );
-      //console.log(res);
-      let { success, result } = res.data;
-      //console.log(result);
+      let {success,result}=await this.$get('/info/intervalTimeByDivider',{dimensionType:dimensionType});
       if (success) {
-        //console.log(result);
         this.intervalData = result;
       }
     }

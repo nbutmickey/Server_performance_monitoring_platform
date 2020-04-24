@@ -38,11 +38,12 @@ export default {
             fields: ["redirect", "dns", "tcp", "ssl","ttfb","trans","dom","resource"],
             key: "type",
             value: "duration",
-            retains: ["time"]
+            retains: ["visitTime"]
           })
           .transform({
             type: "map",
             callback(row) {
+              row.duration=parseInt(row.duration);
               switch (row.type) {
                 case "redirect":
                   row.type = "重定向";
@@ -79,7 +80,7 @@ export default {
         this.chart
           .source(dv)
           .scale({
-            time: {
+            visitTime: {
               type: "timeCat",
               mask: "MM-DD HH:mm:ss",
               tickCount: data.length
@@ -88,7 +89,7 @@ export default {
 
         this.chart
           .interval()
-          .position("time*duration")
+          .position("visitTime*duration")
           .color("type")
           .tooltip("type*duration", (type, duration) => {
             return {

@@ -1,5 +1,5 @@
 let Resource = require("../db/model/Resource");
-
+let ResourceDao = require("../dao/resourceDao");
 const saveResource = (resourceInfo) => {
     let resInfo = new Resource({
         clientID: resourceInfo.clientID,
@@ -31,6 +31,37 @@ const deleteAllresByAppID=(appID)=>{
     });
 }
 
+const getResDetailByType=async (appID,sTime,eTime,type)=>{
+    try {
+        return await ResourceDao.getResDetailByType(appID,sTime,eTime,type);
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getResDetailByURL=async (appID,url)=>{
+    
+    try {
+        return await ResourceDao.getResDetailByUrl(appID,url);
+    } catch (error) {
+        throw error;
+    }
+}
+
+const getResInfo=async (appID)=>{
+    try {
+        let countInfo = await ResourceDao.getResCount(appID);
+        let fileSizeInfo=await ResourceDao.getResFileSize(appID);
+        let durationInfo=await ResourceDao.getResDuration(appID);
+        let result={};
+        result.fileSize=fileSizeInfo;
+        result.resDuration=durationInfo;
+        result.resNum=countInfo;
+        return result;
+    } catch (error) {
+        throw error;
+    }
+}
 
 
-module.exports = { saveResource,deleteAllresByAppID };
+module.exports = {getResDetailByType, getResDetailByURL,getResInfo,saveResource,deleteAllresByAppID };

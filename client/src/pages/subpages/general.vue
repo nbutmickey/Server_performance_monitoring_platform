@@ -4,8 +4,8 @@
     <div style="margin-left:-8px;display: flex;flex-direction: row;flex-wrap: wrap">
       <lineChartPanel
         :title="pvAnduvTitle"
-        :data="uvData"
-        v-on:changeTimeDimension="getUvData"
+        :data="pvAndUvData"
+        v-on:changeTimeDimension="getPvAndUvData"
       ></lineChartPanel>
       <topPageListPanel
         :title="topPageTitle"
@@ -57,6 +57,7 @@ import chinaMapPanel from "@/components/chinaMapPanel";
 import lineChartPanel from "@/components/lineChartPanel";
 import basedPieChartPanel from "@/components/basedPieChartPanel";
 import topPageListPanel from "@/components/topPageListPanel";
+import { EventBus } from "@/common/js/eventBus"
 export default {
   components: {
     showPanel,
@@ -79,8 +80,7 @@ export default {
       screenTitle: "屏幕类型",
       topPageTitle: "访问量TOP8页面",
       topPageData: [],
-      pvData: [],
-      uvData: [],
+      pvAndUvData: [],
       geoData: [],
       ispcdata: [],
       screendata: [],
@@ -90,21 +90,29 @@ export default {
   },
   async created() {
     this.getTodayData();
-    this.getTopPageData(0);
-    this.getPvData(0);
-    this.getUvData(0);
-    this.getGeoData(0);
-    this.getBsData(0);
-    this.getOsData(0);
-    this.getisPcData(0);
-    this.getScreenData(0);
+    this.getPvAndUvData(5);
+    this.getTopPageData(5);
+    this.getGeoData(5);
+    this.getBsData(5);
+    this.getOsData(5);
+    this.getisPcData(5);
+    this.getScreenData(5);
+  },
+  mounted () {
+    EventBus.$on("updateInfo",()=>{
+      this.getTodayData();
+    })
   },
   methods: {
     getTodayData: async function() {
-      let res = await this.axios.get("/data/todayGeneral");
-      let { success, result } = res.data;
-      result.forEach(item => {
-        item.rate = ((item.today - item.yesterday) / item.yesterday).toFixed(2);
+      let {success,result}=await this.$get('/info/todayGeneral');
+      if(success){
+        result.forEach(item => {
+        if(item.yesterday===0){
+          item.rate=(item.today-item.yesterday).toFixed(2);
+        }else{
+          item.rate = ((item.today - item.yesterday) / item.yesterday).toFixed(2);
+        }
         switch (item.title) {
           case "pv":
             item.title = "PV";
@@ -125,84 +133,52 @@ export default {
           default:
             break;
         }
-      });
+      });  
       this.todayData=result;
+      }
+    },
+    getPvAndUvData:async function(dimensionType){
+      let {success,result}=await this.$get('/info/pvAndUvNumByDivider',{dimensionType:dimensionType});
+      if (success) {
+        this.pvAndUvData = result;
+      }
     },
     getTopPageData: async function(dimensionType) {
-      console.log(dimensionType);
-      console.log(typeof dimensionType);
-      let res = await this.axios.get(
-        `/data/pageTop?dimensionType=${dimensionType}`
-      );
-      let { success, result } = res.data;
+      let {success,result}=await this.$get('/info/pageTop',{dimensionType:dimensionType});
       if (success) {
-        result.forEach((item, index) => {
-          item.key = index + 1;
-        });
         this.topPageData = result;
       }
     },
-    getPvData: async function(dimensionType) {
-      let res = await this.axios.get(
-        `/data/pvDataByDivider?dimensionType=${dimensionType}`
-      );
-      //console.log(res);
-      let { success, result } = res.data;
-      //console.log(result);
-      if (success) {
-        this.pvData = result;
-      }
-    },
-    getUvData: async function(dimensionType) {
-      let res = await this.axios.get(
-        `/data/uvDataByDivider?dimensionType=${dimensionType}`
-      );
-      let { success, result } = res.data;
-      if (success) {
-        this.uvData = result;
-      }
-    },
     getGeoData: async function(dimensionType) {
-      let res = await this.axios.get(
-        `/data/geoDataByDivider?dimensionType=${dimensionType}`
-      );
-      let { success, result } = res.data;
+      let {success,result}=await this.$get('/info/pvAndUvNumByGeo',{dimensionType:dimensionType});
       if (success) {
         this.geoData=result;
       }
     },
     getOsData: async function(dimensionType) {
-      let res = await this.axios.get(
-        `/data/osDataByDivider?dimensionType=${dimensionType}`
-      );
-      let { success, result } = res.data;
+       let {success,result}=await this.$get('/info/clientInfo',{dimensionType:dimensionType,groupType:1});
       if (success) {
         this.osdata=result;
       }
     },
     getBsData: async function(dimensionType) {
-      let res = await this.axios.get(
-        `/data/bsDataByDivider?dimensionType=${dimensionType}`
-      );
-      let { success, result } = res.data;
+      let {success,result}=await this.$get('/info/clientInfo',{dimensionType:dimensionType,groupType:0});
       if (success) {
         this.bsdata=result;
       }
     },
     getisPcData: async function(dimensionType) {
-      let res = await this.axios.get(
-        `/data/isPCDataByDivider?dimensionType=${dimensionType}`
-      );
-      let { success, result } = res.data;
+      let {success,result}=await this.$get('/info/clientInfo',{dimensionType:dimensionType,groupType:3});
       if (success) {
-        this.ispcdata=result;
+        this.ispcdata=result.map((item)=>{
+          item.type?item.type="PC":item.type="移动端";
+          return item;
+        });
+        //console.log(this.ispcdata);
       }
     },
     getScreenData: async function(dimensionType) {
-      let res = await this.axios.get(
-        `/data/screenDataByDivider?dimensionType=${dimensionType}`
-      );
-      let { success, result } = res.data;
+      let {success,result}=await this.$get('/info/clientInfo',{dimensionType:dimensionType,groupType:2});
       if (success) {
         this.screendata=result;
       }

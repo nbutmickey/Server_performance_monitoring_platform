@@ -81,7 +81,7 @@ exports.getWaterFallLoadingByTime=async function(appID,sTime,eTime,page){
                   $gte: sTime,
                   $lt: eTime,
                 },
-                pageURL:page,
+                pageUrl:page,
                 appID: appID
               }
         }:{
@@ -323,7 +323,7 @@ exports.getPageListKeyPerByTime=async function(appID,sTime,eTime){
             },
             {
                 $group: {
-                    _id: "$pageURL",
+                    _id: "$pageUrl",
                     fpt:{
                         $avg:"$performanceDetail.fpt" 
                     },
@@ -340,7 +340,8 @@ exports.getPageListKeyPerByTime=async function(appID,sTime,eTime){
             },
             {
                 $project: {
-                    _id: "$_id",
+                    _id: 0,
+                    pageUrl:"$_id",
                     fpt:1,
                     ready:1,
                     tti:1,
@@ -384,4 +385,4 @@ exports.getFullyLoadPerByGroupType=async function(appID,sTime,eTime,groupType){
       } catch (error) {
         throw error;
       }
-}
+} 

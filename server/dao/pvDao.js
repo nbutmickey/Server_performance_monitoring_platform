@@ -1,5 +1,5 @@
 let PvInfo = require("../db/model/PV");
-let unique = require("../utils/unique");
+let utils = require("../utils/utils");
 exports.getPVCountByTime = async function (appID, sTime, eTime) {
     try {
         return await PvInfo.countDocuments({ appID: appID, visitTime: { $gte: sTime, $lt: eTime } });
@@ -7,6 +7,28 @@ exports.getPVCountByTime = async function (appID, sTime, eTime) {
         throw error;
     }
 }
+exports.getVisitorPath=async function(appID,clientID){
+    try {
+        return await PvInfo.aggregate([
+            {
+                $match: {
+                    appID: appID,
+                    clientID:clientID
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    url: "$pageURL",
+                    time:"$visitTime"
+                }
+            }
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
+
 exports.getPageTop=async function(appID,sTime,eTime){
     try {
         return await PvInfo.aggregate([
@@ -111,7 +133,8 @@ exports.getPVAndUVByDivider= async function (appID, sTime, eTime, divider) {
             }
         ])
         result.forEach((item)=>{
-            item.uv=unique(item.uvList).length;
+            item.uv=utils.unique(item.uvList).length;
+            delete item['uvList'];
         })
 
         return result;
@@ -157,8 +180,8 @@ exports.getPVAndUVByGeo = async function (appID, sTime, eTime) {
             }
         ])
         result.forEach((item)=>{
-            item.uv=unique(item.uvList).length;
-            delete result['uvList'];
+            item.uv=utils.unique(item.uvList).length;
+            delete item['uvList'];
         })
         return result;
     } catch (error) {

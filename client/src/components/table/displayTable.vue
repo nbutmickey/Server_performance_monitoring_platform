@@ -5,7 +5,7 @@
       :dataSource="data"
       :loading="loading"
       :pagination="pagination"
-      :rowKey="record => record.type"
+      :rowKey="(record,index) => index "
     ></a-table>
   </div>
 </template>
@@ -13,6 +13,7 @@
 <script>
 export default {
   props: {
+    title:String,
     data: Array
   },
   data() {

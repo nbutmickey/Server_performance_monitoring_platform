@@ -45,7 +45,7 @@ const savePerformance = function (data) {
 
 const deleteAllPerByAppID = function (appID) {
   return new Promise((resolve, reject) => {
-    Performance.deleteMany((err) => {
+    Performance.deleteMany({ appID: appID },(err) => {
       try {
         resolve(true);
       } catch (error) {
@@ -58,11 +58,11 @@ const deleteAllPerByAppID = function (appID) {
 const getPerToday = async function (appID) {
   try {
     let { yesTime, toTime, nowTime } = time.getToadyTimeDivider();
-    let result= await performanceDao.getPerTodayByTime(appID, toTime, nowTime);
-    let res=[];
-    if(result.length!==0){
-      Object.keys(result[0]).forEach((key)=>{
-        res.push({title:key,today:result[0][key]});
+    let result = await performanceDao.getPerTodayByTime(appID, toTime, nowTime);
+    let res = [];
+    if (result.length !== 0) {
+      Object.keys(result[0]).forEach((key) => {
+        res.push({ title: key, today: result[0][key] });
       })
     }
     return res;
@@ -74,15 +74,15 @@ const getPerToday = async function (appID) {
 
 const getKeyPerTimeByDivider = async function (appID, sTime, eTime, divider) {
   try {
-    return await performanceDao.getKeyPerTimeByDivider(appID,sTime,eTime,divider);
+    return await performanceDao.getKeyPerTimeByDivider(appID, sTime, eTime, divider);
   } catch (error) {
     throw error;
   }
 }
 
-const getIntervalTimeByDivider=async function(appID,sTime,eTime,divider){
+const getIntervalTimeByDivider = async function (appID, sTime, eTime, divider) {
   try {
-    return await performanceDao.getIntervalTimeByDivider(appID,sTime,eTime,divider);
+    return await performanceDao.getIntervalTimeByDivider(appID, sTime, eTime, divider);
   } catch (error) {
     throw error;
   }
@@ -90,34 +90,48 @@ const getIntervalTimeByDivider=async function(appID,sTime,eTime,divider){
 
 const getWaterfallByTime = async function (appID, sTime, eTime) {
   try {
-    let result=await  performanceDao.getWaterFallLoadingByTime(appID,sTime,eTime);
-    let total=0; 
-    Object.keys(result[0]).forEach((key)=>{
-        total+=result[0][key];
+    let result = await performanceDao.getWaterFallLoadingByTime(appID, sTime, eTime);
+    if (result.length !== 0) {
+      let total = 0;
+      Object.keys(result[0]).forEach((key) => {
+        total += result[0][key];
       })
-    result[0].total=total;
+      result[0].total = total;
+      return result;
+    }
     return result;
   } catch (error) {
     throw error
   }
 }
 
-const getWaterfallByPage = async function (appID, sTime, eTime,page) {
+const getWaterfallByPage = async function (appID, sTime, eTime, page) {
   try {
-    let result=await  performanceDao.getWaterFallLoadingByTime(appID,sTime,eTime,page);
-    let total=0; 
-    Object.keys(result[0]).forEach((key)=>{
-        total+=result[0][key];
+    let result = await performanceDao.getWaterFallLoadingByTime(appID, sTime, eTime, page);
+    if (result.length !== 0) {
+      let total = 0;
+      Object.keys(result[0]).forEach((key) => {
+        total += result[0][key];
       })
-    result[0].total=total;
+      result[0].total = total;
+      return result;
+    }
     return result;
   } catch (error) {
     throw error
+  }
+}
+
+const getPageListPer = async function (appID, sTime, eTime) {
+  try {
+    return await performanceDao.getPageListKeyPerByTime(appID, sTime, eTime);
+  } catch (error) {
+    throw error;
   }
 }
 
 const getFullyLoadPerByGroupType = async function (appID, sTime, eTime, groupType) {
-  
+
 
 }
 
@@ -200,6 +214,7 @@ module.exports = {
   savePerformance,
   getKeyPerTimeByDivider,
   getIntervalTimeByDivider,
+  getPageListPer,
   getWaterfallByPage,
   getFullyLoadPerByGroupType,
   getApdex,

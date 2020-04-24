@@ -1,13 +1,12 @@
 <template>
-    <div style="height:335px;width:49%;display:inline-block">
+    <div style="width:49%;height:450px;display:inline-block">
           <a-table
             :columns="columns"
             :dataSource="data"
             :loading="loading"
-            :scroll="{ y: 320 }"
             :pagination="pagination"
             size="middle"
-            :rowKey="record => record.type"
+            :rowKey="(record,index) => index "
           ></a-table>
     </div>
 </template>
@@ -35,7 +34,9 @@ export default {
           width:150
         }
       ],
-      pagination:false,
+      pagination:{
+        pageSize:6
+      },
       loading: false
     };
   },

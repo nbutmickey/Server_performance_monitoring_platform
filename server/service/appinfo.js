@@ -1,13 +1,14 @@
 let AppInfo = require("../db/model/App");
 let time=require("../utils/time");
+
 //对model进行操作
-const saveApp = function (appinfo, clientID) {
+const saveApp = function (appinfo, appID) {
     let appInfo = new AppInfo({
         appName: appinfo.appName,
         userName: appinfo.userName,
         monitoringDomain: appinfo.monitoringDomain,
-        createTime: time.getNowTime(),
-        appID: clientID,
+        createTime: time.getStandardTime(),
+        appID: appID,
     });
     return new Promise((resolve, reject) => {
         appInfo.save((error) => {
@@ -29,6 +30,19 @@ const deleteApp = function (appID) {
                 reject(false);
             }
         })
+    })   
+}
+
+
+const findAllAppInfoByUserName=function(userName){
+    return new Promise((resolve,reject)=>{
+        AppInfo.find({userName:userName},(err,result)=>{
+            try {
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        })
     })
 }
 
@@ -36,6 +50,7 @@ const findApp = function (domain, username) {
     return new Promise((resolve, reject) => {
         AppInfo.findOne({ monitoringDomain: domain, userName: username }, (err, result) => {
             try {
+                console.log(result);
                 if (result !== null) {
                     resolve(true);
                 } else {
@@ -66,4 +81,4 @@ const findAppByAppID = function (appID) {
 
 
 
-module.exports = { saveApp,findApp, deleteApp, findAppByAppID };
+module.exports = {findAllAppInfoByUserName, saveApp,findApp, deleteApp, findAppByAppID };
