@@ -26,7 +26,7 @@ router.get('/clientID', async function (req, res, next) {
     //console.log(tempIP);
     let IP = tempIP.split(":")[tempIP.split(":").length - 1]
     //查询IP地址对应的地理信息
-    let IPInfo = await ipSearch("27.128.241.0");//需修改成IP
+    let IPInfo = await ipSearch(IP);//需修改成IP
     //根据clientID查找是否该访问者曾经访问过，若访问过，则不生成ID，直接返回，若未访问过，则需要生成ID返回。
     let visitResult = await uvinfo.findUvByClientID(clientID);
     //console.log(visitResult);
