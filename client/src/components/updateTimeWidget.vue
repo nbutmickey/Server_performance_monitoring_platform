@@ -28,7 +28,7 @@ export default {
           let HH=date.getHours();
           let mm=date.getMinutes();
           let ss=date.getSeconds();
-          return  `${HH>10?HH:'0'+HH}:${mm>10?mm:'0'+mm}` 
+          return  `${HH>=10?HH:'0'+HH}:${mm>=10?mm:'0'+mm}` 
       }
   }
 };

@@ -29,6 +29,7 @@ const saveApi = function (apiinfo) {
         });
     })
 }
+
 const deleteAllApiByAppID = function (appID) {
     return new Promise((resolve, reject) => {
         APIInfo.deleteMany({ appID: appID }, (err) => {
@@ -41,6 +42,17 @@ const deleteAllApiByAppID = function (appID) {
     });
 }
 
+const deleteAllApiByTime=function(sTime){
+    return new Promise((resolve,reject)=>{
+        APIInfo.deleteMany({visitTime:{$lt: sTime}},(err)=>{
+            try {
+                resolve(true);
+            } catch (error) {
+                reject(false);
+            }
+        })
+    })
+}
 
 const getAPIToday = async function (appID) {
     try {
@@ -84,10 +96,8 @@ const getSuccessAPIRateByTimeDivider = async function (appID, sTime, eTime, divi
         let result = [];
         for (let u of successCount) {
             let temp = allCount.filter(item =>  new Date(item.visitTime).getTime() === new Date(u.visitTime).getTime() )[0];
-            //console.log(temp);
             result.push({ ...u, ...temp })
         }
-        console.log(result);
         return result;
     } catch (error) {
         throw error;
@@ -146,4 +156,4 @@ const getAPIInfoByGroupType = async function (appID, sTime, eTime, groupType) {
     }
 }
 
-module.exports = { saveApi, getAPIToday, getAPIFailedDurationByTimeDivider, getAPISuccessDurationByTimeDivider, getSuccessAPIRateByTimeDivider, getAllRequestAPIByTime, getALLRequestFailedAPIByTime, getAPIInfoByGroupType, deleteAllApiByAppID }
+module.exports = { deleteAllApiByTime,saveApi, getAPIToday, getAPIFailedDurationByTimeDivider, getAPISuccessDurationByTimeDivider, getSuccessAPIRateByTimeDivider, getAllRequestAPIByTime, getALLRequestFailedAPIByTime, getAPIInfoByGroupType, deleteAllApiByAppID }

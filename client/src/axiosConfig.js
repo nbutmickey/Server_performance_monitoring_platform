@@ -2,7 +2,7 @@ import axios from 'axios'
 import qs from "qs"
 axios.defaults.timeout=5*1000;
 axios.defaults.headers.post['Content-Type']="application/x-www-form-urlencoded;charset=UTF-8";
-axios.defaults.baseURL="http://192.168.31.88:3000";
+axios.defaults.baseURL="http://127.0.0.1:3001";
 //添加请求拦截器
 axios.interceptors.request.use(
     config=>{

@@ -31,6 +31,18 @@ const deleteAllresByAppID=(appID)=>{
     });
 }
 
+const deleteAllResByTime=function(sTime){
+    return new Promise((resolve,reject)=>{
+        Resource.deleteMany({visitTime:{$lt: sTime}},(err)=>{
+            try {
+                resolve(true);
+            } catch (error) {
+                reject(false);
+            }
+        })
+    })
+  }
+
 const getResDetailByType=async (appID,sTime,eTime,type)=>{
     try {
         return await ResourceDao.getResDetailByType(appID,sTime,eTime,type);
@@ -64,4 +76,11 @@ const getResInfo=async (appID)=>{
 }
 
 
-module.exports = {getResDetailByType, getResDetailByURL,getResInfo,saveResource,deleteAllresByAppID };
+module.exports = {
+    getResDetailByType, 
+    getResDetailByURL,
+    getResInfo,
+    saveResource,
+    deleteAllresByAppID,
+    deleteAllResByTime
+ };

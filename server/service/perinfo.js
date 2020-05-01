@@ -54,6 +54,18 @@ const deleteAllPerByAppID = function (appID) {
     })
   });
 }
+const deleteAllPerByTime=function(sTime){
+  return new Promise((resolve,reject)=>{
+    Performance.deleteMany({visitTime:{$lt: sTime}},(err)=>{
+          try {
+              resolve(true);
+          } catch (error) {
+              reject(false);
+          }
+      })
+  })
+}
+
 
 const getPerToday = async function (appID) {
   try {
@@ -130,13 +142,7 @@ const getPageListPer = async function (appID, sTime, eTime) {
   }
 }
 
-const getFullyLoadPerByGroupType = async function (appID, sTime, eTime, groupType) {
-
-
-}
-
 const getApdex = async function (appID, sTime, eTime, page) {
-
   try {
     /*总体样本数量*/
     let total = await Performance.countDocuments(
@@ -209,6 +215,7 @@ const getApdex = async function (appID, sTime, eTime, page) {
 }
 
 module.exports = {
+  deleteAllPerByTime,
   getPerToday,
   getWaterfallByTime,
   savePerformance,
@@ -216,7 +223,6 @@ module.exports = {
   getIntervalTimeByDivider,
   getPageListPer,
   getWaterfallByPage,
-  getFullyLoadPerByGroupType,
   getApdex,
   deleteAllPerByAppID
 }

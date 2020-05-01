@@ -48,6 +48,18 @@ const deleteAllPvByAppID = function (appID) {
     })
 }
 
+const deleteAllPvByTime=function(sTime){
+    return new Promise((resolve,reject)=>{
+      PvInfo.deleteMany({visitTime:{$lt: sTime}},(err)=>{
+            try {
+                resolve(true);
+            } catch (error) {
+                reject(false);
+            }
+        })
+    })
+  }
+
 const getTodayGeneral=async function(appID){
     try {
         let result=[];
@@ -109,4 +121,13 @@ const getVisitorPath=async function(appID,clientID){
     }
 }
 
-module.exports = { savePv,getVisitorPath,getTodayGeneral, getPvAndUvNumByGeo, deleteAllPvByAppID, getPageTop,  getPvAndUvNumByDivider };
+module.exports = { 
+    savePv,
+    getVisitorPath,
+    getTodayGeneral, 
+    getPvAndUvNumByGeo, 
+    deleteAllPvByAppID, 
+    getPageTop,  
+    getPvAndUvNumByDivider,
+    deleteAllPvByTime 
+};

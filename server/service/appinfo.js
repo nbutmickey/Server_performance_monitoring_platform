@@ -34,6 +34,13 @@ const deleteApp = function (appID) {
 }
 
 
+// const findAppIDList =function(){
+//     return new Promise((resolve,reject)=>{
+//         AppInfo.findMany()
+//     })
+// }
+
+
 const findAllAppInfoByUserName=function(userName){
     return new Promise((resolve,reject)=>{
         AppInfo.find({userName:userName},(err,result)=>{
@@ -79,6 +86,22 @@ const findAppByAppID = function (appID) {
     })
 }
 
+const findAllAPPList=async function(){
+    try {
+        return await AppInfo.aggregate([
+            {
+                $project: {
+                    _id: 0,
+                    appID:"$appID",
+                    createTime: "$createTime"
+                }
+            }
+        ])
+    } catch (error) {
+        throw error;
+    }
+}
 
 
-module.exports = {findAllAppInfoByUserName, saveApp,findApp, deleteApp, findAppByAppID };
+
+module.exports = {findAllAPPList,findAllAppInfoByUserName, saveApp,findApp, deleteApp, findAppByAppID };

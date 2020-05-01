@@ -8,12 +8,13 @@ var app = require('../app');
 var debug = require('debug')('server:server');
 var http = require('http');
 var mongoose=require("../db/connectDB");
+let scheduleTask=require("../service/dataprocess");
 
 /**
  * Get port from environment and store in Express.
  */
 
-var port = normalizePort(process.env.PORT || '3000');
+var port = normalizePort(process.env.PORT || '3001');
 app.set('port', port);
 
 /**
@@ -29,6 +30,8 @@ var server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+//定时任务开启
+scheduleTask.scheduleProcessData();
 
 /**
  * Normalize a port into a number, string, or false.
@@ -87,6 +90,6 @@ function onListening() {
   var bind = typeof addr === 'string'
     ? 'pipe ' + addr
     : 'port ' + addr.port;
-    console.log("Server is listening port 3000");
+    console.log("Server is listening port 3001");
   debug('Listening on ' + bind);
 }
