@@ -328,10 +328,10 @@ function resources_Collect() {
     if (perfResEntries) {
         perfResEntries.forEach(function (item) {
             //需过滤掉脚本文件的请求和上传todo....
-            let reqAppID = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/clientID\/\?appID=[a-z0-9]{5}-[a-z0-9]{8}-[a-z0-9]{8}-[a-z0-9]{7}/;
-            let collectJS = /[http|https]*?:\/\/192.168.31.88:3000\/static\/javascripts\/collection\.js/;
-            let uploadJS = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/imgReport\?./;
-            let resUploadJS = /[http|https]*?:\/\/192.168.31.88:3000\/collect\/upload/;
+            let reqAppID = /[http|https]*?:\/\/121.199.49.71:3001\/collect\/clientID\/\?appID=[a-z0-9]{5}-[a-z0-9]{8}-[a-z0-9]{8}-[a-z0-9]{7}/;
+            let collectJS = /[http|https]*?:\/\/121.199.49.71:3001\/static\/javascripts\/collection\.js/;
+            let uploadJS = /[http|https]*?:\/\/121.199.49.71:3001\/collect\/imgReport\?./;
+            let resUploadJS = /[http|https]*?:\/\/121.199.49.71:3001\/collect\/upload/;
             if (!reqAppID.test(item.name) && !collectJS.test(item.name) && !uploadJS.test(item.name) && !resUploadJS.test(item.name)) {
                 detail.push({
                     Url: item.name,
@@ -368,7 +368,7 @@ function resources_Collect() {
 
 //传输模块（Image实现）
 function uploadData(type, data) {
-    let url = 'http://192.168.31.88:3000/collect/upload';
+    let url = 'http://121.199.49.71:3001/collect/upload';
     let image = new Image();
     let UpLoadData = JSON.stringify(data);
     image.src = url + '?' + 'type=' + type + '&dataJson=' + encodeURIComponent(UpLoadData);
@@ -378,7 +378,7 @@ function uploadData(type, data) {
 }
 
 function uploadDataBySendBeacon(data){
-    let url = 'http://192.168.31.88:3000/collect/upload';
+    let url = 'http://121.199.49.71:3001/collect/upload';
     let headers={
         type:"application/x-www-form-urlencoded"
     }
