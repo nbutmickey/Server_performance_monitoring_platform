@@ -136,7 +136,7 @@ export default {
         }
         if(this.register){
             if(this.phoneNumber!==''){
-              let {success,note}=await this.$post('/users/reg',{username:this.userName,password:this.passWord,phonenumber:this.phoneNumber})
+              let {success,note}=await this.$post('/api/users/reg',{username:this.userName,password:this.passWord,phonenumber:this.phoneNumber})
               if(success){
                 this.$message.success("注册成功，点击返回登录吧~");
               }else{
@@ -148,7 +148,7 @@ export default {
               this.showTips=true;
             }
         }else{
-            let {success,note,username,token}=await this.$post('/users/login',{username:this.userName,password:this.passWord})
+            let {success,note,username,token}=await this.$post('/api/users/login',{username:this.userName,password:this.passWord})
             if(success){
               //本地存储token的逻辑
               localStorage.setItem("token",token);
