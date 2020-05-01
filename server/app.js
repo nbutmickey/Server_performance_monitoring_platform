@@ -62,6 +62,7 @@ app.use('/info', statisticsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
+  console.log("404了")
   next(createError(404));
 });
 
