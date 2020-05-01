@@ -179,6 +179,7 @@ exports.getPVAndUVByGeo = async function (appID, sTime, eTime) {
                 }
             }
         ])
+        console.log(result);
         result.forEach((item)=>{
             item.uv=utils.unique(item.uvList).length;
             delete item['uvList'];
