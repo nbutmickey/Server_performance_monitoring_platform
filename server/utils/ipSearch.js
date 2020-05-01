@@ -1,7 +1,8 @@
 let request=require("request")
 function  getIPInfo(ipaddr) {
     return new Promise((resolve,reject)=>{
-        request.get("http://smallsite:8085/lookUp?ip="+ipaddr, function(err, response){
+        console.log(ipaddr);
+        request.get("http://smallsite.online:8085/lookUp?ip="+ipaddr, function(err, response){
                let { success,data}=JSON.parse(response.body);
                if(success){
                    resolve({
