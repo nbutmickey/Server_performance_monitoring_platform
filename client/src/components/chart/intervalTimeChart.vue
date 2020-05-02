@@ -72,7 +72,7 @@ export default {
                 default:
                   break;
               }  
-              row.time = new Date(row.time).getTime() - 8 * 60 * 60 * 1000;
+              //row.time = new Date(row.time).getTime() - 8 * 60 * 60 * 1000;
               return row;
             }
           });
