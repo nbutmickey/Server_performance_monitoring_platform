@@ -23,39 +23,39 @@
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="操作系统" >
-              <p>{{baseInfo.os||未知}}</p>
+              <p>{{baseInfo.os===null?'未知':baseInfo.os}}</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="浏览器" >
-              <p>{{baseInfo.bs||未知}}</p>
+              <p>{{baseInfo.bs===null?'未知':baseInfo.bs}}</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="分辨率" >
-              <p>{{baseInfo.screen||未知}}</p>
+              <p>{{baseInfo.screen===null?'未知':baseInfo.screen}}</p>
             </a-card>
           </a-col>
         </a-row>
         <a-row style="padding:4px 0">
           <a-col :span="6" style="padding:0 4px">
             <a-card title="国家">
-              <p>{{baseInfo.country||暂无}}</p>
+              <p>{{baseInfo.country===null?'暂无':baseInfo.country}}</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="省份" >
-              <p>{{baseInfo.province||暂无}}</p>
+              <p>{{baseInfo.province===null?'暂无':baseInfo.province}}</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="城市" >
-              <p>{{baseInfo.city||暂无}}</p>
+              <p>{{baseInfo.city===null?'暂无':baseInfo.city}}</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="服务提供商" >
-              <p>{{baseInfo.isp||暂无}}</p>
+              <p>{{baseInfo.isp===null?'暂无':baseInfo.isp}}</p>
             </a-card>
           </a-col>
         </a-row>
@@ -64,7 +64,7 @@
          <h4>关键路径记录</h4>
          <div class="pathLine">
            <a-timeline>
-            <a-timeline-item v-for="(item,index) in userPath" :key="index" v-if="item.duration>0">
+            <a-timeline-item  v-for="(item,index) in userPath" :key="index">
               <a-icon v-if="index==userPath.length-1" slot="dot"  type="check-circle"/>
               <p>{{item.url}}</p>
               <p style="color:rgba(0,0,0,.45)">访问时间：{{formatTime(item.time)}} <span v-if="index!==0" style="display:disply-block;margin-left:20px">间隔：{{item.duration}}</span></p>
