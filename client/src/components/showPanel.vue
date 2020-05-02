@@ -12,7 +12,7 @@
           <div class="text-sub-value" v-if="isCompare">
             <span class="text-help">
               昨日
-              <span style="color:#666;font-weight:700">{{item.yesterday.toLocaleString()}}</span>
+              <span style="color:#666;font-weight:700">{{parseInt(item.yesterday).toLocaleString()}}</span>
             </span>
             <span class="text-help">
               相比
