@@ -126,7 +126,6 @@ export default {
     async getWaterFallLoadTimeByPage(pageURL){
        let {success,result}=await this.$post('/info/waterfallLoadTime',
        {
-         appID:'kol9l-k5dvol2z-b4cad0ad-k5dvol2z',
          page:pageURL,
          dimensionType:this.dimensionType
        });
