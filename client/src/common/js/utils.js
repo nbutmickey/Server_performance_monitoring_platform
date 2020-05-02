@@ -13,10 +13,11 @@ export function getCookie(key){
 
 export function formatDate(date){
     let newDate=new Date(date);
+    newDate.setHours(newDate.getHours()-8);
     let YY=newDate.getFullYear();
     let MM=newDate.getMonth()+1;
     MM=MM<10?'0'+MM:MM;
-    let DD=newDate.getDate()+1;
+    let DD=newDate.getDate();
     DD=DD<10?'0'+DD:DD;
 
     let HH=newDate.getHours();

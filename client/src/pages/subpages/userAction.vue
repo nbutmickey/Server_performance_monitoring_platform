@@ -23,39 +23,39 @@
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="操作系统" >
-              <p>{{baseInfo.os}}</p>
+              <p>{{baseInfo.os}}||未知</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="浏览器" >
-              <p>{{baseInfo.bs}}</p>
+              <p>{{baseInfo.bs}}||未知</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="分辨率" >
-              <p>{{baseInfo.screen}}</p>
+              <p>{{baseInfo.screen}}||未知</p>
             </a-card>
           </a-col>
         </a-row>
         <a-row style="padding:4px 0">
           <a-col :span="6" style="padding:0 4px">
             <a-card title="国家">
-              <p>{{baseInfo.country}}</p>
+              <p>{{baseInfo.country}}||暂无</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="省份" >
-              <p>{{baseInfo.province}}</p>
+              <p>{{baseInfo.province}}||暂无</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="城市" >
-              <p>{{baseInfo.city}}</p>
+              <p>{{baseInfo.city}}||暂无</p>
             </a-card>
           </a-col>
           <a-col :span="6" style="padding:0 4px">
             <a-card title="服务提供商" >
-              <p>{{baseInfo.isp}}</p>
+              <p>{{baseInfo.isp}}||暂无</p>
             </a-card>
           </a-col>
         </a-row>
