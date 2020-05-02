@@ -72,7 +72,7 @@ export default {
                 default:
                   break;
               }  
-              row.visitTime = new Date(row.visitTime).getTime() - 8 * 60 * 60 * 1000;
+              row.visitTimes = new Date(row.visitTime).getTime() - 8 * 60 * 60 * 1000;
               return row;
             }
           });
