@@ -11,7 +11,7 @@ exports.setIPInfo=async function (req,res,next) {
     let tempIP = req.headers['x-forwarded-for'] || req.ip || req.socket.remoteAddress || req.connection.socket.remoteAddress || req.connection.remoteAddress || '';
     let IP = tempIP.split(":")[tempIP.split(":").length - 1]
     //查询IP地址对应的地理信息
-    let IPInfo = await ipSearch("27.128.241.0");//需修改成IP;
+    let IPInfo = await ipSearch(IP);//需修改成IP;
     
     //以下代码需要优化;
     let tempData=JSON.parse(req.query.dataJson)
