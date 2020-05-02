@@ -30,6 +30,13 @@ export default {
     processData:function(rawData){
         const ds=new DataSet();
         const dv=ds.createView().source(rawData);
+        dv.transform({
+            type:'map',
+            callback(row){
+              row.visitTime = new Date(row.visitTime).getTime() - 8 * 60 * 60 * 1000;
+              return row;
+            }
+        })
         return dv;
     },
     renderChart:function(dv){

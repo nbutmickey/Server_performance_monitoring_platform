@@ -40,6 +40,7 @@ export default {
         const dv=ds.createView().source(rawData).transform({
             type:'map',
             callback(row){
+                row.visitTime = new Date(row.visitTime).getTime() - 8 * 60 * 60 * 1000;
                 row.successRate=((row.success/row.allCount).toFixed(2))*100+'%';
                 return row;
            }
