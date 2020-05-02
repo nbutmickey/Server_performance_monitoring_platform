@@ -21,7 +21,11 @@ axios.interceptors.request.use(
 //发送POST请求
 export function fetchPost(url,params){
     return new Promise((resolve,reject)=>{
-        axios.post(url,params).then(
+        axios.post(url,
+            {
+                appID:localStorage.getItem("appID"),
+                ...params
+            }).then(
             res=>{
                 resolve(res.data)
             },
