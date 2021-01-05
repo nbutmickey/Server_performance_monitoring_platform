@@ -14,7 +14,7 @@
     "@antv/data-set": "^0.10.2",
     "@antv/g2": "^3.5.11",
     "ant-design-vue": "^1.4.10",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "less": "^3.11.0",
     "less-loader": "^5.0.0",
     "postcss": "^7.0.26",
